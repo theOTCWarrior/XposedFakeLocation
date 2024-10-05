@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -14,10 +15,13 @@ fun MapScreen(viewModel: MainViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0),
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                viewModel.togglePlaying()
-            }) {
+            FloatingActionButton(
+                onClick = { viewModel.togglePlaying() },
+                modifier = Modifier
+                    .navigationBarsPadding()
+            ) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
                     contentDescription = if (isPlaying) "Stop" else "Play"
