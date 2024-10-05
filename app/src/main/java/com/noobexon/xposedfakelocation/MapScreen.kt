@@ -1,4 +1,3 @@
-// MapScreen.kt
 package com.noobexon.xposedfakelocation
 
 import androidx.compose.foundation.layout.*

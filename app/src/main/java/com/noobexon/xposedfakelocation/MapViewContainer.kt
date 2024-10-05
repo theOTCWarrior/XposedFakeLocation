@@ -1,4 +1,3 @@
-// MapViewContainer.kt
 package com.noobexon.xposedfakelocation
 
 import android.widget.Toast

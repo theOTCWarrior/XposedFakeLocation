@@ -1,4 +1,3 @@
-// AppContent.kt
 package com.noobexon.xposedfakelocation
 
 import android.Manifest
