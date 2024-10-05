@@ -18,6 +18,14 @@ class MainViewModel : ViewModel() {
     private val _hasPermissions = mutableStateOf(false)
     val hasPermissions: State<Boolean> get() = _hasPermissions
 
+    // State variable to track if permission check is done
+    private val _isPermissionCheckDone = mutableStateOf(false)
+    val isPermissionCheckDone: State<Boolean> get() = _isPermissionCheckDone
+
+    // State variable for tracking whether permissions are permanently denied
+    private val _permanentlyDenied = mutableStateOf(false)
+    val permanentlyDenied: State<Boolean> get() = _permanentlyDenied
+
     // Toggle the play/stop status
     fun togglePlaying() {
         _isPlaying.value = !_isPlaying.value
@@ -31,5 +39,15 @@ class MainViewModel : ViewModel() {
     // Update location permission status
     fun updatePermissionsStatus(granted: Boolean) {
         _hasPermissions.value = granted
+    }
+
+    // Update permanent denial status
+    fun updatePermanentlyDenied(denied: Boolean) {
+        _permanentlyDenied.value = denied
+    }
+
+    // Mark permission check as done
+    fun markPermissionCheckDone() {
+        _isPermissionCheckDone.value = true
     }
 }

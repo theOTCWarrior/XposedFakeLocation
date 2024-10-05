@@ -1,6 +1,8 @@
 package com.noobexon.xposedfakelocation
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -15,63 +17,73 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+fun Context.getActivity(): Activity? = this as? Activity
+
 @Composable
 fun PermissionsScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
+    val activity = context.getActivity()  // Get the current activity
 
     // Launcher to request permissions
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
             viewModel.updatePermissionsStatus(granted)
+
+            // Check if permissions were denied permanently
+            if (!granted && activity != null) {  // Ensure activity is not null
+                val shouldShowRationale = activity.shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                viewModel.updatePermanentlyDenied(!shouldShowRationale)
+            }
         }
     )
 
-    // Request permissions when the screen is first displayed
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        )
-    }
-
-    // Display UI indicating that permissions are required
+    // UI observing permission state
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Permissions are required to use this app!",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                // Request permissions again
-                permissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
+            if (viewModel.permanentlyDenied.value) {
+                Text(
+                    text = "You have permanently denied location permissions. Please enable them from settings.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
                 )
-            }) {
-                Text("Grant Permissions")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                // Open app settings
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", context.packageName, null)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = {
+                    // Open app settings
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }) {
+                    Text("Open Settings")
                 }
-                context.startActivity(intent)
-            }) {
-                Text("Open Settings")
+            } else {
+                Text(
+                    text = "Permissions are required to use this app!",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = {
+                    // Request permissions again
+                    permissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }) {
+                    Text("Grant Permissions")
+                }
             }
         }
     }
 }
+
+
