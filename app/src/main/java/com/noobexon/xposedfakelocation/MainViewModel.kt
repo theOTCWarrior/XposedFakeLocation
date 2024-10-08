@@ -29,10 +29,16 @@ class MainViewModel : ViewModel() {
     // Toggle the play/stop status
     fun togglePlaying() {
         _isPlaying.value = !_isPlaying.value
+
+        if (!_isPlaying.value) {
+            // Transitioned to "not playing" state
+            // Remove the marker by setting lastClickedLocation to null
+            _lastClickedLocation.value = null
+        }
     }
 
     // Update the last clicked location
-    fun updateClickedLocation(geoPoint: GeoPoint) {
+    fun updateClickedLocation(geoPoint: GeoPoint?) {
         _lastClickedLocation.value = geoPoint
     }
 

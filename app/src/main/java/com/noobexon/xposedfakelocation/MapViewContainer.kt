@@ -1,3 +1,4 @@
+// MapViewContainer.kt
 package com.noobexon.xposedfakelocation
 
 import android.widget.Toast
@@ -50,32 +51,41 @@ fun MapViewContainer(viewModel: MainViewModel) {
         }
     }
 
-    // Observe the last clicked location
+    // Observe the last clicked location and isPlaying state
     val lastClickedLocation by viewModel.lastClickedLocation
+    val isPlaying by viewModel.isPlaying
 
-    // Add the marker to the map when the user clicks for the first time
+    // Handle marker visibility and position
     LaunchedEffect(lastClickedLocation) {
-        lastClickedLocation?.let { geoPoint ->
+        if (lastClickedLocation != null) {
             // Add the marker to the map if not already added
             if (!mapView.overlays.contains(userMarker)) {
                 mapView.overlays.add(userMarker)
             }
 
-            userMarker.position = geoPoint
-            mapView.controller.animateTo(geoPoint)
+            userMarker.position = lastClickedLocation
+            mapView.controller.animateTo(lastClickedLocation)
             mapView.invalidate()
 
-            val message = "Latitude: ${geoPoint.latitude}\nLongitude: ${geoPoint.longitude}"
+            val message = "Latitude: ${lastClickedLocation!!.latitude}\nLongitude: ${lastClickedLocation!!.longitude}"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        } else {
+            // Remove the marker from the map if it exists
+            if (mapView.overlays.contains(userMarker)) {
+                mapView.overlays.remove(userMarker)
+                mapView.invalidate()
+            }
         }
     }
 
     // Set up the map click listener
-    DisposableEffect(mapView) {
+    DisposableEffect(mapView, isPlaying) {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                // Update the ViewModel with the clicked location
-                viewModel.updateClickedLocation(p)
+                if (!isPlaying) {
+                    // Update the ViewModel with the clicked location
+                    viewModel.updateClickedLocation(p)
+                }
                 return true
             }
 
