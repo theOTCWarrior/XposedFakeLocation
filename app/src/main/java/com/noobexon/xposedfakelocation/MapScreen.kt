@@ -14,7 +14,6 @@ fun MapScreen(viewModel: MainViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets(0),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { viewModel.togglePlaying() },
@@ -37,3 +36,4 @@ fun MapScreen(viewModel: MainViewModel) {
         }
     }
 }
+

@@ -6,51 +6,110 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.delay
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 @Composable
 fun MapViewContainer(viewModel: MainViewModel) {
     val context = LocalContext.current
 
-    // Observe the last clicked location
-    val lastClickedLocation by viewModel.lastClickedLocation
-
-    // Show a toast when the last clicked location changes
-    LaunchedEffect(lastClickedLocation) {
-        lastClickedLocation?.let { geoPoint ->
-            val message = "Latitude: ${geoPoint.latitude}\nLongitude: ${geoPoint.longitude}"
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
+    // Remember the MapView
     val mapView = remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setBuiltInZoomControls(false)
             setMultiTouchControls(true)
+        }
+    }
 
-            controller.setZoom(2.0)
-            controller.setCenter(GeoPoint(0.0, 0.0))
+    // Remember the user's marker, but don't add it to the map initially
+    val userMarker = remember {
+        Marker(mapView).apply {
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        }
+    }
 
-            // Map click listener
-            val mapEventsReceiver = object : MapEventsReceiver {
-                override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                    // Update the ViewModel with the clicked location
-                    viewModel.updateClickedLocation(p)
-                    return true
-                }
+    // Remember the location overlay
+    val locationOverlay = remember {
+        MyLocationNewOverlay(GpsMyLocationProvider(context), mapView).apply {
+            enableMyLocation()
+        }
+    }
 
-                override fun longPressHelper(p: GeoPoint): Boolean {
-                    // Will be used later
-                    return false
-                }
+    // Add the location overlay to the map
+    LaunchedEffect(Unit) {
+        if (!mapView.overlays.contains(locationOverlay)) {
+            mapView.overlays.add(locationOverlay)
+        }
+    }
+
+    // Observe the last clicked location
+    val lastClickedLocation by viewModel.lastClickedLocation
+
+    // Add the marker to the map when the user clicks for the first time
+    LaunchedEffect(lastClickedLocation) {
+        lastClickedLocation?.let { geoPoint ->
+            // Add the marker to the map if not already added
+            if (!mapView.overlays.contains(userMarker)) {
+                mapView.overlays.add(userMarker)
             }
-            val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
-            overlays.add(mapEventsOverlay)
+
+            userMarker.position = geoPoint
+            mapView.controller.animateTo(geoPoint)
+            mapView.invalidate()
+
+            val message = "Latitude: ${geoPoint.latitude}\nLongitude: ${geoPoint.longitude}"
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Set up the map click listener
+    DisposableEffect(mapView) {
+        val mapEventsReceiver = object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                // Update the ViewModel with the clicked location
+                viewModel.updateClickedLocation(p)
+                return true
+            }
+
+            override fun longPressHelper(p: GeoPoint): Boolean {
+                return false
+            }
+        }
+
+        val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
+        mapView.overlays.add(mapEventsOverlay)
+
+        onDispose {
+            // Remove the overlay when the effect is disposed
+            mapView.overlays.remove(mapEventsOverlay)
+        }
+    }
+
+    // Center the map on the user's current location when it's available
+    LaunchedEffect(locationOverlay) {
+        // Wait until the user's location is available or a timeout occurs
+        val maxAttempts = 50 // e.g., 50 attempts * 100ms = 5 seconds
+        var attempts = 0
+        while (locationOverlay.myLocation == null && attempts < maxAttempts) {
+            delay(100) // Wait for 100ms before checking again
+            attempts++
+        }
+        val userLocation = locationOverlay.myLocation
+        userLocation?.let { geoPoint ->
+            mapView.controller.setZoom(18.0) // Adjust zoom level as desired
+            mapView.controller.animateTo(geoPoint)
+        } ?: run {
+            // If location is not available after timeout, set default location
+            mapView.controller.setZoom(2.0)
+            mapView.controller.setCenter(GeoPoint(0.0, 0.0))
         }
     }
 
@@ -59,6 +118,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
         mapView.onResume()
         onDispose {
             mapView.onPause()
+            locationOverlay.disableMyLocation()
         }
     }
 
