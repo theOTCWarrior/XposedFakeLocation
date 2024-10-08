@@ -49,7 +49,7 @@ fun PermissionsScreen(viewModel: MainViewModel) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (viewModel.permanentlyDenied.value) {
                 Text(
-                    text = "You have permanently denied location permissions. Please enable them from settings.",
+                    text = "You have permanently denied location permissions. Please enable them from settings and restart the app.",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
