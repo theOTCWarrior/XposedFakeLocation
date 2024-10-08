@@ -24,6 +24,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
     // Remember the MapView
     val mapView = remember {
         MapView(context).apply {
+
             setTileSource(TileSourceFactory.MAPNIK)
             setBuiltInZoomControls(false)
             setMultiTouchControls(true)
