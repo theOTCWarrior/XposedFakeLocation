@@ -16,7 +16,7 @@ fun AppContent(viewModel: MainViewModel = viewModel()) {
 
     // Observe the hasLocationPermission state from the ViewModel
     val hasPermissions by viewModel.hasPermissions
-    val isPermissionCheckDone by viewModel.isPermissionCheckDone
+    val isPermissionsCheckDone by viewModel.isPermissionsCheckDone
 
     // Check permissions when the composable is first launched
     LaunchedEffect(Unit) {
@@ -26,7 +26,7 @@ fun AppContent(viewModel: MainViewModel = viewModel()) {
     }
 
     // Navigate when possible to the required screen.
-    if (isPermissionCheckDone) {
+    if (isPermissionsCheckDone) {
         if (hasPermissions) {
             MapScreen(viewModel)
         } else {

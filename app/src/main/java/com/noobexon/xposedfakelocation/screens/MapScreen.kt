@@ -22,36 +22,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(viewModel: MainViewModel) {
     val isPlaying by viewModel.isPlaying
-    val lastClickedLocation by viewModel.lastClickedLocation
+    val isFabClickable by remember { derivedStateOf { viewModel.isFabClickable } }
 
-    val isFabClickable = lastClickedLocation != null
-
-    // State for the drawer
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = viewModel.drawerState.value)
     val scope = rememberCoroutineScope()
 
-    // State to track navigation
-    var showSettings by remember { mutableStateOf(false) }
-    var showAbout by remember { mutableStateOf(false) }
+    val showSettings by viewModel.showSettings
+    val showAbout by viewModel.showAbout
 
     val context = LocalContext.current
-    val activity = LocalContext.current as? Activity
+    val activity = context as? Activity
 
+    // BackHandler for managing navigation and drawer state
     BackHandler(enabled = showSettings || showAbout || drawerState.isOpen) {
-        when {
-            drawerState.isOpen -> {
-                scope.launch { drawerState.close() }
-            }
-            showSettings -> {
-                showSettings = false
-            }
-            showAbout -> {
-                showAbout = false
-            }
-            else -> {
-                activity?.finish()
-            }
-        }
+        viewModel.handleBackPress(activity)
     }
 
     // Scaffold with drawer
@@ -60,16 +44,16 @@ fun MapScreen(viewModel: MainViewModel) {
             DrawerContent(
                 onSettingsClick = {
                     scope.launch { drawerState.close() }
-                    showSettings = true
+                    viewModel.toggleSettings()
                 },
                 onAboutClick = {
                     scope.launch { drawerState.close() }
-                    showAbout = true
+                    viewModel.toggleAbout()
                 }
             )
         },
         drawerState = drawerState,
-        gesturesEnabled = false // Disable swipe gestures
+        gesturesEnabled = false
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -133,11 +117,11 @@ fun MapScreen(viewModel: MainViewModel) {
 
     // Show Settings Screen
     if (showSettings) {
-        SettingsScreen(onClose = { showSettings = false })
+        SettingsScreen(onClose = { viewModel.toggleSettings() })
     }
 
     // Show About Screen
     if (showAbout) {
-        AboutScreen(onClose = { showAbout = false })
+        AboutScreen(onClose = { viewModel.toggleAbout() })
     }
 }
