@@ -50,6 +50,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _showAbout = mutableStateOf(false)
     val showAbout: State<Boolean> get() = _showAbout
 
+    // State to manage loading status
+    private val _isLoading = mutableStateOf(true)
+    val isLoading: State<Boolean> get() = _isLoading
+
     // FAB clickability
     val isFabClickable: Boolean
         get() = lastClickedLocation.value != null
@@ -98,6 +102,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Mark permission check as done
     fun markPermissionCheckDone() {
         _isPermissionsCheckDone.value = true
+    }
+
+    fun setLoadingFinished() {
+        _isLoading.value = false
     }
 
     fun toggleSettings() {

@@ -1,8 +1,11 @@
 package com.noobexon.xposedfakelocation
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -19,6 +22,8 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 @Composable
 fun MapViewContainer(viewModel: MainViewModel) {
     val context = LocalContext.current
+
+    val isLoading by viewModel.isLoading
 
     // Remember the MapView
     val mapView = remember {
@@ -82,7 +87,6 @@ fun MapViewContainer(viewModel: MainViewModel) {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
                 if (!isPlaying) {
-                    // Update the ViewModel with the clicked location
                     viewModel.updateClickedLocation(p)
                 }
                 return true
@@ -105,7 +109,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
     // Center the map on the user's current location when it's available
     LaunchedEffect(locationOverlay) {
         // Wait until the user's location is available or a timeout occurs
-        val maxAttempts = 50 // e.g., 50 attempts * 100ms = 5 seconds
+        val maxAttempts = 80 // e.g., 80 attempts * 100ms = 8 seconds
         var attempts = 0
         while (locationOverlay.myLocation == null && attempts < maxAttempts) {
             delay(100) // Wait for 100ms before checking again
@@ -116,10 +120,12 @@ fun MapViewContainer(viewModel: MainViewModel) {
             viewModel.updateUserLocation(geoPoint) // Update the user's location in the ViewModel
             mapView.controller.setZoom(18.0) // Adjust zoom level as desired
             mapView.controller.animateTo(geoPoint)
+            viewModel.setLoadingFinished() // Mark the loading as finished
         } ?: run {
             // If location is not available after timeout, set default location
-            mapView.controller.setZoom(2.0)
+            mapView.controller.setZoom(18.0)
             mapView.controller.setCenter(GeoPoint(0.0, 0.0))
+            viewModel.setLoadingFinished() // Mark loading as finished
         }
     }
 
@@ -132,9 +138,19 @@ fun MapViewContainer(viewModel: MainViewModel) {
         }
     }
 
-    // Display the MapView
-    AndroidView(
-        factory = { mapView },
-        modifier = Modifier.fillMaxSize()
-    )
+    // Display a loading spinner or the MapView based on the loading state
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator() // Show a loading spinner while waiting
+        }
+    } else {
+        // Display the MapView when loading is finished
+        AndroidView(
+            factory = { mapView },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
