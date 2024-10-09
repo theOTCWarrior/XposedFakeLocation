@@ -1,4 +1,3 @@
-// MapViewContainer.kt
 package com.noobexon.xposedfakelocation
 
 import android.widget.Toast
@@ -24,14 +23,13 @@ fun MapViewContainer(viewModel: MainViewModel) {
     // Remember the MapView
     val mapView = remember {
         MapView(context).apply {
-
             setTileSource(TileSourceFactory.MAPNIK)
             setBuiltInZoomControls(false)
             setMultiTouchControls(true)
         }
     }
 
-    // Remember the user's marker, but don't add it to the map initially
+    // Remember the user's marker
     val userMarker = remember {
         Marker(mapView).apply {
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -115,6 +113,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
         }
         val userLocation = locationOverlay.myLocation
         userLocation?.let { geoPoint ->
+            viewModel.updateUserLocation(geoPoint) // Update the user's location in the ViewModel
             mapView.controller.setZoom(18.0) // Adjust zoom level as desired
             mapView.controller.animateTo(geoPoint)
         } ?: run {

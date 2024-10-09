@@ -38,6 +38,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _permanentlyDenied = mutableStateOf(false)
     val permanentlyDenied: State<Boolean> get() = _permanentlyDenied
 
+    // State to store the user's location
+    private val _userLocation = mutableStateOf<GeoPoint?>(null)
+    val userLocation: State<GeoPoint?> get() = _userLocation
+
     // Drawer state
     private val _drawerState = mutableStateOf(DrawerValue.Closed)
     val drawerState: State<DrawerValue> get() = _drawerState
@@ -61,6 +65,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             updateClickedLocation(null)
         }
         sharedPrefs.edit().putBoolean(KEY_IS_PLAYING, _isPlaying.value).apply()
+    }
+
+    // Updates the user's current location
+    fun updateUserLocation(location: GeoPoint) {
+        _userLocation.value = location
     }
 
     // Update the last clicked location
@@ -93,16 +102,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Mark permission check as done
     fun markPermissionCheckDone() {
         _isPermissionsCheckDone.value = true
-    }
-
-
-
-    fun toggleDrawerState() {
-        _drawerState.value = if (_drawerState.value == DrawerValue.Closed) {
-            DrawerValue.Open
-        } else {
-            DrawerValue.Closed
-        }
     }
 
     fun toggleSettings() {

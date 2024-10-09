@@ -1,4 +1,3 @@
-// MapScreen.kt
 package com.noobexon.xposedfakelocation.screens
 
 import android.app.Activity
