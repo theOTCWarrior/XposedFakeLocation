@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.DrawerContent
@@ -73,6 +74,12 @@ fun MapScreen(viewModel: MainViewModel) {
             topBar = {
                 TopAppBar(
                     title = { Text("XposedFakeLocation")},
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary, // Background color from theme
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary, // Title color based on primary background
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Nav icon color based on primary background
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary // Action icon color based on primary background
+                    ),
                     navigationIcon = {
                         IconButton(
                             onClick = { scope.launch { drawerState.open() } }
