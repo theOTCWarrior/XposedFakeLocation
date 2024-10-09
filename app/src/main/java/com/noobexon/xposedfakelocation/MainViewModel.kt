@@ -1,9 +1,7 @@
 package com.noobexon.xposedfakelocation
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
-import androidx.compose.material3.DrawerValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.AndroidViewModel
