@@ -18,12 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.MainViewModel
 
-fun Context.getActivity(): Activity? = this as? Activity
-
 @Composable
 fun PermissionsScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
-    val activity = context.getActivity()  // Get the current activity
+    val activity = LocalContext.current as? Activity  // Get the current activity
 
     // Launcher to request permissions
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -34,9 +32,7 @@ fun PermissionsScreen(viewModel: MainViewModel) {
 
             // Check if permissions were denied permanently
             if (!granted && activity != null) {  // Ensure activity is not null
-                val shouldShowRationale = activity.shouldShowRequestPermissionRationale(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+                val shouldShowRationale = activity.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
                 viewModel.updatePermanentlyDenied(!shouldShowRationale)
             }
         }

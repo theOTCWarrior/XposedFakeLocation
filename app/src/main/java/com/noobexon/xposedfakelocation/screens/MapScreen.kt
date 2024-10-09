@@ -37,13 +37,20 @@ fun MapScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
     val activity = LocalContext.current as? Activity
 
-    BackHandler(enabled = showSettings || showAbout) {
-        if (showSettings) {
-            showSettings = false
-        } else if (showAbout) {
-            showAbout = false
-        } else {
-            activity?.finish()
+    BackHandler(enabled = showSettings || showAbout || drawerState.isOpen) {
+        when {
+            drawerState.isOpen -> {
+                scope.launch { drawerState.close() }
+            }
+            showSettings -> {
+                showSettings = false
+            }
+            showAbout -> {
+                showAbout = false
+            }
+            else -> {
+                activity?.finish()
+            }
         }
     }
 
@@ -52,15 +59,18 @@ fun MapScreen(viewModel: MainViewModel) {
         drawerContent = {
             DrawerContent(
                 onSettingsClick = {
+                    scope.launch { drawerState.close() }
                     showSettings = true
                 },
                 onAboutClick = {
+                    scope.launch { drawerState.close() }
                     showAbout = true
                 }
             )
         },
-        drawerState = drawerState
-    )  {
+        drawerState = drawerState,
+        gesturesEnabled = false // Disable swipe gestures
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
