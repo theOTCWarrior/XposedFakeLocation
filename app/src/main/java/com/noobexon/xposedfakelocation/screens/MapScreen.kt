@@ -1,5 +1,5 @@
 // MapScreen.kt
-package com.noobexon.xposedfakelocation
+package com.noobexon.xposedfakelocation.screens
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -13,6 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.noobexon.xposedfakelocation.DrawerContent
+import com.noobexon.xposedfakelocation.MainViewModel
+import com.noobexon.xposedfakelocation.MapViewContainer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

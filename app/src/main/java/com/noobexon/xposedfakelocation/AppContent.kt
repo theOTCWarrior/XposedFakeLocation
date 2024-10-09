@@ -11,9 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.noobexon.xposedfakelocation.screens.MapScreen
+import com.noobexon.xposedfakelocation.screens.PermissionsScreen
 
 @Composable
 fun AppContent(viewModel: MainViewModel = viewModel()) {
+    // Get the context
     val context = LocalContext.current
 
     // Observe the hasLocationPermission state from the ViewModel

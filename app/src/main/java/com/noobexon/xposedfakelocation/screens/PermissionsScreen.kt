@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation
+package com.noobexon.xposedfakelocation.screens
 
 import android.Manifest
 import android.app.Activity
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.noobexon.xposedfakelocation.MainViewModel
 
 fun Context.getActivity(): Activity? = this as? Activity
 

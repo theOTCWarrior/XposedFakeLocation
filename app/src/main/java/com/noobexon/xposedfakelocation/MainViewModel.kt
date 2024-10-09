@@ -6,6 +6,10 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.AndroidViewModel
+import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
+import com.noobexon.xposedfakelocation.data.KEY_LATITUDE
+import com.noobexon.xposedfakelocation.data.KEY_LONGITUDE
+import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 import org.osmdroid.util.GeoPoint
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
