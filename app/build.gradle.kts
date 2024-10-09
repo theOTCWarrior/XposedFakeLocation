@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.osmdroid.android)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.line.awesome.android)
+    implementation(libs.font.awesome)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

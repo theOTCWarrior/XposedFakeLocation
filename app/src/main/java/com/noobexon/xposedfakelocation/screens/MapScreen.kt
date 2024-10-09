@@ -64,10 +64,15 @@ fun MapScreen(viewModel: MainViewModel) {
                     scope.launch { drawerState.close() }
                     viewModel.toggleAbout()
                 }
+
             )
         },
+        scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f), // Custom scrim color
         drawerState = drawerState,
-        gesturesEnabled = false
+        gesturesEnabled = false,
+        modifier = Modifier
+            .fillMaxSize()
+
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
