@@ -23,7 +23,7 @@ fun MapScreen(viewModel: MainViewModel) {
     val isPlaying by viewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { viewModel.isFabClickable } }
 
-    val drawerState = rememberDrawerState(initialValue = viewModel.drawerState.value)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     val showSettings by viewModel.showSettings
@@ -34,7 +34,20 @@ fun MapScreen(viewModel: MainViewModel) {
 
     // BackHandler for managing navigation and drawer state
     BackHandler(enabled = showSettings || showAbout || drawerState.isOpen) {
-        viewModel.handleBackPress(activity)
+        when {
+            drawerState.isOpen -> {
+                scope.launch { drawerState.close() }
+            }
+            showSettings -> {
+                viewModel.toggleSettings()
+            }
+            showAbout -> {
+                viewModel.toggleAbout()
+            }
+            else -> {
+                activity?.finish()
+            }
+        }
     }
 
     // Scaffold with drawer

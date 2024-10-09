@@ -42,10 +42,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _userLocation = mutableStateOf<GeoPoint?>(null)
     val userLocation: State<GeoPoint?> get() = _userLocation
 
-    // Drawer state
-    private val _drawerState = mutableStateOf(DrawerValue.Closed)
-    val drawerState: State<DrawerValue> get() = _drawerState
-
     // Navigation state for showing settings screen
     private val _showSettings = mutableStateOf(false)
     val showSettings: State<Boolean> get() = _showSettings
@@ -110,18 +106,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun toggleAbout() {
         _showAbout.value = !_showAbout.value
-    }
-
-    fun closeDrawer() {
-        _drawerState.value = DrawerValue.Closed
-    }
-
-    fun handleBackPress(activity: Activity?) {
-        when {
-            _drawerState.value == DrawerValue.Open -> closeDrawer()
-            _showSettings.value -> _showSettings.value = false
-            _showAbout.value -> _showAbout.value = false
-            else -> activity?.finish()
-        }
     }
 }
