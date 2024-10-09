@@ -1,11 +1,15 @@
 package com.noobexon.xposedfakelocation
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import org.osmdroid.util.GeoPoint
 
 class MainViewModel : ViewModel() {
+
+    // SharedPreferences
+    private val sharedPrefs = ContextHolder.appContext.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
 
     // Existing state variables
     private val _isPlaying = mutableStateOf(false)
@@ -33,13 +37,32 @@ class MainViewModel : ViewModel() {
         if (!_isPlaying.value) {
             // Transitioned to "not playing" state
             // Remove the marker by setting lastClickedLocation to null
-            _lastClickedLocation.value = null
+            updateClickedLocation(null)
         }
+
+        // Save the state to SharedPreferences
+        sharedPrefs.edit()
+            .putBoolean(KEY_IS_PLAYING, _isPlaying.value)
+            .apply()
     }
 
     // Update the last clicked location
     fun updateClickedLocation(geoPoint: GeoPoint?) {
         _lastClickedLocation.value = geoPoint
+
+        // Save the location to SharedPreferences if not null
+        geoPoint?.let {
+            sharedPrefs.edit()
+                .putFloat(KEY_LATITUDE, it.latitude.toFloat())
+                .putFloat(KEY_LONGITUDE, it.longitude.toFloat())
+                .apply()
+        } ?: run {
+            // Remove the location keys when the location is null
+            sharedPrefs.edit()
+                .remove(KEY_LATITUDE)
+                .remove(KEY_LONGITUDE)
+                .apply()
+        }
     }
 
     // Update location permission status

@@ -12,6 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().load(this, getPreferences(MODE_PRIVATE))
         enableEdgeToEdge()
+        ContextHolder.appContext = applicationContext
         setContent {
             XposedFakeLocationTheme {
                 AppContent()
