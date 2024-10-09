@@ -1,15 +1,20 @@
 package com.noobexon.xposedfakelocation
 
+import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import org.osmdroid.util.GeoPoint
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    @SuppressLint("StaticFieldLeak")
+    private val context: Context = getApplication()
 
     // SharedPreferences
-    private val sharedPrefs = ContextHolder.appContext.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
+    private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
 
     // Existing state variables
     private val _isPlaying = mutableStateOf(false)
