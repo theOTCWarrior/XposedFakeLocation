@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
@@ -74,13 +75,16 @@ fun MapScreen(viewModel: MainViewModel) {
                     title = { Text("XposedFakeLocation")},
                     navigationIcon = {
                         IconButton(
-                            onClick = {
-                                scope.launch {
-                                    drawerState.open()
-                                }
-                            }
+                            onClick = { scope.launch { drawerState.open() } }
                         ) {
                             Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                         }
                     }
                 )
