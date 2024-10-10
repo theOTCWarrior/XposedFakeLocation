@@ -29,7 +29,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 @Composable
 fun MapViewContainer(viewModel: MainViewModel) {
     val context = LocalContext.current
-
     val isLoading by viewModel.isLoading
 
     // Remember the MapView

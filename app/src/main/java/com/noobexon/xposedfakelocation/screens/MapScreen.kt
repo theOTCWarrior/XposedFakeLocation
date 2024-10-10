@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
@@ -17,6 +18,10 @@ import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.DrawerContent
 import com.noobexon.xposedfakelocation.MainViewModel
 import com.noobexon.xposedfakelocation.MapViewContainer
+import compose.icons.AllIcons
+import compose.icons.FontAwesomeIcons
+import compose.icons.LineAwesomeIcons
+import compose.icons.lineawesomeicons.LocationArrowSolid
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +102,11 @@ fun MapScreen(viewModel: MainViewModel) {
                             onClick = {}
                         ) {
                             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
+                        }
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            Icon(imageVector = Icons.Default.MyLocation, contentDescription = "center")
                         }
                     }
                 )
