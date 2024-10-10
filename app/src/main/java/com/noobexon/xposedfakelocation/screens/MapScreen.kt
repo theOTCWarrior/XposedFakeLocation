@@ -99,14 +99,16 @@ fun MapScreen(viewModel: MainViewModel) {
                     },
                     actions = {
                         IconButton(
-                            onClick = {}
+                            onClick = {
+                                viewModel.triggerCenterMapEvent()
+                            }
                         ) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
+                            Icon(imageVector = Icons.Default.MyLocation, contentDescription = "center")
                         }
                         IconButton(
                             onClick = {}
                         ) {
-                            Icon(imageVector = Icons.Default.MyLocation, contentDescription = "center")
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                         }
                     }
                 )

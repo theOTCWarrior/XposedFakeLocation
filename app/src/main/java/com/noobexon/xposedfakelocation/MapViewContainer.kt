@@ -61,6 +61,18 @@ fun MapViewContainer(viewModel: MainViewModel) {
         }
     }
 
+    // Collect the center map event
+    LaunchedEffect(Unit) {
+        viewModel.centerMapEvent.collect {
+            val userLocation = locationOverlay.myLocation
+            if (userLocation != null) {
+                mapView.controller.animateTo(userLocation)
+            } else {
+                Toast.makeText(context, "User location not available", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     // Observe the last clicked location and isPlaying state
     val lastClickedLocation by viewModel.lastClickedLocation
     val isPlaying by viewModel.isPlaying

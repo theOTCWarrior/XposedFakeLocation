@@ -5,10 +5,15 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
 import com.noobexon.xposedfakelocation.data.KEY_LATITUDE
 import com.noobexon.xposedfakelocation.data.KEY_LONGITUDE
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -52,6 +57,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _isLoading = mutableStateOf(true)
     val isLoading: State<Boolean> get() = _isLoading
 
+    private val _centerMapEvent = MutableSharedFlow<Unit>()
+    val centerMapEvent: SharedFlow<Unit> get() = _centerMapEvent.asSharedFlow()
+
     // FAB clickability
     val isFabClickable: Boolean
         get() = lastClickedLocation.value != null
@@ -84,6 +92,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .remove(KEY_LATITUDE)
                 .remove(KEY_LONGITUDE)
                 .apply()
+        }
+    }
+
+    // Function to trigger the event
+    fun triggerCenterMapEvent() {
+        viewModelScope.launch {
+            _centerMapEvent.emit(Unit)
         }
     }
 
