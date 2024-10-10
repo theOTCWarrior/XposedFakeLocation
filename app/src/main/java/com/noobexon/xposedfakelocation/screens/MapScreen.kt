@@ -1,27 +1,16 @@
 package com.noobexon.xposedfakelocation.screens
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.DrawerContent
 import com.noobexon.xposedfakelocation.MainViewModel
 import com.noobexon.xposedfakelocation.MapViewContainer
-import compose.icons.AllIcons
-import compose.icons.FontAwesomeIcons
-import compose.icons.LineAwesomeIcons
-import compose.icons.lineawesomeicons.LocationArrowSolid
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,47 +18,21 @@ import kotlinx.coroutines.launch
 fun MapScreen(viewModel: MainViewModel) {
     val isPlaying by viewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { viewModel.isFabClickable } }
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val showSettings by viewModel.showSettings
-    val showAbout by viewModel.showAbout
-
-    val context = LocalContext.current
-    val activity = context as? Activity
-
-    // BackHandler for managing navigation and drawer state
-    BackHandler(enabled = showSettings || showAbout || drawerState.isOpen) {
-        when {
-            drawerState.isOpen -> {
-                scope.launch { drawerState.close() }
-            }
-            showSettings -> {
-                viewModel.toggleSettings()
-            }
-            showAbout -> {
-                viewModel.toggleAbout()
-            }
-            else -> {
-                activity?.finish()
-            }
-        }
+    // BackHandler to close the drawer when open
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
     }
 
     // Scaffold with drawer
     ModalNavigationDrawer(
         drawerContent = {
             DrawerContent(
-                onSettingsClick = {
+                onCloseDrawer = {
                     scope.launch { drawerState.close() }
-                    viewModel.toggleSettings()
-                },
-                onAboutClick = {
-                    scope.launch { drawerState.close() }
-                    viewModel.toggleAbout()
                 }
-
             )
         },
         scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f), // Custom scrim color
@@ -77,18 +40,17 @@ fun MapScreen(viewModel: MainViewModel) {
         gesturesEnabled = false,
         modifier = Modifier
             .fillMaxSize()
-
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopAppBar(
-                    title = { Text("XposedFakeLocation")},
+                    title = { Text("XposedFakeLocation") },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary, // Background color from theme
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary, // Title color based on primary background
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Nav icon color based on primary background
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary // Action icon color based on primary background
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     navigationIcon = {
                         IconButton(
@@ -103,10 +65,10 @@ fun MapScreen(viewModel: MainViewModel) {
                                 viewModel.triggerCenterMapEvent()
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.MyLocation, contentDescription = "center")
+                            Icon(imageVector = Icons.Default.MyLocation, contentDescription = "Center")
                         }
                         IconButton(
-                            onClick = {}
+                            onClick = { /* Implement options menu */ }
                         ) {
                             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                         }
@@ -153,15 +115,5 @@ fun MapScreen(viewModel: MainViewModel) {
                 MapViewContainer(viewModel)
             }
         }
-    }
-
-    // Show Settings Screen
-    if (showSettings) {
-        SettingsScreen(onClose = { viewModel.toggleSettings() })
-    }
-
-    // Show About Screen
-    if (showAbout) {
-        AboutScreen(onClose = { viewModel.toggleAbout() })
     }
 }

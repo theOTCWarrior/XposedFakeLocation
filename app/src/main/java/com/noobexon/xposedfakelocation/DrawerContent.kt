@@ -1,36 +1,25 @@
 package com.noobexon.xposedfakelocation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.LineAwesomeIcons
-import compose.icons.lineawesomeicons.Discord
-import compose.icons.lineawesomeicons.Github
-import compose.icons.lineawesomeicons.InfoCircleSolid
-import compose.icons.lineawesomeicons.QuestionCircle
-import compose.icons.lineawesomeicons.Telegram
+import compose.icons.lineawesomeicons.*
 
 @Composable
 fun DrawerContent(
-    onSettingsClick: () -> Unit = {},
-    onAboutClick: () -> Unit = {}
+    onCloseDrawer: () -> Unit = {}
 ) {
     ModalDrawerSheet {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(16.dp)
@@ -43,32 +32,32 @@ fun DrawerContent(
             DrawerItem(
                 icon = LineAwesomeIcons.InfoCircleSolid,
                 label = "About",
-                onClick = { onAboutClick() }
+                onClick = { /* Implement this */ }
             )
             DrawerItem(
-                icon =  LineAwesomeIcons.QuestionCircle,
+                icon = LineAwesomeIcons.QuestionCircle,
                 label = "How-to-Use",
-                onClick = { }
+                onClick = { /* Implement this */ }
             )
             DrawerItem(
-                icon =  LineAwesomeIcons.Telegram,
-                label = "Telegeram",
-                onClick = { }
+                icon = LineAwesomeIcons.Telegram,
+                label = "Telegram",
+                onClick = { /* Implement this */ }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Discord,
                 label = "Discord",
-                onClick = { }
+                onClick = { /* Implement this */ }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Github,
                 label = "Github",
-                onClick = { }
+                onClick = { /* Implement this */ }
             )
             DrawerItem(
                 icon = Icons.Default.Settings,
                 label = "Settings",
-                onClick = { onSettingsClick() }
+                onClick = { /* Implement this */ }
             )
         }
     }

@@ -45,14 +45,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _userLocation = mutableStateOf<GeoPoint?>(null)
     val userLocation: State<GeoPoint?> get() = _userLocation
 
-    // Navigation state for showing settings screen
-    private val _showSettings = mutableStateOf(false)
-    val showSettings: State<Boolean> get() = _showSettings
-
-    // Navigation state for showing about screen
-    private val _showAbout = mutableStateOf(false)
-    val showAbout: State<Boolean> get() = _showAbout
-
     // State to manage loading status
     private val _isLoading = mutableStateOf(true)
     val isLoading: State<Boolean> get() = _isLoading
@@ -119,13 +111,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setLoadingFinished() {
         _isLoading.value = false
-    }
-
-    fun toggleSettings() {
-        _showSettings.value = !_showSettings.value
-    }
-
-    fun toggleAbout() {
-        _showAbout.value = !_showAbout.value
     }
 }
