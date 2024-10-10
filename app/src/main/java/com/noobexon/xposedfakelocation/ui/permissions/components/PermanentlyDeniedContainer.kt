@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation.screens
+package com.noobexon.xposedfakelocation.ui.permissions.components
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation
+package com.noobexon.xposedfakelocation.ui.map.components
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.noobexon.xposedfakelocation.ui.map.MapViewModel
 import kotlinx.coroutines.delay
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -27,9 +29,9 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 @Composable
-fun MapViewContainer(viewModel: MainViewModel) {
+fun MapViewContainer(mapViewModel: MapViewModel = viewModel()) {
     val context = LocalContext.current
-    val isLoading by viewModel.isLoading
+    val isLoading by mapViewModel.isLoading
 
     // Remember the MapView
     val mapView = remember {
@@ -63,7 +65,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
 
     // Collect the center map event
     LaunchedEffect(Unit) {
-        viewModel.centerMapEvent.collect {
+        mapViewModel.centerMapEvent.collect {
             val userLocation = locationOverlay.myLocation
             if (userLocation != null) {
                 mapView.controller.animateTo(userLocation)
@@ -74,8 +76,8 @@ fun MapViewContainer(viewModel: MainViewModel) {
     }
 
     // Observe the last clicked location and isPlaying state
-    val lastClickedLocation by viewModel.lastClickedLocation
-    val isPlaying by viewModel.isPlaying
+    val lastClickedLocation by mapViewModel.lastClickedLocation
+    val isPlaying by mapViewModel.isPlaying
 
     // Handle marker visibility and position
     LaunchedEffect(lastClickedLocation) {
@@ -105,7 +107,7 @@ fun MapViewContainer(viewModel: MainViewModel) {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
                 if (!isPlaying) {
-                    viewModel.updateClickedLocation(p)
+                    mapViewModel.updateClickedLocation(p)
                 }
                 return true
             }
@@ -135,15 +137,15 @@ fun MapViewContainer(viewModel: MainViewModel) {
         }
         val userLocation = locationOverlay.myLocation
         userLocation?.let { geoPoint ->
-            viewModel.updateUserLocation(geoPoint) // Update the user's location in the ViewModel
+            mapViewModel.updateUserLocation(geoPoint) // Update the user's location in the ViewModel
             mapView.controller.setZoom(18.0) // Adjust zoom level as desired
             mapView.controller.animateTo(geoPoint)
-            viewModel.setLoadingFinished() // Mark the loading as finished
+            mapViewModel.setLoadingFinished() // Mark the loading as finished
         } ?: run {
             // If location is not available after timeout, set default location
             mapView.controller.setZoom(18.0)
             mapView.controller.setCenter(GeoPoint(0.0, 0.0))
-            viewModel.setLoadingFinished() // Mark loading as finished
+            mapViewModel.setLoadingFinished() // Mark loading as finished
         }
     }
 

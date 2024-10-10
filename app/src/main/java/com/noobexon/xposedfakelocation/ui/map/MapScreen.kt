@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation.screens
+package com.noobexon.xposedfakelocation.ui.map
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
@@ -8,18 +8,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.noobexon.xposedfakelocation.DrawerContent
-import com.noobexon.xposedfakelocation.MainViewModel
-import com.noobexon.xposedfakelocation.MapViewContainer
+import com.noobexon.xposedfakelocation.ui.common.components.DrawerContent
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.noobexon.xposedfakelocation.ui.map.components.MapViewContainer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(viewModel: MainViewModel) {
-    val isPlaying by viewModel.isPlaying
-    val isFabClickable by remember { derivedStateOf { viewModel.isFabClickable } }
+fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
+    val isPlaying by mapViewModel.isPlaying
+    val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    var showOptionsMenu by remember { mutableStateOf(false) }
 
     // BackHandler to close the drawer when open
     BackHandler(enabled = drawerState.isOpen) {
@@ -62,15 +64,38 @@ fun MapScreen(viewModel: MainViewModel) {
                     actions = {
                         IconButton(
                             onClick = {
-                                viewModel.triggerCenterMapEvent()
+                                mapViewModel.triggerCenterMapEvent()
                             }
                         ) {
                             Icon(imageVector = Icons.Default.MyLocation, contentDescription = "Center")
                         }
+
                         IconButton(
-                            onClick = { /* Implement options menu */ }
+                            onClick = {
+                                showOptionsMenu = true
+                            }
                         ) {
                             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
+                        }
+
+                        DropdownMenu(
+                            expanded = showOptionsMenu,
+                            onDismissRequest = { showOptionsMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Add to Favorites") },
+                                onClick = {
+                                    // Handle "Add to Favorites" action
+                                    showOptionsMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Favorites") },
+                                onClick = {
+                                    // Handle "Favorites" action
+                                    showOptionsMenu = false
+                                }
+                            )
                         }
                     }
                 )
@@ -79,7 +104,7 @@ fun MapScreen(viewModel: MainViewModel) {
                 FloatingActionButton(
                     onClick = {
                         if (isFabClickable) {
-                            viewModel.togglePlaying()
+                            mapViewModel.togglePlaying()
                         }
                     },
                     modifier = Modifier
@@ -112,7 +137,7 @@ fun MapScreen(viewModel: MainViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                MapViewContainer(viewModel)
+                MapViewContainer(mapViewModel)
             }
         }
     }

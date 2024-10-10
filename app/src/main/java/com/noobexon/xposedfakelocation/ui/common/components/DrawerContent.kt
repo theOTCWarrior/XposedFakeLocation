@@ -1,6 +1,5 @@
-package com.noobexon.xposedfakelocation
+package com.noobexon.xposedfakelocation.ui.common.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

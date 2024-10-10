@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation.screens
+package com.noobexon.xposedfakelocation.ui.permissions.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

@@ -6,31 +6,34 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.noobexon.xposedfakelocation.screens.MapScreen
-import com.noobexon.xposedfakelocation.screens.PermissionsScreen
+import com.noobexon.xposedfakelocation.ui.map.MapScreen
+import com.noobexon.xposedfakelocation.ui.permissions.PermissionsScreen
+import com.noobexon.xposedfakelocation.ui.permissions.PermissionsViewModel
 
 @Composable
-fun AppContent(viewModel: MainViewModel = viewModel()) {
+fun AppContent(
+    permissionsViewModel: PermissionsViewModel = viewModel()
+) {
     // Get the context
     val context = LocalContext.current
 
     // Observe the hasLocationPermission state from the ViewModel
-    val hasPermissions by viewModel.hasPermissions
-    val isPermissionsCheckDone by viewModel.isPermissionsCheckDone
+    val hasPermissions by permissionsViewModel.hasPermissions
+    val isPermissionsCheckDone by permissionsViewModel.isPermissionsCheckDone
 
     // Check permissions when the composable is first launched
     LaunchedEffect(Unit) {
         val fineLocationGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        viewModel.updatePermissionsStatus(fineLocationGranted)
-        viewModel.markPermissionCheckDone()
+        permissionsViewModel.updatePermissionsStatus(fineLocationGranted)
+        permissionsViewModel.markPermissionCheckDone()
     }
 
     // Navigate when possible to the required screen.
     if (isPermissionsCheckDone) {
         if (hasPermissions) {
-            MapScreen(viewModel)
+            MapScreen()
         } else {
-            PermissionsScreen(viewModel)
+            PermissionsScreen(permissionsViewModel)
         }
     }
 }
