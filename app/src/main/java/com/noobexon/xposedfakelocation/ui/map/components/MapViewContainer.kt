@@ -180,7 +180,7 @@ fun MapViewContainer(
                 CircularProgressIndicator() // Show a loading spinner while waiting
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Fetching location...",
+                    text = "Updating Map...",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
