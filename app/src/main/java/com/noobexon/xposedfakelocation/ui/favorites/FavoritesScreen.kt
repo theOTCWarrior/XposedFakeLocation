@@ -28,6 +28,12 @@ fun FavoritesScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Favorites") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -55,12 +61,7 @@ fun FavoritesScreen(
                     FavoriteItem(
                         favorite = favorite,
                         onClick = {
-                            // Navigate back to MapScreen and pass the favorite location
-                            navController.navigate(Screen.Map.route + "?latitude=${favorite.latitude.toFloat()}&longitude=${favorite.longitude.toFloat()}") {
-                                popUpTo(Screen.Map.route) {
-                                    inclusive = true
-                                }
-                            }
+                            // TODO: make it put a marker on the map with the favorite coordinate.
                         },
                         onDelete = {
                             favoritesViewModel.removeFavorite(favorite)

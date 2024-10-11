@@ -37,12 +37,8 @@ fun AppNavGraph(
                 }
             )
         ) { backStackEntry ->
-            val latitude = backStackEntry.arguments?.getFloat("latitude") ?: Float.NaN
-            val longitude = backStackEntry.arguments?.getFloat("longitude") ?: Float.NaN
             MapScreen(
                 navController = navController,
-                initialLatitude = latitude.toDouble(),
-                initialLongitude = longitude.toDouble()
             )
         }
         composable(route = Screen.Favorites.route) {

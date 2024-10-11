@@ -22,8 +22,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(
     navController: NavController,
-    initialLatitude: Double = Double.NaN,
-    initialLongitude: Double = Double.NaN,
     mapViewModel: MapViewModel = viewModel()
 ) {
     val isPlaying by mapViewModel.isPlaying
@@ -38,13 +36,6 @@ fun MapScreen(
     // BackHandler to close the drawer when open
     BackHandler(enabled = drawerState.isOpen) {
         scope.launch { drawerState.close() }
-    }
-
-    // Use LaunchedEffect to handle initial coordinates
-    LaunchedEffect(initialLatitude, initialLongitude) {
-        if (!initialLatitude.isNaN() && !initialLongitude.isNaN()) {
-            mapViewModel.goToPoint(initialLatitude, initialLongitude)
-        }
     }
 
     // Scaffold with drawer
