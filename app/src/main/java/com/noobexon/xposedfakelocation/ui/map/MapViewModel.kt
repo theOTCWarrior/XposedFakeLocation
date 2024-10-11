@@ -48,6 +48,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _showAddToFavoritesDialog = mutableStateOf(false)
     val showAddToFavoritesDialog: State<Boolean> get() = _showAddToFavoritesDialog
 
+    // State variables for GoToPointDialog
+    private val _latitudeInput = mutableStateOf("")
+    val latitudeInput: State<String> get() = _latitudeInput
+
+    private val _longitudeInput = mutableStateOf("")
+    val longitudeInput: State<String> get() = _longitudeInput
+
+    private val _latitudeError = mutableStateOf<String?>(null)
+    val latitudeError: State<String?> get() = _latitudeError
+
+    private val _longitudeError = mutableStateOf<String?>(null)
+    val longitudeError: State<String?> get() = _longitudeError
+
     // FAB clickability
     val isFabClickable: Boolean
         get() = lastClickedLocation.value != null
@@ -118,5 +131,46 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun hideAddToFavoritesDialog() {
         _showAddToFavoritesDialog.value = false
+    }
+
+    // Update latitude input
+    fun updateLatitudeInput(input: String) {
+        _latitudeInput.value = input
+        _latitudeError.value = null // Reset error when input changes
+    }
+
+    // Update longitude input
+    fun updateLongitudeInput(input: String) {
+        _longitudeInput.value = input
+        _longitudeError.value = null // Reset error when input changes
+    }
+
+    // Validate inputs and handle "Go" action
+    fun validateAndGo(onSuccess: (latitude: Double, longitude: Double) -> Unit) {
+        val latitude = _latitudeInput.value.toDoubleOrNull()
+        val longitude = _longitudeInput.value.toDoubleOrNull()
+        var isValid = true
+
+        if (latitude == null || latitude !in -90.0..90.0) {
+            _latitudeError.value = "Latitude must be between -90 and 90"
+            isValid = false
+        }
+
+        if (longitude == null || longitude !in -180.0..180.0) {
+            _longitudeError.value = "Longitude must be between -180 and 180"
+            isValid = false
+        }
+
+        if (isValid) {
+            onSuccess(latitude!!, longitude!!)
+        }
+    }
+
+    // Clear input fields and errors
+    fun clearGoToPointInputs() {
+        _latitudeInput.value = ""
+        _longitudeInput.value = ""
+        _latitudeError.value = null
+        _longitudeError.value = null
     }
 }

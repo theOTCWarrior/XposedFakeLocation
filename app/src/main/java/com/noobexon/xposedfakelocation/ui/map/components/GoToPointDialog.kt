@@ -5,25 +5,30 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.noobexon.xposedfakelocation.ui.map.MapViewModel
 
 @Composable
 fun GoToPointDialog(
+    mapViewModel: MapViewModel,
     onDismissRequest: () -> Unit,
     onGoToPoint: (latitude: Double, longitude: Double) -> Unit
 ) {
-    var latitudeInput by remember { mutableStateOf("") }
-    var longitudeInput by remember { mutableStateOf("") }
-    var latitudeError by remember { mutableStateOf<String?>(null) }
-    var longitudeError by remember { mutableStateOf<String?>(null) }
+    val latitudeInput by mapViewModel.latitudeInput
+    val longitudeInput by mapViewModel.longitudeInput
+    val latitudeError by mapViewModel.latitudeError
+    val longitudeError by mapViewModel.longitudeError
 
     AlertDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {
+            mapViewModel.clearGoToPointInputs()
+            onDismissRequest()
+        },
         title = { Text("Go to Point") },
         text = {
             Column {
                 OutlinedTextField(
                     value = latitudeInput,
-                    onValueChange = { latitudeInput = it },
+                    onValueChange = { mapViewModel.updateLatitudeInput(it) },
                     label = { Text("Latitude") },
                     isError = latitudeError != null,
                     modifier = Modifier.fillMaxWidth()
@@ -39,7 +44,7 @@ fun GoToPointDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = longitudeInput,
-                    onValueChange = { longitudeInput = it },
+                    onValueChange = { mapViewModel.updateLongitudeInput(it) },
                     label = { Text("Longitude") },
                     isError = longitudeError != null,
                     modifier = Modifier.fillMaxWidth()
@@ -57,27 +62,9 @@ fun GoToPointDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // Validate inputs
-                    val latitude = latitudeInput.toDoubleOrNull()
-                    val longitude = longitudeInput.toDoubleOrNull()
-                    var isValid = true
-
-                    if (latitude == null || latitude !in -90.0..90.0) {
-                        latitudeError = "Latitude must be between -90 and 90"
-                        isValid = false
-                    } else {
-                        latitudeError = null
-                    }
-
-                    if (longitude == null || longitude !in -180.0..180.0) {
-                        longitudeError = "Longitude must be between -180 and 180"
-                        isValid = false
-                    } else {
-                        longitudeError = null
-                    }
-
-                    if (isValid) {
-                        onGoToPoint(latitude!!, longitude!!)
+                    mapViewModel.validateAndGo { latitude, longitude ->
+                        onGoToPoint(latitude, longitude)
+                        mapViewModel.clearGoToPointInputs()
                         onDismissRequest()
                     }
                 }
@@ -86,7 +73,12 @@ fun GoToPointDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(
+                onClick = {
+                    mapViewModel.clearGoToPointInputs()
+                    onDismissRequest()
+                }
+            ) {
                 Text("Cancel")
             }
         }

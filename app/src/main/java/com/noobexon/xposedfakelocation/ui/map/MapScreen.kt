@@ -165,7 +165,8 @@ fun MapScreen(
                 onGoToPoint = { latitude, longitude ->
                     mapViewModel.goToPoint(latitude, longitude)
                     mapViewModel.hideGoToPointDialog()
-                }
+                },
+                mapViewModel = mapViewModel
             )
         }
 
