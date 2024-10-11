@@ -51,8 +51,7 @@ fun MapScreen(
         scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f), // Custom scrim color
         drawerState = drawerState,
         gesturesEnabled = false,
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -103,17 +102,16 @@ fun MapScreen(
                                 leadingIcon = { Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Add to Favorites") },
                                 text = { Text("Add to Favorites") },
                                 onClick = {
-                                    showAddToFavoritesDialog = true // Show the Add to Favorites dialog
                                     showOptionsMenu = false
+                                    showAddToFavoritesDialog = true // Show the Add to Favorites dialog
                                 }
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(imageVector = Icons.Default.Star, contentDescription = "Favorites") },
                                 text = { Text("Favorites") },
                                 onClick = {
-                                    // Navigate to FavoritesScreen
-                                    navController.navigate(Screen.Favorites.route)
                                     showOptionsMenu = false
+                                    navController.navigate(Screen.Favorites.route)
                                 }
                             )
                         }

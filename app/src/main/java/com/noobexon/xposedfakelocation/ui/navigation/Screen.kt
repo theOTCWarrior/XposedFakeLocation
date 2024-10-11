@@ -5,5 +5,4 @@ sealed class Screen(val route: String) {
     object Map : Screen("map")
     object Favorites : Screen("favorites")
     object Settings : Screen("settings")
-    // Add other screens as needed
 }
