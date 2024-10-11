@@ -93,8 +93,12 @@ fun MapViewContainer(
             mapView.controller.animateTo(lastClickedLocation)
             mapView.invalidate()
 
-            val message = "Latitude: ${lastClickedLocation!!.latitude}\nLongitude: ${lastClickedLocation!!.longitude}"
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            val message = lastClickedLocation?.let {
+                "Latitude: ${it.latitude}\nLongitude: ${it.longitude}"
+            }
+            message?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
         } else {
             // Remove the marker from the map if it exists
             if (mapView.overlays.contains(userMarker)) {
@@ -162,9 +166,12 @@ fun MapViewContainer(
     // Handle MapView lifecycle
     DisposableEffect(Unit) {
         mapView.onResume()
+        locationOverlay.enableMyLocation()
         onDispose {
-            mapView.onPause()
             locationOverlay.disableMyLocation()
+            mapView.overlays.clear()
+            mapView.onPause()
+            mapView.onDetach()
         }
     }
 

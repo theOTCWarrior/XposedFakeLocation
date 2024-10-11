@@ -173,10 +173,13 @@ fun MapScreen(
         if (showAddToFavoritesDialog) {
             // Prefill coordinates from the last clicked location (marker)
             val lastClickedLocation = mapViewModel.lastClickedLocation.value
-            mapViewModel.prefillCoordinatesFromMarker(
-                lastClickedLocation?.latitude,
-                lastClickedLocation?.longitude
-            )
+
+            LaunchedEffect(Unit) {
+                mapViewModel.prefillCoordinatesFromMarker(
+                    lastClickedLocation?.latitude,
+                    lastClickedLocation?.longitude
+                )
+            }
 
             AddToFavoritesDialog(
                 mapViewModel = mapViewModel,

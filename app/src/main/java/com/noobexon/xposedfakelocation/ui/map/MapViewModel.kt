@@ -79,10 +79,17 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     // Update specific fields in the FavoritesInputState
     fun updateAddToFavoritesField(fieldName: String, newValue: String) {
         val currentState = addToFavoritesState.value
+        val errorMessage = when (fieldName) {
+            "name" -> if (newValue.isBlank()) "Please provide a name" else null
+            "latitude" -> validateInput(newValue, -90.0..90.0, "Latitude must be between -90 and 90")
+            "longitude" -> validateInput(newValue, -180.0..180.0, "Longitude must be between -180 and 180")
+            else -> null
+        }
+
         addToFavoritesState.value = when (fieldName) {
-            "name" -> currentState.copy(name = currentState.name.copy(value = newValue))
-            "latitude" -> currentState.copy(latitude = currentState.latitude.copy(value = newValue))
-            "longitude" -> currentState.copy(longitude = currentState.longitude.copy(value = newValue))
+            "name" -> currentState.copy(name = currentState.name.copy(value = newValue, errorMessage = errorMessage))
+            "latitude" -> currentState.copy(latitude = currentState.latitude.copy(value = newValue, errorMessage = errorMessage))
+            "longitude" -> currentState.copy(longitude = currentState.longitude.copy(value = newValue, errorMessage = errorMessage))
             else -> currentState
         }
     }
@@ -118,10 +125,16 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     // Dialog show/hide logic
     fun showGoToPointDialog() { showGoToPointDialog.value = true }
-    fun hideGoToPointDialog() { showGoToPointDialog.value = false }
+    fun hideGoToPointDialog() {
+        showGoToPointDialog.value = false
+        clearGoToPointInputs()
+    }
 
     fun showAddToFavoritesDialog() { showAddToFavoritesDialog.value = true }
-    fun hideAddToFavoritesDialog() { showAddToFavoritesDialog.value = false }
+    fun hideAddToFavoritesDialog() {
+        showAddToFavoritesDialog.value = false
+        clearAddToFavoritesInputs()
+    }
 
     // Helper for input validation
     private fun validateInput(
