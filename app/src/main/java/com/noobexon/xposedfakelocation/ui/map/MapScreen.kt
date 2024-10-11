@@ -69,7 +69,6 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                         ) {
                             Icon(imageVector = Icons.Default.MyLocation, contentDescription = "Center")
                         }
-
                         IconButton(
                             onClick = {
                                 showOptionsMenu = true
@@ -77,12 +76,20 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                         ) {
                             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                         }
-
                         DropdownMenu(
                             expanded = showOptionsMenu,
                             onDismissRequest = { showOptionsMenu = false }
                         ) {
                             DropdownMenuItem(
+                                leadingIcon = { Icon(imageVector = Icons.Default.LocationSearching, contentDescription = "Go to Point") },
+                                text = { Text("Go to Point") },
+                                onClick = {
+                                    // Handle "Add to Favorites" action
+                                    showOptionsMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Add to Favorites") },
                                 text = { Text("Add to Favorites") },
                                 onClick = {
                                     // Handle "Add to Favorites" action
@@ -90,6 +97,7 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                                 }
                             )
                             DropdownMenuItem(
+                                leadingIcon = { Icon(imageVector = Icons.Default.Star, contentDescription = "Favorites") },
                                 text = { Text("Favorites") },
                                 onClick = {
                                     // Handle "Favorites" action

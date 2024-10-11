@@ -10,9 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
-import com.noobexon.xposedfakelocation.util.KEY_IS_PLAYING
-import com.noobexon.xposedfakelocation.util.KEY_LATITUDE
-import com.noobexon.xposedfakelocation.util.KEY_LONGITUDE
 import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 
 class MapViewModel(application: Application) : AndroidViewModel(application) {
