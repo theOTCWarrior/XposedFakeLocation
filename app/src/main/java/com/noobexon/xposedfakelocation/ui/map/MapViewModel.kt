@@ -26,10 +26,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _lastClickedLocation = mutableStateOf<GeoPoint?>(null)
     val lastClickedLocation: State<GeoPoint?> get() = _lastClickedLocation
 
-    // Add a new state variable for the go-to point event
-    private val _goToPointEvent = MutableSharedFlow<GeoPoint>()
-    val goToPointEvent: SharedFlow<GeoPoint> get() = _goToPointEvent.asSharedFlow()
-
     // State to store the user's location
     private val _userLocation = mutableStateOf<GeoPoint?>(null)
     val userLocation: State<GeoPoint?> get() = _userLocation
@@ -38,8 +34,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _isLoading = mutableStateOf(true)
     val isLoading: State<Boolean> get() = _isLoading
 
+    // Add a new state variable for the go-to point event
+    private val _goToPointEvent = MutableSharedFlow<GeoPoint>()
+    val goToPointEvent: SharedFlow<GeoPoint> get() = _goToPointEvent.asSharedFlow()
+
     private val _centerMapEvent = MutableSharedFlow<Unit>()
     val centerMapEvent: SharedFlow<Unit> get() = _centerMapEvent.asSharedFlow()
+
+    // Add new state variables for showing dialogs
+    private val _showGoToPointDialog = mutableStateOf(false)
+    val showGoToPointDialog: State<Boolean> get() = _showGoToPointDialog
+
+    private val _showAddToFavoritesDialog = mutableStateOf(false)
+    val showAddToFavoritesDialog: State<Boolean> get() = _showAddToFavoritesDialog
 
     // FAB clickability
     val isFabClickable: Boolean
@@ -94,5 +101,22 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setLoadingFinished() {
         _isLoading.value = false
+    }
+
+    // Functions to handle showing and hiding dialogs
+    fun showGoToPointDialog() {
+        _showGoToPointDialog.value = true
+    }
+
+    fun hideGoToPointDialog() {
+        _showGoToPointDialog.value = false
+    }
+
+    fun showAddToFavoritesDialog() {
+        _showAddToFavoritesDialog.value = true
+    }
+
+    fun hideAddToFavoritesDialog() {
+        _showAddToFavoritesDialog.value = false
     }
 }

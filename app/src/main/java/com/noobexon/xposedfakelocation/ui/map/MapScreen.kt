@@ -26,12 +26,12 @@ fun MapScreen(
 ) {
     val isPlaying by mapViewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }
+    val showGoToPointDialog by mapViewModel.showGoToPointDialog
+    val showAddToFavoritesDialog by mapViewModel.showAddToFavoritesDialog
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     var showOptionsMenu by remember { mutableStateOf(false) }
-    var showGoToPointDialog by remember { mutableStateOf(false) }
-    var showAddToFavoritesDialog by remember { mutableStateOf(false) } // Add this line
 
     // BackHandler to close the drawer when open
     BackHandler(enabled = drawerState.isOpen) {
@@ -95,7 +95,7 @@ fun MapScreen(
                                 text = { Text("Go to Point") },
                                 onClick = {
                                     showOptionsMenu = false
-                                    showGoToPointDialog = true
+                                    mapViewModel.showGoToPointDialog()
                                 }
                             )
                             DropdownMenuItem(
@@ -103,7 +103,7 @@ fun MapScreen(
                                 text = { Text("Add to Favorites") },
                                 onClick = {
                                     showOptionsMenu = false
-                                    showAddToFavoritesDialog = true // Show the Add to Favorites dialog
+                                    mapViewModel.showAddToFavoritesDialog()
                                 }
                             )
                             DropdownMenuItem(
@@ -161,9 +161,10 @@ fun MapScreen(
 
         if (showGoToPointDialog) {
             GoToPointDialog(
-                onDismissRequest = { showGoToPointDialog = false },
+                onDismissRequest = { mapViewModel.hideGoToPointDialog() },
                 onGoToPoint = { latitude, longitude ->
                     mapViewModel.goToPoint(latitude, longitude)
+                    mapViewModel.hideGoToPointDialog()
                 }
             )
         }
@@ -171,13 +172,13 @@ fun MapScreen(
         if (showAddToFavoritesDialog) {
             val lastClickedLocation = mapViewModel.lastClickedLocation.value
             AddToFavoritesDialog(
-                onDismissRequest = { showAddToFavoritesDialog = false },
+                onDismissRequest = { mapViewModel.hideAddToFavoritesDialog() },
                 initialLatitude = lastClickedLocation?.latitude?.toString() ?: "",
                 initialLongitude = lastClickedLocation?.longitude?.toString() ?: "",
                 onAddFavorite = { name, latitude, longitude ->
                     val favorite = FavoriteLocation(name, latitude, longitude)
                     mapViewModel.addFavoriteLocation(favorite)
-                    showAddToFavoritesDialog = false
+                    mapViewModel.hideAddToFavoritesDialog()
                 }
             )
         }

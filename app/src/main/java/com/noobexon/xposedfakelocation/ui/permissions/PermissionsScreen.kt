@@ -2,7 +2,6 @@ package com.noobexon.xposedfakelocation.ui.permissions
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.core.content.ContextCompat
 import com.noobexon.xposedfakelocation.ui.permissions.components.PermanentlyDeniedScreen
 import com.noobexon.xposedfakelocation.ui.permissions.components.PermissionRequestScreen
 import com.noobexon.xposedfakelocation.ui.navigation.Screen
@@ -29,12 +27,10 @@ fun PermissionsScreen(navController: NavController, permissionsViewModel: Permis
         return
     }
 
-    // State to track if permissions have been checked
-    var permissionsChecked by remember { mutableStateOf(false) }
-
     // Observe the permissions state
     val hasPermissions by permissionsViewModel.hasPermissions
     val permanentlyDenied by permissionsViewModel.permanentlyDenied
+    val permissionsChecked by permissionsViewModel.permissionsChecked
 
     // Launcher to request permissions
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -49,23 +45,15 @@ fun PermissionsScreen(navController: NavController, permissionsViewModel: Permis
                 }
             } else {
                 // Check if permissions were denied permanently
-                val shouldShowRationale = activity.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-                permissionsViewModel.updatePermanentlyDenied(!shouldShowRationale)
+                permissionsViewModel.checkIfPermanentlyDenied(activity)
             }
         }
     )
 
     // Check permissions when the composable is first displayed
     LaunchedEffect(Unit) {
-        val fineLocationGranted = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        permissionsViewModel.updatePermissionsStatus(fineLocationGranted)
-        permissionsChecked = true
-
-        if (fineLocationGranted) {
+        permissionsViewModel.checkPermissions(context)
+        if (hasPermissions) {
             // Navigate to MapScreen
             navController.navigate(Screen.Map.route) {
                 popUpTo(Screen.Permissions.route) { inclusive = true }
