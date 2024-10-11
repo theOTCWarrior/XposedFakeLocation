@@ -149,6 +149,14 @@ fun MapViewContainer(mapViewModel: MapViewModel = viewModel()) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        mapViewModel.goToPointEvent.collect { geoPoint ->
+            mapView.controller.animateTo(geoPoint)
+            // Optionally, update the last clicked location or add a marker
+            mapViewModel.updateClickedLocation(geoPoint)
+        }
+    }
+
     // Handle MapView lifecycle
     DisposableEffect(Unit) {
         mapView.onResume()

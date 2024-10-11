@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.ui.common.components.DrawerContent
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.noobexon.xposedfakelocation.ui.map.components.MapViewContainer
+import com.noobexon.xposedfakelocation.ui.map.components.GoToPointDialog
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,6 +23,7 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
 
     var showOptionsMenu by remember { mutableStateOf(false) }
+    var showGoToPointDialog by remember { mutableStateOf(false) }
 
     // BackHandler to close the drawer when open
     BackHandler(enabled = drawerState.isOpen) {
@@ -86,6 +88,7 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                                 onClick = {
                                     // Handle "Add to Favorites" action
                                     showOptionsMenu = false
+                                    showGoToPointDialog = true
                                 }
                             )
                             DropdownMenuItem(
@@ -147,6 +150,15 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
             ) {
                 MapViewContainer(mapViewModel)
             }
+        }
+
+        if (showGoToPointDialog) {
+            GoToPointDialog(
+                onDismissRequest = { showGoToPointDialog = false },
+                onGoToPoint = { latitude, longitude ->
+                    mapViewModel.goToPoint(latitude, longitude)
+                }
+            )
         }
     }
 }

@@ -25,6 +25,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _lastClickedLocation = mutableStateOf<GeoPoint?>(null)
     val lastClickedLocation: State<GeoPoint?> get() = _lastClickedLocation
 
+    // Add a new state variable for the go-to point event
+    private val _goToPointEvent = MutableSharedFlow<GeoPoint>()
+    val goToPointEvent: SharedFlow<GeoPoint> get() = _goToPointEvent.asSharedFlow()
+
     // State to store the user's location
     private val _userLocation = mutableStateOf<GeoPoint?>(null)
     val userLocation: State<GeoPoint?> get() = _userLocation
@@ -65,6 +69,14 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             )
         } ?: run {
             preferencesRepository.clearLastClickedLocation()
+        }
+    }
+
+    // Add the function to handle go to point
+    fun goToPoint(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            val geoPoint = GeoPoint(latitude, longitude)
+            _goToPointEvent.emit(geoPoint)
         }
     }
 
