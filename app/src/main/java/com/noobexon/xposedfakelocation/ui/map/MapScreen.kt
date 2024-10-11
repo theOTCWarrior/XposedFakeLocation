@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.ui.common.components.DrawerContent
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.ui.map.components.AddToFavoritesDialog
 import com.noobexon.xposedfakelocation.ui.map.components.MapViewContainer
 import com.noobexon.xposedfakelocation.ui.map.components.GoToPointDialog
 import com.noobexon.xposedfakelocation.ui.navigation.Screen
@@ -20,6 +22,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(
     navController: NavController,
+    initialLatitude: Double = Double.NaN,
+    initialLongitude: Double = Double.NaN,
     mapViewModel: MapViewModel = viewModel()
 ) {
     val isPlaying by mapViewModel.isPlaying
@@ -29,10 +33,18 @@ fun MapScreen(
 
     var showOptionsMenu by remember { mutableStateOf(false) }
     var showGoToPointDialog by remember { mutableStateOf(false) }
+    var showAddToFavoritesDialog by remember { mutableStateOf(false) } // Add this line
 
     // BackHandler to close the drawer when open
     BackHandler(enabled = drawerState.isOpen) {
         scope.launch { drawerState.close() }
+    }
+
+    // Use LaunchedEffect to handle initial coordinates
+    LaunchedEffect(initialLatitude, initialLongitude) {
+        if (!initialLatitude.isNaN() && !initialLongitude.isNaN()) {
+            mapViewModel.goToPoint(initialLatitude, initialLongitude)
+        }
     }
 
     // Scaffold with drawer
@@ -100,7 +112,7 @@ fun MapScreen(
                                 leadingIcon = { Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Add to Favorites") },
                                 text = { Text("Add to Favorites") },
                                 onClick = {
-                                    // Handle "Add to Favorites" action
+                                    showAddToFavoritesDialog = true // Show the Add to Favorites dialog
                                     showOptionsMenu = false
                                 }
                             )
@@ -163,6 +175,20 @@ fun MapScreen(
                 onDismissRequest = { showGoToPointDialog = false },
                 onGoToPoint = { latitude, longitude ->
                     mapViewModel.goToPoint(latitude, longitude)
+                }
+            )
+        }
+
+        if (showAddToFavoritesDialog) {
+            val lastClickedLocation = mapViewModel.lastClickedLocation.value
+            AddToFavoritesDialog(
+                onDismissRequest = { showAddToFavoritesDialog = false },
+                initialLatitude = lastClickedLocation?.latitude?.toString() ?: "",
+                initialLongitude = lastClickedLocation?.longitude?.toString() ?: "",
+                onAddFavorite = { name, latitude, longitude ->
+                    val favorite = FavoriteLocation(name, latitude, longitude)
+                    mapViewModel.addFavoriteLocation(favorite)
+                    showAddToFavoritesDialog = false
                 }
             )
         }

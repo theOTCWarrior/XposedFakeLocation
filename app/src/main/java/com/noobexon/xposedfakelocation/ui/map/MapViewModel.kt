@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -70,6 +71,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         } ?: run {
             preferencesRepository.clearLastClickedLocation()
         }
+    }
+
+    fun addFavoriteLocation(favoriteLocation: FavoriteLocation) {
+        preferencesRepository.addFavorite(favoriteLocation)
     }
 
     // Add the function to handle go to point

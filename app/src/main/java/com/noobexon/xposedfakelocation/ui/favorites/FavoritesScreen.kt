@@ -1,11 +1,102 @@
 package com.noobexon.xposedfakelocation.ui.favorites
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.ui.navigation.Screen
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FavoritesScreen(
+    navController: NavController,
+    favoritesViewModel: FavoritesViewModel = viewModel()
+) {
+    val favorites by favoritesViewModel.favorites.collectAsState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Favorites") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        if (favorites.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("No favorites added.")
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                items(favorites) { favorite ->
+                    FavoriteItem(
+                        favorite = favorite,
+                        onClick = {
+                            // Navigate back to MapScreen and pass the favorite location
+                            navController.navigate(Screen.Map.route + "?latitude=${favorite.latitude.toFloat()}&longitude=${favorite.longitude.toFloat()}") {
+                                popUpTo(Screen.Map.route) {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                        onDelete = {
+                            favoritesViewModel.removeFavorite(favorite)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
-fun FavoritesScreen(favoritesViewModel: FavoritesViewModel = viewModel()) {
-    // Your favorites UI goes here
-    Text("Favorites Screen")
+fun FavoriteItem(
+    favorite: FavoriteLocation,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        ListItem(
+            headlineContent = { Text(favorite.name) },
+            supportingContent = {
+                Text(
+                    text = "Lat: ${favorite.latitude}, Lon: ${favorite.longitude}",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            trailingContent = {
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                }
+            }
+        )
+    }
 }
