@@ -143,7 +143,7 @@ fun MapViewContainer(mapViewModel: MapViewModel = viewModel()) {
             mapViewModel.setLoadingFinished() // Mark the loading as finished
         } ?: run {
             // If location is not available after timeout, set default location
-            mapView.controller.setZoom(18.0)
+            mapView.controller.setZoom(2.0)
             mapView.controller.setCenter(GeoPoint(0.0, 0.0))
             mapViewModel.setLoadingFinished() // Mark loading as finished
         }

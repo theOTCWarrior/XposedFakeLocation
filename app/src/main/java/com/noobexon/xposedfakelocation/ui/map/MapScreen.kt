@@ -10,13 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.ui.common.components.DrawerContent
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.noobexon.xposedfakelocation.ui.map.components.MapViewContainer
 import com.noobexon.xposedfakelocation.ui.map.components.GoToPointDialog
+import com.noobexon.xposedfakelocation.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
+fun MapScreen(
+    navController: NavController,
+    mapViewModel: MapViewModel = viewModel()
+) {
     val isPlaying by mapViewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -36,7 +41,8 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
             DrawerContent(
                 onCloseDrawer = {
                     scope.launch { drawerState.close() }
-                }
+                },
+                navController = navController
             )
         },
         scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f), // Custom scrim color
@@ -86,7 +92,6 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                                 leadingIcon = { Icon(imageVector = Icons.Default.LocationSearching, contentDescription = "Go to Point") },
                                 text = { Text("Go to Point") },
                                 onClick = {
-                                    // Handle "Add to Favorites" action
                                     showOptionsMenu = false
                                     showGoToPointDialog = true
                                 }
@@ -103,7 +108,8 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                                 leadingIcon = { Icon(imageVector = Icons.Default.Star, contentDescription = "Favorites") },
                                 text = { Text("Favorites") },
                                 onClick = {
-                                    // Handle "Favorites" action
+                                    // Navigate to FavoritesScreen
+                                    navController.navigate(Screen.Favorites.route)
                                     showOptionsMenu = false
                                 }
                             )

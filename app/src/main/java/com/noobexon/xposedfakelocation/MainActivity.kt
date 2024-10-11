@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
+import com.noobexon.xposedfakelocation.ui.navigation.AppNavGraph
 import com.noobexon.xposedfakelocation.ui.theme.XposedFakeLocationTheme
 import org.osmdroid.config.Configuration
 
@@ -14,7 +16,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             XposedFakeLocationTheme {
-                AppContent()
+                val navController = rememberNavController()
+                AppNavGraph(navController = navController)
             }
         }
     }

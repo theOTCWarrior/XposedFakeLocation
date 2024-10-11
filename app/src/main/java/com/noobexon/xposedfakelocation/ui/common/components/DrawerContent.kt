@@ -10,11 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import compose.icons.LineAwesomeIcons
 import compose.icons.lineawesomeicons.*
+import  com.noobexon.xposedfakelocation.ui.navigation.Screen
 
 @Composable
 fun DrawerContent(
+    navController: NavController,
     onCloseDrawer: () -> Unit = {}
 ) {
     ModalDrawerSheet {
@@ -56,7 +59,10 @@ fun DrawerContent(
             DrawerItem(
                 icon = Icons.Default.Settings,
                 label = "Settings",
-                onClick = { /* Implement this */ }
+                onClick = {
+                    navController.navigate(Screen.Settings.route)
+                    onCloseDrawer()
+                }
             )
         }
     }

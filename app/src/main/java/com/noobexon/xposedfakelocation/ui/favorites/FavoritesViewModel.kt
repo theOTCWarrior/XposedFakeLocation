@@ -1,4 +1,6 @@
 package com.noobexon.xposedfakelocation.ui.favorites
 
-class FavoritesViewModel {
+import androidx.lifecycle.ViewModel
+
+class FavoritesViewModel : ViewModel(){
 }

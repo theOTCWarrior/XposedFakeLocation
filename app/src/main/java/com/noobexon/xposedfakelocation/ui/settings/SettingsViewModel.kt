@@ -1,4 +1,6 @@
 package com.noobexon.xposedfakelocation.ui.settings
 
-class SettingsViewModel {
+import androidx.lifecycle.ViewModel
+
+class SettingsViewModel : ViewModel() {
 }
