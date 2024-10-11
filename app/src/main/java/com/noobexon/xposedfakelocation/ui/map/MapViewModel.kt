@@ -24,15 +24,15 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val userLocation = mutableStateOf<GeoPoint?>(null)
     val isLoading = mutableStateOf(true)
 
+    // Dialog state variables
+    val showGoToPointDialog = mutableStateOf(false)
+    val showAddToFavoritesDialog = mutableStateOf(false)
+
     private val _goToPointEvent = MutableSharedFlow<GeoPoint>()
     val goToPointEvent: SharedFlow<GeoPoint> = _goToPointEvent.asSharedFlow()
 
     private val _centerMapEvent = MutableSharedFlow<Unit>()
     val centerMapEvent: SharedFlow<Unit> = _centerMapEvent.asSharedFlow()
-
-    // Dialog state variables
-    val showGoToPointDialog = mutableStateOf(false)
-    val showAddToFavoritesDialog = mutableStateOf(false)
 
     // Generic input state model for dialogs
     data class InputFieldState(var value: String = "", var errorMessage: String? = null)
