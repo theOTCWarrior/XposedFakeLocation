@@ -44,24 +44,24 @@ fun DrawerContent(
                     onCloseDrawer()
                 }
             )
-            DrawerItem(
-                icon = LineAwesomeIcons.QuestionCircle,
-                label = "How-to-Use",
-                onClick = {
-                    navController.navigate(Screen.HowToUse.route)
-                    onCloseDrawer()
-                }
-            )
-            DrawerItem(
-                icon = LineAwesomeIcons.Telegram,
-                label = "Telegram",
-                onClick = { /* Implement this */ }
-            )
-            DrawerItem(
-                icon = LineAwesomeIcons.Discord,
-                label = "Discord",
-                onClick = { /* Implement this */ }
-            )
+//            DrawerItem(
+//                icon = LineAwesomeIcons.QuestionCircle,
+//                label = "How-to-Use",
+//                onClick = {
+//                    navController.navigate(Screen.HowToUse.route)
+//                    onCloseDrawer()
+//                }
+//            )
+//            DrawerItem(
+//                icon = LineAwesomeIcons.Telegram,
+//                label = "Telegram",
+//                onClick = { /* Implement this */ }
+//            )
+//            DrawerItem(
+//                icon = LineAwesomeIcons.Discord,
+//                label = "Discord",
+//                onClick = { /* Implement this */ }
+//            )
             DrawerItem(
                 icon = LineAwesomeIcons.Github,
                 label = "Github",

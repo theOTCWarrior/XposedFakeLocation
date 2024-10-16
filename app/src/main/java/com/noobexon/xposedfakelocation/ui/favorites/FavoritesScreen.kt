@@ -14,15 +14,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.ui.map.MapViewModel
+import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     navController: NavController,
+    mapViewModel: MapViewModel,
     favoritesViewModel: FavoritesViewModel = viewModel()
 ) {
     val favorites by favoritesViewModel.favorites.collectAsState()
-    val selectedFavorite by favoritesViewModel.selectedFavorite.collectAsState()
 
     Scaffold(
         topBar = {
@@ -61,8 +63,11 @@ fun FavoritesScreen(
                     FavoriteItem(
                         favorite = favorite,
                         onClick = {
-                            favoritesViewModel.selectFavorite(favorite)
-                            // TODO: Handle map marker placement or navigation if needed
+                            // Update the marker location in MapViewModel
+                            mapViewModel.updateClickedLocation(
+                                GeoPoint(favorite.latitude, favorite.longitude)
+                            )
+                            navController.navigateUp() // Navigate back to MapScreen
                         },
                         onDelete = {
                             favoritesViewModel.removeFavorite(favorite)

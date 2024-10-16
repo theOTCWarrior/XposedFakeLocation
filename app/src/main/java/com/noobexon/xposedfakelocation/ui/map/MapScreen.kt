@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.noobexon.xposedfakelocation.ui.common.components.DrawerContent
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.ui.map.components.AddToFavoritesDialog
@@ -22,7 +21,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(
     navController: NavController,
-    mapViewModel: MapViewModel = viewModel()
+    mapViewModel: MapViewModel
 ) {
     val isPlaying by mapViewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }

@@ -134,7 +134,7 @@ fun AppVersionTitle() {
 @Composable
 fun AppVersionValue() {
     Text(
-        text = "1.0.0",
+        text = "0.0.1",
         style = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.SemiBold
         ),
