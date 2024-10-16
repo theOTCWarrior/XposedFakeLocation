@@ -27,6 +27,7 @@ fun MapScreen(
     val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }
     val showGoToPointDialog by mapViewModel.showGoToPointDialog
     val showAddToFavoritesDialog by mapViewModel.showAddToFavoritesDialog
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 

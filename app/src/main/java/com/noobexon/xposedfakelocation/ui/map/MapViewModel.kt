@@ -118,6 +118,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setLoadingStarted() {
+        isLoading.value = true
+    }
+
     // Set loading finished
     fun setLoadingFinished() {
         isLoading.value = false

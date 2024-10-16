@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,10 +29,13 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 @Composable
 fun MapViewContainer(
-    mapViewModel: MapViewModel = viewModel()
+    mapViewModel: MapViewModel
 ) {
     val context = LocalContext.current
+    
     val isLoading by mapViewModel.isLoading
+    val lastClickedLocation by mapViewModel.lastClickedLocation
+    val isPlaying by mapViewModel.isPlaying
 
     // Remember the MapView
     val mapView = remember {
@@ -76,10 +78,6 @@ fun MapViewContainer(
             }
         }
     }
-
-    // Observe the last clicked location and isPlaying state
-    val lastClickedLocation by mapViewModel.lastClickedLocation
-    val isPlaying by mapViewModel.isPlaying
 
     // Handle marker visibility and position
     LaunchedEffect(lastClickedLocation) {
