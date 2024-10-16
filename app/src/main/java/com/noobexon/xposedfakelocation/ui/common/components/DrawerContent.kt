@@ -1,5 +1,7 @@
 package com.noobexon.xposedfakelocation.ui.common.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import compose.icons.LineAwesomeIcons
@@ -20,6 +23,8 @@ fun DrawerContent(
     navController: NavController,
     onCloseDrawer: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     ModalDrawerSheet {
         Column(
             modifier = Modifier
@@ -34,12 +39,18 @@ fun DrawerContent(
             DrawerItem(
                 icon = LineAwesomeIcons.InfoCircleSolid,
                 label = "About",
-                onClick = { /* Implement this */ }
+                onClick = {
+                    navController.navigate(Screen.About.route)
+                    onCloseDrawer()
+                }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.QuestionCircle,
                 label = "How-to-Use",
-                onClick = { /* Implement this */ }
+                onClick = {
+                    navController.navigate(Screen.HowToUse.route)
+                    onCloseDrawer()
+                }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Telegram,
@@ -54,7 +65,11 @@ fun DrawerContent(
             DrawerItem(
                 icon = LineAwesomeIcons.Github,
                 label = "Github",
-                onClick = { /* Implement this */ }
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/noobexon1/XposedFakeLocation"))
+                    context.startActivity(intent)
+                    onCloseDrawer()
+                }
             )
             DrawerItem(
                 icon = Icons.Default.Settings,

@@ -3,7 +3,9 @@ package com.noobexon.xposedfakelocation.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.noobexon.xposedfakelocation.ui.about.AboutScreen
 import com.noobexon.xposedfakelocation.ui.favorites.FavoritesScreen
+import com.noobexon.xposedfakelocation.ui.howtouse.HowToUseScreen
 import com.noobexon.xposedfakelocation.ui.map.MapScreen
 import com.noobexon.xposedfakelocation.ui.permissions.PermissionsScreen
 import com.noobexon.xposedfakelocation.ui.settings.SettingsScreen
@@ -27,6 +29,12 @@ fun AppNavGraph(
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(navController = navController)
+        }
+        composable(route = Screen.About.route) {
+            AboutScreen(navController = navController)
+        }
+        composable(route = Screen.HowToUse.route) {
+            HowToUseScreen(navController = navController)
         }
         // Add other composable destinations here
     }
