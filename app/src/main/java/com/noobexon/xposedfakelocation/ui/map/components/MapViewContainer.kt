@@ -1,5 +1,6 @@
 package com.noobexon.xposedfakelocation.ui.map.components
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,42 +33,85 @@ fun MapViewContainer(
     mapViewModel: MapViewModel
 ) {
     val context = LocalContext.current
-    
+
+    // Observe state from ViewModel
     val isLoading by mapViewModel.isLoading
     val lastClickedLocation by mapViewModel.lastClickedLocation
     val isPlaying by mapViewModel.isPlaying
 
-    // Remember the MapView
-    val mapView = remember {
+    // Remember MapView and overlays
+    val mapView = rememberMapView(context)
+    val userMarker = rememberUserMarker(mapView)
+    val locationOverlay = rememberLocationOverlay(context, mapView)
+
+    // Add the location overlay to the map
+    addLocationOverlayToMap(mapView, locationOverlay)
+
+
+    // Handle map events and updates
+    handleCenterMapEvent(mapView, locationOverlay, mapViewModel)
+    handleGoToPointEvent(mapView, mapViewModel)
+    handleMarkerUpdates(mapView, userMarker, lastClickedLocation, context)
+    setupMapClickListener(mapView, mapViewModel, isPlaying)
+    centerMapOnUserLocation(mapView, locationOverlay, mapViewModel)
+    manageMapViewLifecycle(mapView, locationOverlay)
+
+    // Display loading spinner or MapView
+    if (isLoading) {
+        LoadingSpinner()
+    } else {
+        DisplayMapView(mapView)
+    }
+}
+
+@Composable
+private fun rememberMapView(context: Context): MapView {
+    return remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setBuiltInZoomControls(false)
             setMultiTouchControls(true)
         }
     }
+}
 
-    // Remember the user's marker
-    val userMarker = remember {
+@Composable
+private fun rememberUserMarker(mapView: MapView): Marker {
+    return remember {
         Marker(mapView).apply {
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         }
     }
+}
 
-    // Remember the location overlay
-    val locationOverlay = remember {
+@Composable
+private fun rememberLocationOverlay(context: Context, mapView: MapView): MyLocationNewOverlay {
+    return remember {
         MyLocationNewOverlay(GpsMyLocationProvider(context), mapView).apply {
             enableMyLocation()
         }
     }
+}
 
-    // Add the location overlay to the map
+@Composable
+private fun addLocationOverlayToMap(
+    mapView: MapView,
+    locationOverlay: MyLocationNewOverlay
+) {
     LaunchedEffect(Unit) {
         if (!mapView.overlays.contains(locationOverlay)) {
             mapView.overlays.add(locationOverlay)
         }
     }
+}
 
-    // Collect the center map event
+@Composable
+private fun handleCenterMapEvent(
+    mapView: MapView,
+    locationOverlay: MyLocationNewOverlay,
+    mapViewModel: MapViewModel
+) {
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         mapViewModel.centerMapEvent.collect {
             val userLocation = locationOverlay.myLocation
@@ -78,25 +122,40 @@ fun MapViewContainer(
             }
         }
     }
+}
 
-    // Handle marker visibility and position
+@Composable
+private fun handleGoToPointEvent(
+    mapView: MapView,
+    mapViewModel: MapViewModel
+) {
+    LaunchedEffect(Unit) {
+        mapViewModel.goToPointEvent.collect { geoPoint ->
+            mapView.controller.animateTo(geoPoint)
+            mapViewModel.updateClickedLocation(geoPoint)
+        }
+    }
+}
+
+@Composable
+private fun handleMarkerUpdates(
+    mapView: MapView,
+    userMarker: Marker,
+    lastClickedLocation: GeoPoint?,
+    context: Context
+) {
     LaunchedEffect(lastClickedLocation) {
         if (lastClickedLocation != null) {
             // Add the marker to the map if not already added
             if (!mapView.overlays.contains(userMarker)) {
                 mapView.overlays.add(userMarker)
             }
-
             userMarker.position = lastClickedLocation
             mapView.controller.animateTo(lastClickedLocation)
             mapView.invalidate()
 
-            val message = lastClickedLocation?.let {
-                "Latitude: ${it.latitude}\nLongitude: ${it.longitude}"
-            }
-            message?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
+            val message = "Latitude: ${lastClickedLocation.latitude}\nLongitude: ${lastClickedLocation.longitude}"
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         } else {
             // Remove the marker from the map if it exists
             if (mapView.overlays.contains(userMarker)) {
@@ -105,8 +164,14 @@ fun MapViewContainer(
             }
         }
     }
+}
 
-    // Set up the map click listener
+@Composable
+private fun setupMapClickListener(
+    mapView: MapView,
+    mapViewModel: MapViewModel,
+    isPlaying: Boolean
+) {
     DisposableEffect(mapView, isPlaying) {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
@@ -125,42 +190,43 @@ fun MapViewContainer(
         mapView.overlays.add(mapEventsOverlay)
 
         onDispose {
-            // Remove the overlay when the effect is disposed
             mapView.overlays.remove(mapEventsOverlay)
         }
     }
+}
 
-    // Center the map on the user's current location when it's available
+@Composable
+private fun centerMapOnUserLocation(
+    mapView: MapView,
+    locationOverlay: MyLocationNewOverlay,
+    mapViewModel: MapViewModel
+) {
     LaunchedEffect(locationOverlay) {
-        // Wait until the user's location is available or a timeout occurs
-        val maxAttempts = 80 // e.g., 80 attempts * 100ms = 8 seconds
-        var attempts = 0
-        while (locationOverlay.myLocation == null && attempts < maxAttempts) {
-            delay(100) // Wait for 100ms before checking again
-            attempts++
+        val maxAttempts = 80
+        val delayMillis = 100L
+        repeat(maxAttempts) {
+            val userLocation = locationOverlay.myLocation
+            if (userLocation != null) {
+                mapViewModel.updateUserLocation(userLocation)
+                mapView.controller.setZoom(18.0)
+                mapView.controller.animateTo(userLocation)
+                mapViewModel.setLoadingFinished()
+                return@LaunchedEffect
+            }
+            delay(delayMillis)
         }
-        val userLocation = locationOverlay.myLocation
-        userLocation?.let { geoPoint ->
-            mapViewModel.updateUserLocation(geoPoint) // Update the user's location in the ViewModel
-            mapView.controller.setZoom(18.0) // Adjust zoom level as desired
-            mapView.controller.animateTo(geoPoint)
-            mapViewModel.setLoadingFinished() // Mark the loading as finished
-        } ?: run {
-            // If location is not available after timeout, set default location
-            mapView.controller.setZoom(2.0)
-            mapView.controller.setCenter(GeoPoint(0.0, 0.0))
-            mapViewModel.setLoadingFinished() // Mark loading as finished
-        }
+        // If location is not available after timeout, set default location
+        mapView.controller.setZoom(2.0)
+        mapView.controller.setCenter(GeoPoint(0.0, 0.0))
+        mapViewModel.setLoadingFinished()
     }
+}
 
-    LaunchedEffect(Unit) {
-        mapViewModel.goToPointEvent.collect { geoPoint ->
-            mapView.controller.animateTo(geoPoint)
-            mapViewModel.updateClickedLocation(geoPoint)
-        }
-    }
-
-    // Handle MapView lifecycle
+@Composable
+private fun manageMapViewLifecycle(
+    mapView: MapView,
+    locationOverlay: MyLocationNewOverlay
+) {
     DisposableEffect(Unit) {
         mapView.onResume()
         locationOverlay.enableMyLocation()
@@ -171,30 +237,32 @@ fun MapViewContainer(
             mapView.onDetach()
         }
     }
+}
 
-    // Display a loading spinner or the MapView based on the loading state
-    if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+@Composable
+private fun LoadingSpinner() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator() // Show a loading spinner while waiting
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Updating Map...",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
-            }
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Updating Map...",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
         }
-    } else {
-        // Display the MapView when loading is finished
-        AndroidView(
-            factory = { mapView },
-            modifier = Modifier.fillMaxSize()
-        )
     }
+}
+
+@Composable
+private fun DisplayMapView(mapView: MapView) {
+    AndroidView(
+        factory = { mapView },
+        modifier = Modifier.fillMaxSize()
+    )
 }
