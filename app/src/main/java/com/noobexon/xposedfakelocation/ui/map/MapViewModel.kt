@@ -23,6 +23,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val lastClickedLocation = mutableStateOf<GeoPoint?>(null)
     val userLocation = mutableStateOf<GeoPoint?>(null)
     val isLoading = mutableStateOf(true)
+    val mapZoom = mutableStateOf<Double?>(null) // Add this line
 
     // Dialog state variables
     val showGoToPointDialog = mutableStateOf(false)
