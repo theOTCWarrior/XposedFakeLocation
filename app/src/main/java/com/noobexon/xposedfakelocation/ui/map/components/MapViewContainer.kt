@@ -52,7 +52,7 @@ fun MapViewContainer(
     HandleGoToPointEvent(mapView, mapViewModel)
     HandleMarkerUpdates(mapView, userMarker, lastClickedLocation, context)
     SetupMapClickListener(mapView, mapViewModel, isPlaying)
-    CenterMapOnUserLocation(mapView, locationOverlay, mapViewModel)
+    CenterMapOnUserLocation(mapView, locationOverlay, mapViewModel, lastClickedLocation)
     ManageMapViewLifecycle(mapView, mapViewModel, locationOverlay)
 
     // Display loading spinner or MapView
@@ -198,26 +198,35 @@ private fun SetupMapClickListener(
 private fun CenterMapOnUserLocation(
     mapView: MapView,
     locationOverlay: MyLocationNewOverlay,
-    mapViewModel: MapViewModel
+    mapViewModel: MapViewModel,
+    lastClickedLocation: GeoPoint?
 ) {
-    LaunchedEffect(locationOverlay) {
-        val maxAttempts = 80
-        val delayMillis = 100L
-        repeat(maxAttempts) {
-            val userLocation = locationOverlay.myLocation
-            if (userLocation != null) {
-                mapViewModel.updateUserLocation(userLocation)
-                mapView.controller.setZoom(18.0)
-                mapView.controller.animateTo(userLocation)
-                mapViewModel.setLoadingFinished()
-                return@LaunchedEffect
+    LaunchedEffect(mapView, lastClickedLocation) {
+        if (lastClickedLocation != null) {
+            // If marker exists, center on it
+            mapView.controller.setZoom(18.0)
+            mapView.controller.animateTo(lastClickedLocation)
+            mapViewModel.setLoadingFinished()
+        } else {
+            // Proceed to center on user's location
+            val maxAttempts = 80
+            val delayMillis = 100L
+            repeat(maxAttempts) {
+                val userLocation = locationOverlay.myLocation
+                if (userLocation != null) {
+                    mapViewModel.updateUserLocation(userLocation)
+                    mapView.controller.setZoom(18.0)
+                    mapView.controller.animateTo(userLocation)
+                    mapViewModel.setLoadingFinished()
+                    return@LaunchedEffect
+                }
+                delay(delayMillis)
             }
-            delay(delayMillis)
+            // If location is not available after timeout, set default location
+            mapView.controller.setZoom(2.0)
+            mapView.controller.setCenter(GeoPoint(0.0, 0.0))
+            mapViewModel.setLoadingFinished()
         }
-        // If location is not available after timeout, set default location
-        mapView.controller.setZoom(2.0)
-        mapView.controller.setCenter(GeoPoint(0.0, 0.0))
-        mapViewModel.setLoadingFinished()
     }
 }
 
