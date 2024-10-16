@@ -45,16 +45,15 @@ fun MapViewContainer(
     val locationOverlay = rememberLocationOverlay(context, mapView)
 
     // Add the location overlay to the map
-    addLocationOverlayToMap(mapView, locationOverlay)
-
+    AddLocationOverlayToMap(mapView, locationOverlay)
 
     // Handle map events and updates
-    handleCenterMapEvent(mapView, locationOverlay, mapViewModel)
-    handleGoToPointEvent(mapView, mapViewModel)
-    handleMarkerUpdates(mapView, userMarker, lastClickedLocation, context)
-    setupMapClickListener(mapView, mapViewModel, isPlaying)
-    centerMapOnUserLocation(mapView, locationOverlay, mapViewModel)
-    manageMapViewLifecycle(mapView, locationOverlay)
+    HandleCenterMapEvent(mapView, locationOverlay, mapViewModel)
+    HandleGoToPointEvent(mapView, mapViewModel)
+    HandleMarkerUpdates(mapView, userMarker, lastClickedLocation, context)
+    SetupMapClickListener(mapView, mapViewModel, isPlaying)
+    CenterMapOnUserLocation(mapView, locationOverlay, mapViewModel)
+    ManageMapViewLifecycle(mapView, mapViewModel, locationOverlay)
 
     // Display loading spinner or MapView
     if (isLoading) {
@@ -94,7 +93,7 @@ private fun rememberLocationOverlay(context: Context, mapView: MapView): MyLocat
 }
 
 @Composable
-private fun addLocationOverlayToMap(
+private fun AddLocationOverlayToMap(
     mapView: MapView,
     locationOverlay: MyLocationNewOverlay
 ) {
@@ -106,7 +105,7 @@ private fun addLocationOverlayToMap(
 }
 
 @Composable
-private fun handleCenterMapEvent(
+private fun HandleCenterMapEvent(
     mapView: MapView,
     locationOverlay: MyLocationNewOverlay,
     mapViewModel: MapViewModel
@@ -125,7 +124,7 @@ private fun handleCenterMapEvent(
 }
 
 @Composable
-private fun handleGoToPointEvent(
+private fun HandleGoToPointEvent(
     mapView: MapView,
     mapViewModel: MapViewModel
 ) {
@@ -138,7 +137,7 @@ private fun handleGoToPointEvent(
 }
 
 @Composable
-private fun handleMarkerUpdates(
+private fun HandleMarkerUpdates(
     mapView: MapView,
     userMarker: Marker,
     lastClickedLocation: GeoPoint?,
@@ -167,7 +166,7 @@ private fun handleMarkerUpdates(
 }
 
 @Composable
-private fun setupMapClickListener(
+private fun SetupMapClickListener(
     mapView: MapView,
     mapViewModel: MapViewModel,
     isPlaying: Boolean
@@ -196,7 +195,7 @@ private fun setupMapClickListener(
 }
 
 @Composable
-private fun centerMapOnUserLocation(
+private fun CenterMapOnUserLocation(
     mapView: MapView,
     locationOverlay: MyLocationNewOverlay,
     mapViewModel: MapViewModel
@@ -223,8 +222,9 @@ private fun centerMapOnUserLocation(
 }
 
 @Composable
-private fun manageMapViewLifecycle(
+private fun ManageMapViewLifecycle(
     mapView: MapView,
+    mapViewModel: MapViewModel,
     locationOverlay: MyLocationNewOverlay
 ) {
     DisposableEffect(Unit) {
@@ -235,6 +235,7 @@ private fun manageMapViewLifecycle(
             mapView.overlays.clear()
             mapView.onPause()
             mapView.onDetach()
+            mapViewModel.setLoadingStarted()
         }
     }
 }
