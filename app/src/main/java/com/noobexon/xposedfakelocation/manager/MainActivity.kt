@@ -9,6 +9,8 @@ import com.noobexon.xposedfakelocation.manager.ui.navigation.AppNavGraph
 import com.noobexon.xposedfakelocation.manager.ui.theme.XposedFakeLocationTheme
 import org.osmdroid.config.Configuration
 
+// TODO: On app start, i need to reset the isplaying and the last clicked location fields to null.
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
