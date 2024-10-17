@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation.manager.data.model
+package com.noobexon.xposedfakelocation.data.model
 
 data class LastClickedLocation(
     val latitude: Float,

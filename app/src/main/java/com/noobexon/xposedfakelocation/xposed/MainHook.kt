@@ -5,9 +5,9 @@ import android.content.Context
 import com.noobexon.xposedfakelocation.xposed.location.LocationApiHooks
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.callbacks.XC_LoadPackage
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
 class MainHook : IXposedHookLoadPackage {
@@ -16,7 +16,7 @@ class MainHook : IXposedHookLoadPackage {
     lateinit var context: Context
     var locationApiHooks: LocationApiHooks? = null
 
-    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
+    override fun handleLoadPackage(lpparam: LoadPackageParam) {
         initHookingLogic(lpparam)
     }
 
@@ -31,7 +31,7 @@ class MainHook : IXposedHookLoadPackage {
                     context = (param.args[0] as Application).applicationContext.also {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")
                     }
-                    locationApiHooks = LocationApiHooks(context, lpparam).also { it.initModule() }
+                    locationApiHooks = LocationApiHooks(context, lpparam).also { it.initHooks() }
                 }
             }
         )

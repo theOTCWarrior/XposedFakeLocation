@@ -1,12 +1,12 @@
-package com.noobexon.xposedfakelocation.manager.data.repository
+package com.noobexon.xposedfakelocation.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
-import com.noobexon.xposedfakelocation.manager.data.model.IsPlayingPreference
-import com.noobexon.xposedfakelocation.manager.data.model.LastClickedLocation
-import com.noobexon.xposedfakelocation.manager.util.SHARED_PREFS_FILE
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
+import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
+import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 
 // Key constants for Gson serialized preferences
 private const val KEY_IS_PLAYING_PREF = "is_playing_pref"

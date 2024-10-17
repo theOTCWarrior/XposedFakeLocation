@@ -2,11 +2,10 @@ package com.noobexon.xposedfakelocation.manager.ui.map
 
 import android.app.Application
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
-import com.noobexon.xposedfakelocation.manager.data.repository.PreferencesRepository
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

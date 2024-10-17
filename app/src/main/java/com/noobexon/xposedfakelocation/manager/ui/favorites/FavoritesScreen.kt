@@ -13,7 +13,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.manager.ui.map.MapViewModel
 import org.osmdroid.util.GeoPoint
 

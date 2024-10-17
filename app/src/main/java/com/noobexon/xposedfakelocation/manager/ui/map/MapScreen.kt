@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.manager.ui.common.components.DrawerContent
 import com.noobexon.xposedfakelocation.manager.ui.map.components.AddToFavoritesDialog
 import com.noobexon.xposedfakelocation.manager.ui.map.components.GoToPointDialog

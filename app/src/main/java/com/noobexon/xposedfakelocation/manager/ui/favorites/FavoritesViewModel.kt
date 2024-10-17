@@ -2,8 +2,8 @@ package com.noobexon.xposedfakelocation.manager.ui.favorites
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
-import com.noobexon.xposedfakelocation.manager.data.repository.PreferencesRepository
+import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
+import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

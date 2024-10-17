@@ -11,7 +11,12 @@ class LocationApiHooks(appContext: Context, appLpparam: LoadPackageParam) {
     private val context = appContext
     private val lpparam = appLpparam
 
-    fun initModule() {
-        XposedBridge.log("$tag Instantiated Module successfully")
+    fun initHooks() {
+        hookLocationAPI()
+        XposedBridge.log("$tag Instantiated hooks successfully")
+    }
+
+    private fun hookLocationAPI() {
+
     }
 }
