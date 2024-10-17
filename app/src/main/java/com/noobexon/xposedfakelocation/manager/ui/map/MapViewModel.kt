@@ -2,6 +2,7 @@ package com.noobexon.xposedfakelocation.manager.ui.map
 
 import android.app.Application
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
@@ -13,7 +14,6 @@ import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 
 class MapViewModel(application: Application) : AndroidViewModel(application) {
-
     // App's shared preferences
     private val preferencesRepository = PreferencesRepository(application)
 

@@ -1,5 +1,6 @@
 package com.noobexon.xposedfakelocation.manager.ui.map
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.noobexon.xposedfakelocation.manager.data.model.FavoriteLocation
@@ -23,6 +25,8 @@ fun MapScreen(
     navController: NavController,
     mapViewModel: MapViewModel
 ) {
+    val context = LocalContext.current
+
     val isPlaying by mapViewModel.isPlaying
     val isFabClickable by remember { derivedStateOf { mapViewModel.isFabClickable } }
     val showGoToPointDialog by mapViewModel.showGoToPointDialog
@@ -123,6 +127,11 @@ fun MapScreen(
                     onClick = {
                         if (isFabClickable) {
                             mapViewModel.togglePlaying()
+                            if (mapViewModel.isPlaying.value) {
+                                Toast.makeText(context, "Fake Location Set", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Unset Fake Location", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     },
                     modifier = Modifier

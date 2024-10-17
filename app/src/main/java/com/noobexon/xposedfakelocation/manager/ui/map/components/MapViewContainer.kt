@@ -53,7 +53,7 @@ fun MapViewContainer(
     // Handle map events and updates
     HandleCenterMapEvent(mapView, locationOverlay, mapViewModel)
     HandleGoToPointEvent(mapView, mapViewModel)
-    HandleMarkerUpdates(mapView, userMarker, lastClickedLocation, context)
+    HandleMarkerUpdates(mapView, userMarker, lastClickedLocation)
     SetupMapClickListener(mapView, mapViewModel, isPlaying)
     CenterMapOnUserLocation(mapView, locationOverlay, mapViewModel, lastClickedLocation)
     ManageMapViewLifecycle(mapView, mapViewModel, locationOverlay)
@@ -164,7 +164,6 @@ private fun HandleMarkerUpdates(
     mapView: MapView,
     userMarker: Marker,
     lastClickedLocation: GeoPoint?,
-    context: Context
 ) {
     LaunchedEffect(lastClickedLocation) {
         if (lastClickedLocation != null) {
@@ -175,9 +174,6 @@ private fun HandleMarkerUpdates(
             userMarker.position = lastClickedLocation
             mapView.controller.animateTo(lastClickedLocation)
             mapView.invalidate()
-
-            val message = "Latitude: ${lastClickedLocation.latitude}\nLongitude: ${lastClickedLocation.longitude}"
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         } else {
             // Remove the marker from the map if it exists
             if (mapView.overlays.contains(userMarker)) {
