@@ -63,4 +63,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    compileOnly("de.robv.android.xposed:api:82:sources")
+    compileOnly("de.robv.android.xposed:api:82")
 }
