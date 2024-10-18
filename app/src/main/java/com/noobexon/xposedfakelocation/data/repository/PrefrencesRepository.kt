@@ -1,18 +1,24 @@
+// PreferencesRepository.kt
 package com.noobexon.xposedfakelocation.data.repository
 
 import android.annotation.SuppressLint
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
+import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
+import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 
-class PreferencesRepository(context: Context) {
+private const val DEFAULT_ACCURACY = 3.0f
+private const val DEFAULT_ALTITUDE = 0.0f
 
+class PreferencesRepository(context: Context) {
     @SuppressLint("WorldReadableFiles")
     private val sharedPrefs = try {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
@@ -22,6 +28,7 @@ class PreferencesRepository(context: Context) {
     }
     private val gson = Gson()
 
+    // Is Playing
     fun saveIsPlaying(isPlaying: Boolean) {
         val isPlayingPref = IsPlayingPreference(isPlaying)
         val json = gson.toJson(isPlayingPref)
@@ -30,6 +37,7 @@ class PreferencesRepository(context: Context) {
             .apply()
     }
 
+    // Last Clicked Location
     fun saveLastClickedLocation(latitude: Float, longitude: Float) {
         val location = LastClickedLocation(latitude, longitude)
         val json = gson.toJson(location)
@@ -44,6 +52,38 @@ class PreferencesRepository(context: Context) {
             .apply()
     }
 
+    // Settings
+    fun saveAccuracy(accuracy: Float) {
+        sharedPrefs.edit()
+            .putFloat(KEY_ACCURACY, accuracy)
+            .apply()
+    }
+
+    fun getAccuracy(): Float {
+        return sharedPrefs.getFloat(KEY_ACCURACY, DEFAULT_ACCURACY)
+    }
+
+    fun saveAltitude(altitude: Float) {
+        sharedPrefs.edit()
+            .putFloat(KEY_ALTITUDE, altitude)
+            .apply()
+    }
+
+    fun getAltitude(): Float {
+        return sharedPrefs.getFloat(KEY_ALTITUDE, DEFAULT_ALTITUDE)
+    }
+
+    fun saveRandomize(randomize: Boolean) {
+        sharedPrefs.edit()
+            .putBoolean(KEY_RANDOMIZE, randomize)
+            .apply()
+    }
+
+    fun getRandomize(): Boolean {
+        return sharedPrefs.getBoolean(KEY_RANDOMIZE, false)
+    }
+
+    // Favorites
     fun addFavorite(favorite: FavoriteLocation) {
         val favorites = getFavorites().toMutableList()
         favorites.add(favorite)
@@ -72,4 +112,7 @@ class PreferencesRepository(context: Context) {
         favorites.remove(favorite)
         saveFavorites(favorites)
     }
+
+
+
 }

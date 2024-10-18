@@ -1,23 +1,20 @@
+//SettingsScreen.kt
 package com.noobexon.xposedfakelocation.manager.ui.settings
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +22,13 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = viewModel ()
 ) {
+    val accuracy by settingsViewModel.accuracy.collectAsState()
+    val altitude by settingsViewModel.altitude.collectAsState()
+    val randomize by settingsViewModel.randomize.collectAsState()
+
+    var accuracyInput by remember { mutableStateOf(accuracy.toString()) }
+    var altitudeInput by remember { mutableStateOf(altitude.toString()) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,13 +47,53 @@ fun SettingsScreen(
             )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
+                .padding(innerPadding)
+                .padding(16.dp)
         ) {
-            Text("To be implemented.")
+            OutlinedTextField(
+                value = accuracyInput,
+                onValueChange = {
+                    accuracyInput = it
+                    val value = it.toFloatOrNull()
+                    if (value != null) {
+                        settingsViewModel.setAccuracy(value)
+                    }
+                },
+                label = { Text("Accuracy") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = accuracyInput.toFloatOrNull() == null,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = altitudeInput,
+                onValueChange = {
+                    altitudeInput = it
+                    val value = it.toFloatOrNull()
+                    if (value != null) {
+                        settingsViewModel.setAltitude(value)
+                    }
+                },
+                label = { Text("Altitude") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = accuracyInput.toFloatOrNull() == null,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Randomize")
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(
+                    checked = randomize,
+                    onCheckedChange = { settingsViewModel.setRandomize(it) }
+                )
+            }
         }
     }
 }
