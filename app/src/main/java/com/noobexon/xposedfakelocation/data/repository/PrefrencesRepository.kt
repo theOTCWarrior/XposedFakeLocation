@@ -17,13 +17,11 @@ class PreferencesRepository(context: Context) {
     private val sharedPrefs = try {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
     } catch (e: SecurityException) {
-        // The new XSharedPreferences is not enabled or module's not loading
-        // Fallback to MODE_PRIVATE or handle accordingly
+        // Fallback to MODE_PRIVATE
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
     }
     private val gson = Gson()
 
-    // Save and retrieve isPlaying using Gson
     fun saveIsPlaying(isPlaying: Boolean) {
         val isPlayingPref = IsPlayingPreference(isPlaying)
         val json = gson.toJson(isPlayingPref)
@@ -38,16 +36,6 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putString(KEY_LAST_CLICKED_LOCATION, json)
             .apply()
-    }
-
-    fun getLastClickedLocation(): Pair<Float, Float>? {
-        val json = sharedPrefs.getString(KEY_LAST_CLICKED_LOCATION, null)
-        return if (json != null) {
-            val location = gson.fromJson(json, LastClickedLocation::class.java)
-            Pair(location.latitude, location.longitude)
-        } else {
-            null
-        }
     }
 
     fun clearLastClickedLocation() {

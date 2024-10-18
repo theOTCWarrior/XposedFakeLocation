@@ -21,8 +21,9 @@ class MainHook : IXposedHookLoadPackage {
         // Avoid hooking own app to prevent recursion
         if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
 
-        // If not playing, do not proceed with hooking
-        if (UserPreferences.getIsPlaying() == false) return
+        // If not playing or null, do not proceed with hooking
+        val isPlayingPref = UserPreferences.getIsPlaying()
+        if (isPlayingPref?.isPlaying != true) return
 
         initHookingLogic(lpparam)
     }

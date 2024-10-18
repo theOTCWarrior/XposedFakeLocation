@@ -18,29 +18,29 @@ object UserPreferences {
         reload()
     }
 
-    fun getIsPlaying(): Boolean {
-        preferences.reload() // Ensure we have the latest preferences
-        val json = preferences.getString(KEY_IS_PLAYING_PREF, null)
-        val isPlaying = if (json != null) {
-            val isPlayingPref = Gson().fromJson(json, IsPlayingPreference::class.java)
-            isPlayingPref.isPlaying
-        } else {
-            false
-        }
-        XposedBridge.log("$tag IsPlaying value: $isPlaying")
-        return isPlaying
+    fun getIsPlaying(): IsPlayingPreference? {
+        return getPreference<IsPlayingPreference>(KEY_IS_PLAYING_PREF)
     }
 
     fun getLastClickedLocation(): LastClickedLocation? {
+        return getPreference<LastClickedLocation>(KEY_LAST_CLICKED_LOCATION)
+    }
+
+    private inline fun <reified T> getPreference(key: String): T? {
         preferences.reload() // Ensure we have the latest preferences
-        val json = preferences.getString(KEY_LAST_CLICKED_LOCATION, null)
-        val lastClickedLocation = if (json != null) {
-            val lastClickedLocationPref = Gson().fromJson(json, LastClickedLocation::class.java)
-            LastClickedLocation(lastClickedLocationPref.latitude, lastClickedLocationPref.longitude)
+        val json = preferences.getString(key, null)
+        return if (json != null) {
+            try {
+                Gson().fromJson(json, T::class.java).also {
+                    XposedBridge.log("$tag Retrieved $key: $it")
+                }
+            } catch (e: Exception) {
+                XposedBridge.log("$tag Error parsing $key JSON: ${e.message}")
+                null
+            }
         } else {
+            XposedBridge.log("$tag $key not found in preferences.")
             null
         }
-        XposedBridge.log("$tag lastClickedLocation value: $lastClickedLocation")
-        return lastClickedLocation
     }
 }
