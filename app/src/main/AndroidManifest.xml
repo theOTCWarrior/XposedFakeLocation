@@ -38,11 +38,16 @@
         <!-- The minimum supported Api version of the module is usually 54. -->
         <meta-data
             android:name="xposedminversion"
-            android:value="54"/>
+            android:value="93"/>
         <!-- Module Scopes -->
         <meta-data
             android:name="xposedscope"
             android:resource="@array/xposedscope"/>
+
+        <!-- Indicate usage of new XSharedPreferences -->
+        <meta-data
+            android:name="xposedsharedprefs"
+            android:value="true" />
 
     </application>
 

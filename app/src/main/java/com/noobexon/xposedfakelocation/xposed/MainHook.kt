@@ -2,6 +2,8 @@ package com.noobexon.xposedfakelocation.xposed
 
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
+import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
 import com.noobexon.xposedfakelocation.xposed.location.LocationApiHooks
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -16,6 +18,12 @@ class MainHook : IXposedHookLoadPackage {
     var locationApiHooks: LocationApiHooks? = null
 
     override fun handleLoadPackage(lpparam: LoadPackageParam) {
+        // Avoid hooking own app to prevent recursion
+        if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
+
+        // If not playing, do not proceed with hooking
+        if (UserPreferences.getIsPlaying() == false) return
+
         initHookingLogic(lpparam)
     }
 
@@ -29,6 +37,7 @@ class MainHook : IXposedHookLoadPackage {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     context = (param.args[0] as Application).applicationContext.also {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")
+                        Toast.makeText(it, "Fake Location Is Active!", Toast.LENGTH_LONG).show()
                     }
                     locationApiHooks = LocationApiHooks(context, lpparam).also { it.initHooks() }
                 }

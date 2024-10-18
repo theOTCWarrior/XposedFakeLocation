@@ -1,20 +1,26 @@
 package com.noobexon.xposedfakelocation.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
+import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 
-// Key constants for Gson serialized preferences
-private const val KEY_IS_PLAYING_PREF = "is_playing_pref"
-private const val KEY_LAST_CLICKED_LOCATION = "last_clicked_location"
-
 class PreferencesRepository(context: Context) {
 
-    private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
+    @SuppressLint("WorldReadableFiles")
+    private val sharedPrefs = try {
+        context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
+    } catch (e: SecurityException) {
+        // The new XSharedPreferences is not enabled or module's not loading
+        // Fallback to MODE_PRIVATE or handle accordingly
+        context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
+    }
     private val gson = Gson()
 
     // Save and retrieve isPlaying using Gson
@@ -26,17 +32,6 @@ class PreferencesRepository(context: Context) {
             .apply()
     }
 
-    fun getIsPlaying(): Boolean {
-        val json = sharedPrefs.getString(KEY_IS_PLAYING_PREF, null)
-        return if (json != null) {
-            val isPlayingPref = gson.fromJson(json, IsPlayingPreference::class.java)
-            isPlayingPref.isPlaying
-        } else {
-            false
-        }
-    }
-
-    // Save and retrieve last clicked location using Gson
     fun saveLastClickedLocation(latitude: Float, longitude: Float) {
         val location = LastClickedLocation(latitude, longitude)
         val json = gson.toJson(location)
@@ -61,7 +56,6 @@ class PreferencesRepository(context: Context) {
             .apply()
     }
 
-    // Existing methods for handling favorites remain the same
     fun addFavorite(favorite: FavoriteLocation) {
         val favorites = getFavorites().toMutableList()
         favorites.add(favorite)
