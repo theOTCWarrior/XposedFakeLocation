@@ -2,11 +2,15 @@
 package com.noobexon.xposedfakelocation.xposed
 
 import com.google.gson.Gson
+import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
 import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE
+import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
+import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
@@ -42,10 +46,25 @@ object UserPreferences {
         return getPreference<Boolean>(KEY_RANDOMIZE)
     }
 
+    fun getUseAccuracy(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_ACCURACY)
+    }
+
+    fun getUseAltitude(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_ALTITUDE)
+    }
+
     private inline fun <reified T> getPreference(key: String): T? {
         preferences.reload()
         return when (T::class) {
-            Float::class -> preferences.getFloat(key, -1f) as? T
+            Float::class -> {
+                val defaultValue = when (key) {
+                    KEY_ACCURACY -> DEFAULT_ACCURACY
+                    KEY_ALTITUDE -> DEFAULT_ALTITUDE
+                    else -> -1f
+                }
+                preferences.getFloat(key, defaultValue) as? T
+            }
             Boolean::class -> preferences.getBoolean(key, false) as? T
             else -> {
                 val json = preferences.getString(key, null)

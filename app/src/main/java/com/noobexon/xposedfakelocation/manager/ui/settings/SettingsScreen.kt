@@ -27,14 +27,29 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = viewModel ()
 ) {
+    val useAccuracy by settingsViewModel.useAccuracy.collectAsState()
     val accuracy by settingsViewModel.accuracy.collectAsState()
-    val altitude by settingsViewModel.altitude.collectAsState()
-    val randomize by settingsViewModel.randomize.collectAsState()
-
     var accuracyInput by remember { mutableStateOf(accuracy.toString()) }
+
+    val useAltitude by settingsViewModel.useAltitude.collectAsState()
+    val altitude by settingsViewModel.altitude.collectAsState()
     var altitudeInput by remember { mutableStateOf(altitude.toString()) }
 
+    val randomize by settingsViewModel.randomize.collectAsState()
+
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(accuracy) {
+        if (accuracy.toString() != accuracyInput) {
+            accuracyInput = accuracy.toString()
+        }
+    }
+
+    LaunchedEffect(altitude) {
+        if (altitude.toString() != altitudeInput) {
+            altitudeInput = altitude.toString()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -75,38 +90,41 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Accuracy")
+                    Text("Use Accuracy")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
-                        checked = false,
-                        onCheckedChange = {  }
+                        checked = useAccuracy,
+                        onCheckedChange = { settingsViewModel.setUseAccuracy(it) }
                     )
                 }
 
-                OutlinedTextField(
-                    value = accuracyInput,
-                    onValueChange = {
-                        accuracyInput = it
-                        val value = it.toFloatOrNull()
-                        if (value != null) {
-                            settingsViewModel.setAccuracy(value)
-                        }
-                    },
-                    label = { Text("Accuracy") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
-                    ),
-                    isError = accuracyInput.toFloatOrNull() == null,
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+                if (useAccuracy) {
+                    OutlinedTextField(
+                        value = accuracyInput,
+                        onValueChange = {
+                            accuracyInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setAccuracy(value)
+                            }
+                        },
+                        label = { Text("Accuracy") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = accuracyInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Altitude Setting
@@ -114,38 +132,41 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Altitude")
+                    Text("Use Altitude")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
-                        checked = false,
-                        onCheckedChange = {  }
+                        checked = useAltitude,
+                        onCheckedChange = { settingsViewModel.setUseAltitude(it) }
                     )
                 }
 
-                OutlinedTextField(
-                    value = altitudeInput,
-                    onValueChange = {
-                        altitudeInput = it
-                        val value = it.toFloatOrNull()
-                        if (value != null) {
-                            settingsViewModel.setAltitude(value)
-                        }
-                    },
-                    label = { Text("Altitude") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
-                    ),
-                    isError = altitudeInput.toFloatOrNull() == null,
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+                if (useAltitude) {
+                    OutlinedTextField(
+                        value = altitudeInput,
+                        onValueChange = {
+                            altitudeInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setAltitude(value)
+                            }
+                        },
+                        label = { Text("Altitude") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = altitudeInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Randomize Setting

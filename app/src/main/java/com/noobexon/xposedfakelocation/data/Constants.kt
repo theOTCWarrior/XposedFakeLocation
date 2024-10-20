@@ -11,3 +11,8 @@ const val KEY_RANDOMIZE  = "randomize"
 
 const val DEFAULT_ACCURACY = 0.0f
 const val DEFAULT_ALTITUDE = 0.0f
+
+const val KEY_USE_ACCURACY = "use_accuracy"
+const val KEY_USE_ALTITUDE = "use_altitude"
+const val DEFAULT_USE_ACCURACY = false
+const val DEFAULT_USE_ALTITUDE = false
