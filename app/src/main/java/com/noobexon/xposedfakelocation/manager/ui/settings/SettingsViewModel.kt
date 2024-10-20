@@ -17,6 +17,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val preferencesRepository = PreferencesRepository(application)
 
+
     // StateFlows for the settings
     private val _useAccuracy = MutableStateFlow(DEFAULT_USE_ACCURACY)
     val useAccuracy: StateFlow<Boolean> get() = _useAccuracy
