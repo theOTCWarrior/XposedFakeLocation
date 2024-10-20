@@ -1,7 +1,10 @@
 //SettingsScreen.kt
 package com.noobexon.xposedfakelocation.manager.ui.settings
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -12,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -28,6 +33,8 @@ fun SettingsScreen(
 
     var accuracyInput by remember { mutableStateOf(accuracy.toString()) }
     var altitudeInput by remember { mutableStateOf(altitude.toString()) }
+
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
@@ -47,52 +54,112 @@ fun SettingsScreen(
             )
         }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    focusManager.clearFocus()
+                }
         ) {
-            OutlinedTextField(
-                value = accuracyInput,
-                onValueChange = {
-                    accuracyInput = it
-                    val value = it.toFloatOrNull()
-                    if (value != null) {
-                        settingsViewModel.setAccuracy(value)
-                    }
-                },
-                label = { Text("Accuracy") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = accuracyInput.toFloatOrNull() == null,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = altitudeInput,
-                onValueChange = {
-                    altitudeInput = it
-                    val value = it.toFloatOrNull()
-                    if (value != null) {
-                        settingsViewModel.setAltitude(value)
-                    }
-                },
-                label = { Text("Altitude") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = accuracyInput.toFloatOrNull() == null,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                Text("Randomize")
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = randomize,
-                    onCheckedChange = { settingsViewModel.setRandomize(it) }
+                // Accuracy Setting
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Accuracy")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = false,
+                        onCheckedChange = {  }
+                    )
+                }
+
+                OutlinedTextField(
+                    value = accuracyInput,
+                    onValueChange = {
+                        accuracyInput = it
+                        val value = it.toFloatOrNull()
+                        if (value != null) {
+                            settingsViewModel.setAccuracy(value)
+                        }
+                    },
+                    label = { Text("Accuracy") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    isError = accuracyInput.toFloatOrNull() == null,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Altitude Setting
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Altitude")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = false,
+                        onCheckedChange = {  }
+                    )
+                }
+
+                OutlinedTextField(
+                    value = altitudeInput,
+                    onValueChange = {
+                        altitudeInput = it
+                        val value = it.toFloatOrNull()
+                        if (value != null) {
+                            settingsViewModel.setAltitude(value)
+                        }
+                    },
+                    label = { Text("Altitude") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    isError = altitudeInput.toFloatOrNull() == null,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Randomize Setting
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Randomize")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = randomize,
+                        onCheckedChange = { settingsViewModel.setRandomize(it) }
+                    )
+                }
             }
         }
     }

@@ -4,6 +4,8 @@ package com.noobexon.xposedfakelocation.manager.ui.settings
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +16,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val preferencesRepository = PreferencesRepository(application)
 
     // StateFlows for the settings
-    private val _accuracy = MutableStateFlow(3.0f)
+    private val _accuracy = MutableStateFlow(DEFAULT_ACCURACY)
     val accuracy: StateFlow<Float> get() = _accuracy
 
-    private val _altitude = MutableStateFlow(0.0f)
+    private val _altitude = MutableStateFlow(DEFAULT_ALTITUDE)
     val altitude: StateFlow<Float> get() = _altitude
 
     private val _randomize = MutableStateFlow(false)

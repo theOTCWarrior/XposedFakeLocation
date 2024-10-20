@@ -15,6 +15,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("WorldReadableFiles")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // TODO - test this in fresh install without activating the module first. i think its problematic.
         Configuration.getInstance().load(this, getPreferences(MODE_WORLD_READABLE))
         enableEdgeToEdge()
         resetSettings()

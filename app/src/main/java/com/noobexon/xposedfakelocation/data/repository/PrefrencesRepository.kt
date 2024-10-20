@@ -5,18 +5,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
 import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE
+import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
-import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
-
-private const val DEFAULT_ACCURACY = 3.0f
-private const val DEFAULT_ALTITUDE = 0.0f
 
 class PreferencesRepository(context: Context) {
     @SuppressLint("WorldReadableFiles")
