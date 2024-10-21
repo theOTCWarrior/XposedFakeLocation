@@ -2,6 +2,7 @@ package com.noobexon.xposedfakelocation.manager.ui.common.components
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -45,22 +46,14 @@ fun DrawerContent(
                 }
             )
             DrawerItem(
-                icon = LineAwesomeIcons.QuestionCircle,
-                label = "How-to-Use",
-                onClick = {
-                    navController.navigate(Screen.HowToUse.route)
-                    onCloseDrawer()
-                }
-            )
-            DrawerItem(
                 icon = LineAwesomeIcons.Telegram,
                 label = "Telegram",
-                onClick = { /* Implement this */ }
+                onClick = { Toast.makeText(context, "Coming soon!", Toast.LENGTH_SHORT).show() }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Discord,
                 label = "Discord",
-                onClick = { /* Implement this */ }
+                onClick = { Toast.makeText(context, "Coming soon!", Toast.LENGTH_SHORT).show() }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Github,

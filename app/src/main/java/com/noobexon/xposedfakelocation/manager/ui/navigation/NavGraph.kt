@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.noobexon.xposedfakelocation.manager.ui.about.AboutScreen
 import com.noobexon.xposedfakelocation.manager.ui.favorites.FavoritesScreen
-import com.noobexon.xposedfakelocation.manager.ui.howtouse.HowToUseScreen
 import com.noobexon.xposedfakelocation.manager.ui.map.MapScreen
 import com.noobexon.xposedfakelocation.manager.ui.map.MapViewModel
 import com.noobexon.xposedfakelocation.manager.ui.permissions.PermissionsScreen
@@ -27,9 +26,6 @@ fun AppNavGraph(
         }
         composable(route = Screen.Favorites.route) {
             FavoritesScreen(navController = navController, mapViewModel)
-        }
-        composable(route = Screen.HowToUse.route) {
-            HowToUseScreen(navController = navController)
         }
         composable(route = Screen.Map.route) {
             MapScreen(navController = navController, mapViewModel)
