@@ -26,7 +26,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
 
     var latitude: Double = 40.7128
     var longitude: Double = -74.0060
-    var accuracy: Double = UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY
+    var userAccuracy: Float = (UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
     private var lastUpdateTime: Long = 0
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -137,7 +137,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
-                        param.result = accuracy.toFloat()
+                        param.result = userAccuracy
                     }
                 })
 
@@ -220,7 +220,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         try {
             UserPreferences.getLastClickedLocation()?.let {
                 lastUpdateTime = System.currentTimeMillis()
-                accuracy = UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY
+                userAccuracy = (UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
 
                 val x = (random.nextInt(50) -15).toDouble()
                 val y = (random.nextInt(50) -15).toDouble()
