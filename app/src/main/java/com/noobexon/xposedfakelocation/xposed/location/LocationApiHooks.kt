@@ -225,8 +225,8 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 val deltaLatitude = x / earthRadius
                 val deltaLongittude = y / (earthRadius * cos(pi * it.latitude / 180.0))
 
-                latitude = (if (UserPreferences.getRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude) as Double
-                longtitude = (if (UserPreferences.getRandomize() == true) it.longitude + (deltaLongittude * 180.0 / pi) else it.longitude) as Double
+                latitude = (if (UserPreferences.getUseRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude) as Double
+                longtitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongittude * 180.0 / pi) else it.longitude) as Double
 
                 XposedBridge.log("$tag Updated fake location to point to (lat = $latitude, lng = $longtitude)")
 

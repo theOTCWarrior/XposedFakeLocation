@@ -104,14 +104,14 @@ class PreferencesRepository(context: Context) {
         return sharedPrefs.getFloat(KEY_ALTITUDE, DEFAULT_ALTITUDE)
     }
 
-    fun saveRandomize(randomize: Boolean) {
+    fun saveUseRandomize(randomize: Boolean) {
         sharedPrefs.edit()
             .putBoolean(KEY_USE_RANDOMIZE, randomize)
             .apply()
-        Log.d(tag, "Saved Randomize: $randomize")
+        Log.d(tag, "Saved UseRandomize: $randomize")
     }
 
-    fun getRandomize(): Boolean {
+    fun getUseRandomize(): Boolean {
         return sharedPrefs.getBoolean(KEY_USE_RANDOMIZE, false)
     }
 

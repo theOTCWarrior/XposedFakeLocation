@@ -35,7 +35,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             _accuracy.value = preferencesRepository.getAccuracy()
             _altitude.value = preferencesRepository.getAltitude()
-            _randomize.value = preferencesRepository.getRandomize()
+            _randomize.value = preferencesRepository.getUseRandomize()
             _useAccuracy.value = preferencesRepository.getUseAccuracy()
             _useAltitude.value = preferencesRepository.getUseAltitude()
         }
@@ -63,6 +63,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun setRandomize(value: Boolean) {
         _randomize.value = value
-        preferencesRepository.saveRandomize(value)
+        preferencesRepository.saveUseRandomize(value)
     }
 }
