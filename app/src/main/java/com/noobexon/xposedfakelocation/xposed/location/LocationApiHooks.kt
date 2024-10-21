@@ -7,6 +7,7 @@ import android.location.LocationRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.earthRadius
 import com.noobexon.xposedfakelocation.data.pi
 import com.noobexon.xposedfakelocation.xposed.UserPreferences
@@ -24,10 +25,11 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
 
     private val random: Random = Random()
 
-    var latitude: Double = 40.7128
-    var longitude: Double = -74.0060
-    var userAccuracy: Float = (UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
     private var lastUpdateTime: Long = 0
+    private var latitude: Double = 40.7128
+    private var longitude: Double = -74.0060
+    private var userAccuracy: Float? = null
+    private var userAltitude: Double? = null
 
     @RequiresApi(Build.VERSION_CODES.S)
     fun initHooks() {
@@ -38,35 +40,33 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
     @RequiresApi(Build.VERSION_CODES.S)
     private fun hookLocationAPI() {
         updateLocation()
-
         if (appLpparam.packageName == "android") {
             hookSystemServices(appLpparam.classLoader)
         }
-
         hookLocationClass(appLpparam.classLoader)
         hookLocationManager(appLpparam.classLoader)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun hookSystemServices(classLoader: ClassLoader) {
         try {
-            val lmServiceClass = XposedHelpers.findClass("com.android.server.LocationManagerService", classLoader)
+            val locationManagerServiceClass = XposedHelpers.findClass("com.android.server.LocationManagerService", classLoader)
 
-            // Hook getLastLocation method
             XposedHelpers.findAndHookMethod(
-                lmServiceClass,
+                locationManagerServiceClass,
                 "getLastLocation",
                 LocationRequest::class.java,
                 String::class.java,
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
+                        XposedBridge.log("$tag [SystemHook] Entered method getLastLocation(locationRequest, packageName)")
+                        XposedBridge.log("\t Request comes from: ${param.args[1] as String}")
                         val location = createMockLocation()
                         param.result = location
+                        XposedBridge.log("\t Modified to: $location (original method not executed)")
                     }
                 })
 
-            // Hook other methods to return false
             val methodsToReplace = arrayOf(
                 "addGnssBatchingCallback",
                 "addGnssMeasurementsListener",
@@ -75,26 +75,23 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
 
             for (methodName in methodsToReplace) {
                 XposedHelpers.findAndHookMethod(
-                    lmServiceClass,
+                    locationManagerServiceClass,
                     methodName,
                     XC_MethodReplacement.returnConstant(false)
                 )
             }
 
-            // Hook Receiver class
-            val receiverClass = XposedHelpers.findClass(
-                "com.android.server.LocationManagerService\$Receiver",
-                classLoader
-            )
 
             XposedHelpers.findAndHookMethod(
-                receiverClass,
+                XposedHelpers.findClass("com.android.server.LocationManagerService\$Receiver", classLoader),
                 "callLocationChangedLocked",
                 Location::class.java,
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
+                        XposedBridge.log("$tag [SystemHook] Entered method callLocationChangedLocked(location)")
                         val location = createMockLocation(param.args[0] as? Location)
                         param.args[0] = location
+                        XposedBridge.log("\t Modified to: $location")
                     }
                 })
 
@@ -108,40 +105,61 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         try {
             val locationClass = XposedHelpers.findClass("android.location.Location", classLoader)
 
-            // Hook getLatitude method
             XposedHelpers.findAndHookMethod(
                 locationClass,
                 "getLatitude",
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
+                        XposedBridge.log("$tag Entered method getLatitude()")
                         param.result = latitude
+                        XposedBridge.log("\t Modified to: $latitude (original method not executed)")
                     }
                 })
 
-            // Hook getLongitude method
             XposedHelpers.findAndHookMethod(
                 locationClass,
                 "getLongitude",
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
+                        XposedBridge.log("$tag Entered method getLongitude()")
                         param.result = longitude
+                        XposedBridge.log("\t Modified to: $longitude (original method not executed)")
+
                     }
                 })
 
-            // Hook getAccuracy method
             XposedHelpers.findAndHookMethod(
                 locationClass,
                 "getAccuracy",
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
-                        param.result = userAccuracy
+                        XposedBridge.log("$tag Entered method getAccuracy()")
+                        XposedBridge.log("\t Should modify: ${UserPreferences.getUseAccuracy()}")
+                        if (userAccuracy != null) {
+                            param.result = userAccuracy!!
+                            XposedBridge.log("\t Modified to: $userAccuracy (original method not executed)")
+                        }
                     }
                 })
 
-            // Hook set method
+            XposedHelpers.findAndHookMethod(
+                locationClass,
+                "getAltitude",
+                object : XC_MethodHook() {
+                    override fun beforeHookedMethod(param: MethodHookParam) {
+                        updateLocation()
+                        XposedBridge.log("$tag Entered method getAltitude()")
+                        XposedBridge.log("\t Should modify: ${UserPreferences.getUseAltitude()}")
+                        if (userAltitude != null) {
+                            param.result = userAltitude!!
+                            XposedBridge.log("\t Modified to: $userAltitude (original method not executed)")
+                        }
+                    }
+                })
+
             XposedHelpers.findAndHookMethod(
                 locationClass,
                 "set",
@@ -149,8 +167,10 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
+                        XposedBridge.log("$tag Entered method set(location)")
                         val location = createMockLocation(param.args[0] as? Location)
                         param.args[0] = location
+                        XposedBridge.log("\t Modified to: $location")
                     }
                 })
 
@@ -163,7 +183,6 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         try {
             val locationManagerClass = XposedHelpers.findClass("android.location.LocationManager", classLoader)
 
-            // Hook getLastKnownLocation method
             XposedHelpers.findAndHookMethod(
                 locationManagerClass,
                 "getLastKnownLocation",
@@ -171,10 +190,12 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
+                        XposedBridge.log("$tag Entered method getLastKnownLocation(provider)")
                         val provider = param.args[0] as String
+                        XposedBridge.log("\t Requested provider: $provider")
                         val location = createMockLocation(provider = provider)
                         param.result = location
-
+                        XposedBridge.log("\t Modified to: $location")
                     }
                 })
 
@@ -191,7 +212,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         } else {
             Location(originLocation.provider).apply {
                 time = originLocation.time
-                accuracy = accuracy
+                accuracy = originLocation.accuracy
                 bearing = originLocation.bearing
                 bearingAccuracyDegrees = originLocation.bearingAccuracyDegrees
                 elapsedRealtimeNanos = originLocation.elapsedRealtimeNanos
@@ -201,14 +222,14 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
 
         location.latitude = latitude
         location.longitude = longitude
-        location.altitude = 0.0
         location.speed = 0F
         location.speedAccuracyMetersPerSecond = 0F
-
-        XposedBridge.log("$tag created mock Location instance with (lat: ${location.latitude}, lng: ${location.longitude})")
+        userAccuracy?.let {  location.accuracy = it }
+        userAltitude?.let { location.altitude = it }
 
         try {
             HiddenApiBypass.invoke(location.javaClass, location, "setIsFromMockProvider", false)
+            XposedBridge.log("$tag invoked hidden API - setIsFromMockProvider: false)")
         } catch (e: Exception) {
             XposedBridge.log("$tag Not possible to mock - ${e.message}")
         }
@@ -220,7 +241,18 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         try {
             UserPreferences.getLastClickedLocation()?.let {
                 lastUpdateTime = System.currentTimeMillis()
-                userAccuracy = (UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
+
+                userAccuracy = if (UserPreferences.getUseAccuracy() == true) {
+                    (UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
+                } else {
+                    null
+                }
+
+                userAltitude = if (UserPreferences.getUseAltitude() == true) {
+                    UserPreferences.getAltitude() ?: DEFAULT_ALTITUDE
+                } else {
+                    null
+                }
 
                 val x = (random.nextInt(50) -15).toDouble()
                 val y = (random.nextInt(50) -15).toDouble()
@@ -231,7 +263,10 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 latitude = (if (UserPreferences.getUseRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude)
                 longitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongitude * 180.0 / pi) else it.longitude)
 
-                XposedBridge.log("$tag Updated fake location to point to (lat = $latitude, lng = $longitude)")
+                XposedBridge.log("$tag Updated fake location values to:")
+                XposedBridge.log("\t coordinates: (latitude = $latitude, longitude = $longitude)")
+                XposedBridge.log("\t accuracy: $userAccuracy")
+                XposedBridge.log("\t altitude: $userAltitude")
             } ?: XposedBridge.log("$tag Last clicked location is null")
         } catch (e: Exception) {
             XposedBridge.log("$tag Error - ${e.message}")
