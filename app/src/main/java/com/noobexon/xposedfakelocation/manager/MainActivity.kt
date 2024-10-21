@@ -21,15 +21,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var loadSuccess = true
+        var isXposedModuleEnabled = true
 
+        // If the module is not enabled then the app won't have permission to use MODE_WORLD_READABLE.
         try {
             Configuration.getInstance().load(this, getPreferences(MODE_WORLD_READABLE))
         } catch (e: SecurityException) {
-            loadSuccess = false
+            isXposedModuleEnabled = false
         }
 
-        if (loadSuccess) {
+        if (isXposedModuleEnabled) {
             PreferencesRepository(this.application).clearNonPersistentSettings()
             enableEdgeToEdge()
             setContent {
