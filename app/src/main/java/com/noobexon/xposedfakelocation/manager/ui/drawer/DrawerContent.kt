@@ -1,4 +1,4 @@
-package com.noobexon.xposedfakelocation.manager.ui.common.components
+package com.noobexon.xposedfakelocation.manager.ui.drawer
 
 import android.content.Intent
 import android.net.Uri
