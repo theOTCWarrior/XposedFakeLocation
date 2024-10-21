@@ -6,14 +6,13 @@ import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
+import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
-import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE
+import com.noobexon.xposedfakelocation.data.KEY_USE_RANDOMIZE
 import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
-import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
@@ -26,8 +25,8 @@ object UserPreferences {
         reload()
     }
 
-    fun getIsPlaying(): IsPlayingPreference? {
-        return getPreference<IsPlayingPreference>(KEY_IS_PLAYING_PREF)
+    fun getIsPlaying(): Boolean? {
+        return getPreference<Boolean>(KEY_IS_PLAYING)
     }
 
     fun getLastClickedLocation(): LastClickedLocation? {
@@ -43,7 +42,7 @@ object UserPreferences {
     }
 
     fun getRandomize(): Boolean? {
-        return getPreference<Boolean>(KEY_RANDOMIZE)
+        return getPreference<Boolean>(KEY_USE_RANDOMIZE)
     }
 
     fun getUseAccuracy(): Boolean? {

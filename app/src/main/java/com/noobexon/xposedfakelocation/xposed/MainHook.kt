@@ -24,8 +24,7 @@ class MainHook : IXposedHookLoadPackage {
         if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
 
         // If not playing or null, do not proceed with hooking
-        val isPlayingPref = UserPreferences.getIsPlaying()
-        if (isPlayingPref?.isPlaying != true) return
+        if (UserPreferences.getIsPlaying() != true) return
 
         initHookingLogic(lpparam)
     }

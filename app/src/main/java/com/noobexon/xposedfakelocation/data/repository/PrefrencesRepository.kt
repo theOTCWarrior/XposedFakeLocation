@@ -9,9 +9,9 @@ import com.google.gson.reflect.TypeToken
 import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
 import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING_PREF
+import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
-import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE
+import com.noobexon.xposedfakelocation.data.KEY_USE_RANDOMIZE
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
 import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ACCURACY
@@ -19,7 +19,6 @@ import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
-import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 
 class PreferencesRepository(context: Context) {
@@ -28,7 +27,6 @@ class PreferencesRepository(context: Context) {
     @SuppressLint("WorldReadableFiles")
     private val sharedPrefs = try {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
-
     } catch (e: SecurityException) {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE) // Fallback to MODE_PRIVATE
     }
@@ -37,12 +35,10 @@ class PreferencesRepository(context: Context) {
 
     // Is Playing
     fun saveIsPlaying(isPlaying: Boolean) {
-        val isPlayingPref = IsPlayingPreference(isPlaying)
-        val json = gson.toJson(isPlayingPref)
         sharedPrefs.edit()
-            .putString(KEY_IS_PLAYING_PREF, json)
+            .putBoolean(KEY_IS_PLAYING, isPlaying)
             .apply()
-        Log.d(tag, "Saved IsPlaying: $json")
+        Log.d(tag, "Saved IsPlaying: $isPlaying")
     }
 
     // Last Clicked Location
@@ -110,13 +106,13 @@ class PreferencesRepository(context: Context) {
 
     fun saveRandomize(randomize: Boolean) {
         sharedPrefs.edit()
-            .putBoolean(KEY_RANDOMIZE, randomize)
+            .putBoolean(KEY_USE_RANDOMIZE, randomize)
             .apply()
         Log.d(tag, "Saved Randomize: $randomize")
     }
 
     fun getRandomize(): Boolean {
-        return sharedPrefs.getBoolean(KEY_RANDOMIZE, false)
+        return sharedPrefs.getBoolean(KEY_USE_RANDOMIZE, false)
     }
 
     // Favorites
