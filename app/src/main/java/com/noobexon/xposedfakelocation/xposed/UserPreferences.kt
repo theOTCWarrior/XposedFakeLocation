@@ -4,10 +4,12 @@ package com.noobexon.xposedfakelocation.xposed
 import com.google.gson.Gson
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
+import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
 import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
 import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
+import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE_RADIUS
 import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
 import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.KEY_USE_RANDOMIZE
@@ -53,6 +55,10 @@ object UserPreferences {
         return getPreference<Boolean>(KEY_USE_RANDOMIZE)
     }
 
+    fun getRandomizeRadius(): Double? {
+        return getPreference<Double>(KEY_RANDOMIZE_RADIUS)
+    }
+
     private inline fun <reified T> getPreference(key: String): T? {
         preferences.reload()
         return when (T::class) {
@@ -60,6 +66,7 @@ object UserPreferences {
                 val defaultValue = when (key) {
                     KEY_ACCURACY -> java.lang.Double.doubleToRawLongBits(DEFAULT_ACCURACY)
                     KEY_ALTITUDE -> java.lang.Double.doubleToRawLongBits(DEFAULT_ALTITUDE)
+                    KEY_RANDOMIZE_RADIUS -> java.lang.Double.doubleToRawLongBits(DEFAULT_RANDOMIZE_RADIUS)
                     else -> -1L
                 }
                 val bits = preferences.getLong(key, defaultValue)

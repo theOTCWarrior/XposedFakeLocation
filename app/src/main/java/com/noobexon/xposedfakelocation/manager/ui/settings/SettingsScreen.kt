@@ -35,7 +35,9 @@ fun SettingsScreen(
     val altitude by settingsViewModel.altitude.collectAsState()
     var altitudeInput by remember { mutableStateOf(altitude.toString()) }
 
-    val randomize by settingsViewModel.randomize.collectAsState()
+    val useRandomize by settingsViewModel.useRandomize.collectAsState()
+    val randomizeRadius by settingsViewModel.randomizeRadius.collectAsState()
+    var randomizeRadiusInput by remember { mutableStateOf(randomizeRadius.toString()) }
 
     val focusManager = LocalFocusManager.current
 
@@ -48,6 +50,12 @@ fun SettingsScreen(
     LaunchedEffect(altitude) {
         if (altitude.toString() != altitudeInput) {
             altitudeInput = altitude.toString()
+        }
+    }
+
+    LaunchedEffect(randomizeRadius) {
+        if (randomizeRadius.toString() != randomizeRadiusInput) {
+            randomizeRadiusInput = randomizeRadius.toString()
         }
     }
 
@@ -171,11 +179,38 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Randomize")
+                    Text("Randomize Nearby Location")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
-                        checked = randomize,
+                        checked = useRandomize,
                         onCheckedChange = { settingsViewModel.setRandomize(it) }
+                    )
+                }
+
+                if (useRandomize) {
+                    OutlinedTextField(
+                        value = randomizeRadiusInput,
+                        onValueChange = {
+                            randomizeRadiusInput = it
+                            val value = it.toDoubleOrNull()
+                            if (value != null) {
+                                settingsViewModel.setRandomizeRadius(value)
+                            }
+                        },
+                        label = { Text("Randomization Radius (meters)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = randomizeRadiusInput.toDoubleOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                 }
             }

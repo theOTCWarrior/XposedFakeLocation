@@ -105,7 +105,23 @@ class PreferencesRepository(context: Context) {
     }
 
     fun getUseRandomize(): Boolean {
-        return sharedPrefs.getBoolean(KEY_USE_RANDOMIZE, false)
+        return sharedPrefs.getBoolean(KEY_USE_RANDOMIZE, DEFAULT_USE_RANDOMIZE)
+    }
+
+    fun saveRandomizeRadius(radius: Double) {
+        val bits = java.lang.Double.doubleToRawLongBits(radius)
+        sharedPrefs.edit()
+            .putLong(KEY_RANDOMIZE_RADIUS, bits)
+            .apply()
+        Log.d(tag, "Saved RandomizeRadius: $radius")
+    }
+
+    fun getRandomizeRadius(): Double {
+        val bits = sharedPrefs.getLong(
+            KEY_RANDOMIZE_RADIUS,
+            java.lang.Double.doubleToRawLongBits(DEFAULT_RANDOMIZE_RADIUS)
+        )
+        return java.lang.Double.longBitsToDouble(bits)
     }
 
     // Favorites

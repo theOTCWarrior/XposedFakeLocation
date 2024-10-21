@@ -17,6 +17,7 @@ const val KEY_USE_ALTITUDE = "use_altitude"
 const val KEY_ALTITUDE  = "altitude"
 
 const val KEY_USE_RANDOMIZE  = "use_randomize"
+const val KEY_RANDOMIZE_RADIUS = "randomize_radius"
 
  // DEFAULT VALUES
 const val DEFAULT_USE_ACCURACY = false
@@ -25,6 +26,9 @@ const val DEFAULT_ACCURACY = 0.0
 const val DEFAULT_USE_ALTITUDE = false
 const val DEFAULT_ALTITUDE = 0.0
 
+const val DEFAULT_USE_RANDOMIZE = true
+const val DEFAULT_RANDOMIZE_RADIUS = 3.0
+
 // MATH & PHYS
-const val pi = 3.14159265359
-const val earthRadius = 6378137.0
+const val PI = 3.14159265359
+const val RADIUS_EARTH = 6378137.0 // Approximately Earth's radius in meters

@@ -6,8 +6,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
+import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
 import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ALTITUDE
+import com.noobexon.xposedfakelocation.data.DEFAULT_USE_RANDOMIZE
 import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,16 +30,20 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _altitude = MutableStateFlow(DEFAULT_ALTITUDE)
     val altitude: StateFlow<Double> get() = _altitude
 
-    private val _randomize = MutableStateFlow(false)
-    val randomize: StateFlow<Boolean> get() = _randomize
+    private val _useRandomize = MutableStateFlow(DEFAULT_USE_RANDOMIZE)
+    val useRandomize: StateFlow<Boolean> get() = _useRandomize
+
+    private val _randomizeRadius = MutableStateFlow(DEFAULT_RANDOMIZE_RADIUS)
+    val randomizeRadius: StateFlow<Double> get() = _randomizeRadius
 
     init {
         viewModelScope.launch {
-            _accuracy.value = preferencesRepository.getAccuracy()
-            _altitude.value = preferencesRepository.getAltitude()
-            _randomize.value = preferencesRepository.getUseRandomize()
             _useAccuracy.value = preferencesRepository.getUseAccuracy()
+            _accuracy.value = preferencesRepository.getAccuracy()
             _useAltitude.value = preferencesRepository.getUseAltitude()
+            _altitude.value = preferencesRepository.getAltitude()
+            _useRandomize.value = preferencesRepository.getUseRandomize()
+            _randomizeRadius.value = preferencesRepository.getRandomizeRadius()
         }
     }
 
@@ -62,7 +68,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun setRandomize(value: Boolean) {
-        _randomize.value = value
+        _useRandomize.value = value
         preferencesRepository.saveUseRandomize(value)
+    }
+
+    fun setRandomizeRadius(value: Double) {
+        _randomizeRadius.value = value
+        preferencesRepository.saveRandomizeRadius(value)
     }
 }

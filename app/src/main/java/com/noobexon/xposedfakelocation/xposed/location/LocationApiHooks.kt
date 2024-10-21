@@ -8,8 +8,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
-import com.noobexon.xposedfakelocation.data.earthRadius
-import com.noobexon.xposedfakelocation.data.pi
+import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
+import com.noobexon.xposedfakelocation.data.RADIUS_EARTH
+import com.noobexon.xposedfakelocation.data.PI
 import com.noobexon.xposedfakelocation.xposed.UserPreferences
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
@@ -19,6 +20,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.util.*
 import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam) {
     private val tag = "[LocationApiHooks]"
@@ -28,6 +31,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
     private var lastUpdateTime: Long = 0
     private var latitude: Double = 40.7128
     private var longitude: Double = -74.0060
+    private var randomizeRadius: Double = 0.0
     private var userAccuracy: Float? = null
     private var userAltitude: Double? = null
 
@@ -254,14 +258,15 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     null
                 }
 
-                val x = (random.nextInt(50) -15).toDouble()
-                val y = (random.nextInt(50) -15).toDouble()
-
-                val deltaLatitude = x / earthRadius
-                val deltaLongitude = y / (earthRadius * cos(pi * it.latitude / 180.0))
-
-                latitude = (if (UserPreferences.getUseRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude)
-                longitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongitude * 180.0 / pi) else it.longitude)
+                if (UserPreferences.getUseRandomize() == true) {
+                    randomizeRadius = UserPreferences.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
+                    val randomLocation = getRandomLocation(it.latitude, it.longitude, randomizeRadius)
+                    latitude = randomLocation.first
+                    longitude = randomLocation.second
+                } else {
+                    latitude = it.latitude
+                    longitude = it.longitude
+                }
 
                 XposedBridge.log("$tag Updated fake location values to:")
                 XposedBridge.log("\t coordinates: (latitude = $latitude, longitude = $longitude)")
@@ -271,5 +276,22 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         } catch (e: Exception) {
             XposedBridge.log("$tag Error - ${e.message}")
         }
+    }
+
+    // Calculates a random point within a circle around the fake location that has the radius set by by the user.
+    private fun getRandomLocation(lat: Double, lon: Double, radiusInMeters: Double): Pair<Double, Double> {
+        val radiusInDegrees = radiusInMeters / RADIUS_EARTH * (180 / PI)
+
+        val u = random.nextDouble()
+        val v = random.nextDouble()
+        val w = radiusInDegrees * sqrt(u)
+        val t = 2 * PI * v
+        val xOffset = w * cos(t)
+        val yOffset = w * sin(t)
+
+        val newLat = lat + yOffset
+        val newLon = lon + xOffset / cos(lat * PI / 180)
+
+        return Pair(newLat, newLon)
     }
 }
