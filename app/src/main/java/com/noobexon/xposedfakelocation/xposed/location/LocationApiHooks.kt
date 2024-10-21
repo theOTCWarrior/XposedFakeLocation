@@ -232,7 +232,6 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 longitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongitude * 180.0 / pi) else it.longitude)
 
                 XposedBridge.log("$tag Updated fake location to point to (lat = $latitude, lng = $longitude)")
-
             } ?: XposedBridge.log("$tag Last clicked location is null")
         } catch (e: Exception) {
             XposedBridge.log("$tag Error - ${e.message}")
