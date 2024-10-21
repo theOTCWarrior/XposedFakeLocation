@@ -63,11 +63,8 @@ fun FavoritesScreen(
                     FavoriteItem(
                         favorite = favorite,
                         onClick = {
-                            // Update the marker location in MapViewModel
-                            mapViewModel.updateClickedLocation(
-                                GeoPoint(favorite.latitude, favorite.longitude)
-                            )
-                            navController.navigateUp() // Navigate back to MapScreen
+                            mapViewModel.updateClickedLocation(GeoPoint(favorite.latitude, favorite.longitude))
+                            navController.navigateUp()
                         },
                         onDelete = {
                             favoritesViewModel.removeFavorite(favorite)

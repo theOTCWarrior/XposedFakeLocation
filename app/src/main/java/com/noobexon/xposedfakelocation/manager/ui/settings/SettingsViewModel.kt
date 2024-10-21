@@ -14,11 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-
     private val preferencesRepository = PreferencesRepository(application)
 
-
-    // StateFlows for the settings
     private val _useAccuracy = MutableStateFlow(DEFAULT_USE_ACCURACY)
     val useAccuracy: StateFlow<Boolean> get() = _useAccuracy
 
@@ -35,7 +32,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val randomize: StateFlow<Boolean> get() = _randomize
 
     init {
-        // Load settings from preferences
         viewModelScope.launch {
             _accuracy.value = preferencesRepository.getAccuracy()
             _altitude.value = preferencesRepository.getAltitude()
@@ -45,7 +41,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // Functions to update the settings
     fun setUseAccuracy(value: Boolean) {
         _useAccuracy.value = value
         preferencesRepository.saveUseAccuracy(value)

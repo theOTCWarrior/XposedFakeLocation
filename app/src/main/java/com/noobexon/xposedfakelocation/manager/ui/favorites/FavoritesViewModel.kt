@@ -14,9 +14,6 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     private val _favorites = MutableStateFlow<List<FavoriteLocation>>(emptyList())
     val favorites: StateFlow<List<FavoriteLocation>> get() = _favorites
 
-    private val _selectedFavorite = MutableStateFlow<FavoriteLocation?>(null)
-    val selectedFavorite: StateFlow<FavoriteLocation?> get() = _selectedFavorite
-
     init {
         loadFavorites()
     }
@@ -27,11 +24,6 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun removeFavorite(favorite: FavoriteLocation) {
         preferencesRepository.removeFavorite(favorite)
-        loadFavorites() // Refresh the list
-    }
-
-    fun selectFavorite(favorite: FavoriteLocation) {
-        _selectedFavorite.value = favorite
-        // Additional logic to add marker on the map or handle selection can be added here.
+        loadFavorites()
     }
 }
