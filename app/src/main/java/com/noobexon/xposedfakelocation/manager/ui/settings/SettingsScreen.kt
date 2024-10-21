@@ -102,7 +102,7 @@ fun SettingsScreen(
                         value = accuracyInput,
                         onValueChange = {
                             accuracyInput = it
-                            val value = it.toFloatOrNull()
+                            val value = it.toDoubleOrNull()
                             if (value != null) {
                                 settingsViewModel.setAccuracy(value)
                             }
@@ -117,7 +117,7 @@ fun SettingsScreen(
                                 focusManager.clearFocus()
                             }
                         ),
-                        isError = accuracyInput.toFloatOrNull() == null,
+                        isError = accuracyInput.toDoubleOrNull() == null,
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -143,7 +143,7 @@ fun SettingsScreen(
                         value = altitudeInput,
                         onValueChange = {
                             altitudeInput = it
-                            val value = it.toFloatOrNull()
+                            val value = it.toDoubleOrNull()
                             if (value != null) {
                                 settingsViewModel.setAltitude(value)
                             }
@@ -158,7 +158,7 @@ fun SettingsScreen(
                                 focusManager.clearFocus()
                             }
                         ),
-                        isError = altitudeInput.toFloatOrNull() == null,
+                        isError = altitudeInput.toDoubleOrNull() == null,
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()

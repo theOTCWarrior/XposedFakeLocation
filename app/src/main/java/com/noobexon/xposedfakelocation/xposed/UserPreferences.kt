@@ -37,16 +37,16 @@ object UserPreferences {
         return getPreference<Boolean>(KEY_USE_ACCURACY)
     }
 
-    fun getAccuracy(): Float? {
-        return getPreference<Float>(KEY_ACCURACY)
+    fun getAccuracy(): Double? {
+        return getPreference<Double>(KEY_ACCURACY)
     }
 
     fun getUseAltitude(): Boolean? {
         return getPreference<Boolean>(KEY_USE_ALTITUDE)
     }
 
-    fun getAltitude(): Float? {
-        return getPreference<Float>(KEY_ALTITUDE)
+    fun getAltitude(): Double? {
+        return getPreference<Double>(KEY_ALTITUDE)
     }
 
     fun getUseRandomize(): Boolean? {
@@ -56,13 +56,14 @@ object UserPreferences {
     private inline fun <reified T> getPreference(key: String): T? {
         preferences.reload()
         return when (T::class) {
-            Float::class -> {
+            Double::class -> {
                 val defaultValue = when (key) {
-                    KEY_ACCURACY -> DEFAULT_ACCURACY
-                    KEY_ALTITUDE -> DEFAULT_ALTITUDE
-                    else -> -1f
+                    KEY_ACCURACY -> java.lang.Double.doubleToRawLongBits(DEFAULT_ACCURACY)
+                    KEY_ALTITUDE -> java.lang.Double.doubleToRawLongBits(DEFAULT_ALTITUDE)
+                    else -> -1L
                 }
-                preferences.getFloat(key, defaultValue) as? T
+                val bits = preferences.getLong(key, defaultValue)
+                java.lang.Double.longBitsToDouble(bits) as? T
             }
             Boolean::class -> preferences.getBoolean(key, false) as? T
             else -> {

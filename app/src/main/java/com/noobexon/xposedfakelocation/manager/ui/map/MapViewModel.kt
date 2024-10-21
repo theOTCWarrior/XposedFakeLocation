@@ -65,8 +65,8 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         lastClickedLocation.value = geoPoint
         geoPoint?.let {
             preferencesRepository.saveLastClickedLocation(
-                it.latitude.toFloat(),
-                it.longitude.toFloat()
+                it.latitude,
+                it.longitude
             )
         } ?: preferencesRepository.clearNonPersistentSettings()
     }

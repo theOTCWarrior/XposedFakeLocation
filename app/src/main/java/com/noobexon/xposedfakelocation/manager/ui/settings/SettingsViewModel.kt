@@ -20,13 +20,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val useAccuracy: StateFlow<Boolean> get() = _useAccuracy
 
     private val _accuracy = MutableStateFlow(DEFAULT_ACCURACY)
-    val accuracy: StateFlow<Float> get() = _accuracy
+    val accuracy: StateFlow<Double> get() = _accuracy
 
     private val _useAltitude = MutableStateFlow(DEFAULT_USE_ALTITUDE)
     val useAltitude: StateFlow<Boolean> get() = _useAltitude
 
     private val _altitude = MutableStateFlow(DEFAULT_ALTITUDE)
-    val altitude: StateFlow<Float> get() = _altitude
+    val altitude: StateFlow<Double> get() = _altitude
 
     private val _randomize = MutableStateFlow(false)
     val randomize: StateFlow<Boolean> get() = _randomize
@@ -46,7 +46,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         preferencesRepository.saveUseAccuracy(value)
     }
 
-    fun setAccuracy(value: Float) {
+    fun setAccuracy(value: Double) {
         _accuracy.value = value
         preferencesRepository.saveAccuracy(value)
     }
@@ -56,7 +56,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         preferencesRepository.saveUseAltitude(value)
     }
 
-    fun setAltitude(value: Float) {
+    fun setAltitude(value: Double) {
         _altitude.value = value
         preferencesRepository.saveAltitude(value)
     }

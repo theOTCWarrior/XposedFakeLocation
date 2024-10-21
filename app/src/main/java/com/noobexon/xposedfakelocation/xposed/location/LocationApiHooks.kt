@@ -6,6 +6,7 @@ import android.location.LocationManager
 import android.location.LocationRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.earthRadius
 import com.noobexon.xposedfakelocation.data.pi
 import com.noobexon.xposedfakelocation.xposed.UserPreferences
@@ -24,8 +25,8 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
     private val random: Random = Random()
 
     var latitude: Double = 40.7128
-    var longtitude: Double = 74.0060
-    val accuracy = UserPreferences.getAccuracy()!!
+    var longitude: Double = -74.0060
+    var accuracy: Double = UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY
     private var lastUpdateTime: Long = 0
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -98,7 +99,8 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 })
 
         } catch (e: Exception) {
-            XposedBridge.log("$tag Error hooking system services - ${e.message}")
+            XposedBridge.log("$tag Error hooking system services")
+            XposedBridge.log(e)
         }
     }
 
@@ -124,7 +126,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
-                        param.result = longtitude
+                        param.result = longitude
                     }
                 })
 
@@ -135,7 +137,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         updateLocation()
-                        param.result = accuracy
+                        param.result = accuracy.toFloat()
                     }
                 })
 
@@ -153,7 +155,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 })
 
         } catch (e: Exception) {
-            XposedBridge.log("GPS Setter: Error hooking Location class - ${e.message}")
+            XposedBridge.log("$tag Error hooking Location class - ${e.message}")
         }
     }
 
@@ -177,7 +179,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                 })
 
         } catch (e: Exception) {
-            XposedBridge.log("GPS Setter: Error hooking LocationManager - ${e.message}")
+            XposedBridge.log("$tag Error hooking LocationManager - ${e.message}")
         }
     }
 
@@ -198,7 +200,7 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         }
 
         location.latitude = latitude
-        location.longitude = longtitude
+        location.longitude = longitude
         location.altitude = 0.0
         location.speed = 0F
         location.speedAccuracyMetersPerSecond = 0F
@@ -218,17 +220,18 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
         try {
             UserPreferences.getLastClickedLocation()?.let {
                 lastUpdateTime = System.currentTimeMillis()
+                accuracy = UserPreferences.getAccuracy() ?: DEFAULT_ACCURACY
 
                 val x = (random.nextInt(50) -15).toDouble()
                 val y = (random.nextInt(50) -15).toDouble()
 
                 val deltaLatitude = x / earthRadius
-                val deltaLongittude = y / (earthRadius * cos(pi * it.latitude / 180.0))
+                val deltaLongitude = y / (earthRadius * cos(pi * it.latitude / 180.0))
 
-                latitude = (if (UserPreferences.getUseRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude) as Double
-                longtitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongittude * 180.0 / pi) else it.longitude) as Double
+                latitude = (if (UserPreferences.getUseRandomize() == true) it.latitude + (deltaLatitude * 180.0 / pi) else it.latitude)
+                longitude = (if (UserPreferences.getUseRandomize() == true) it.longitude + (deltaLongitude * 180.0 / pi) else it.longitude)
 
-                XposedBridge.log("$tag Updated fake location to point to (lat = $latitude, lng = $longtitude)")
+                XposedBridge.log("$tag Updated fake location to point to (lat = $latitude, lng = $longitude)")
 
             } ?: XposedBridge.log("$tag Last clicked location is null")
         } catch (e: Exception) {

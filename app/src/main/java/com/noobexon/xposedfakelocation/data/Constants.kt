@@ -20,10 +20,10 @@ const val KEY_USE_RANDOMIZE  = "use_randomize"
 
  // DEFAULT VALUES
 const val DEFAULT_USE_ACCURACY = false
-const val DEFAULT_ACCURACY = 0.0f
+const val DEFAULT_ACCURACY = 0.0
 
 const val DEFAULT_USE_ALTITUDE = false
-const val DEFAULT_ALTITUDE = 0.0f
+const val DEFAULT_ALTITUDE = 0.0
 
 // MATH & PHYS
 const val pi = 3.14159265359

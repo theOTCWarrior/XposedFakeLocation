@@ -31,7 +31,7 @@ class PreferencesRepository(context: Context) {
     }
 
     // Last Clicked Location
-    fun saveLastClickedLocation(latitude: Float, longitude: Float) {
+    fun saveLastClickedLocation(latitude: Double, longitude: Double) {
         val location = LastClickedLocation(latitude, longitude)
         val json = gson.toJson(location)
         sharedPrefs.edit()
@@ -60,15 +60,17 @@ class PreferencesRepository(context: Context) {
         return sharedPrefs.getBoolean(KEY_USE_ACCURACY, DEFAULT_USE_ACCURACY)
     }
 
-    fun saveAccuracy(accuracy: Float) {
+    fun saveAccuracy(accuracy: Double) {
+        val bits = java.lang.Double.doubleToRawLongBits(accuracy)
         sharedPrefs.edit()
-            .putFloat(KEY_ACCURACY, accuracy)
+            .putLong(KEY_ACCURACY, bits)
             .apply()
         Log.d(tag, "Saved Accuracy: $accuracy")
     }
 
-    fun getAccuracy(): Float {
-        return sharedPrefs.getFloat(KEY_ACCURACY, DEFAULT_ACCURACY)
+    fun getAccuracy(): Double {
+        val bits = sharedPrefs.getLong(KEY_ACCURACY, java.lang.Double.doubleToRawLongBits(DEFAULT_ACCURACY))
+        return java.lang.Double.longBitsToDouble(bits)
     }
 
     fun saveUseAltitude(useAltitude: Boolean) {
@@ -82,15 +84,17 @@ class PreferencesRepository(context: Context) {
         return sharedPrefs.getBoolean(KEY_USE_ALTITUDE, DEFAULT_USE_ALTITUDE)
     }
 
-    fun saveAltitude(altitude: Float) {
+    fun saveAltitude(altitude: Double) {
+        val bits = java.lang.Double.doubleToRawLongBits(altitude)
         sharedPrefs.edit()
-            .putFloat(KEY_ALTITUDE, altitude)
+            .putLong(KEY_ALTITUDE, bits)
             .apply()
         Log.d(tag, "Saved Altitude: $altitude")
     }
 
-    fun getAltitude(): Float {
-        return sharedPrefs.getFloat(KEY_ALTITUDE, DEFAULT_ALTITUDE)
+    fun getAltitude(): Double {
+        val bits = sharedPrefs.getLong(KEY_ALTITUDE, java.lang.Double.doubleToRawLongBits(DEFAULT_ALTITUDE))
+        return java.lang.Double.longBitsToDouble(bits)
     }
 
     fun saveUseRandomize(randomize: Boolean) {
