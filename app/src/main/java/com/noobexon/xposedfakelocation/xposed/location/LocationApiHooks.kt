@@ -18,7 +18,6 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.util.*
 import kotlin.math.cos
 
-
 class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam) {
     private val tag = "[LocationApiHooks]"
 

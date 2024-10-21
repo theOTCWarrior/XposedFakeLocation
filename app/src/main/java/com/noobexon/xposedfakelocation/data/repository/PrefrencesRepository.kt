@@ -33,9 +33,9 @@ class PreferencesRepository(context: Context) {
     private val sharedPrefs = try {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
     } catch (e: SecurityException) {
-        // Fallback to MODE_PRIVATE
-        context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE)
+        context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE) // Fallback to MODE_PRIVATE
     }
+
     private val gson = Gson()
 
     // Get the path to the shared preferences file
