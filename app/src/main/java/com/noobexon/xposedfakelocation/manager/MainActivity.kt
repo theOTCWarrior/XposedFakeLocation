@@ -11,8 +11,6 @@ import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import com.noobexon.xposedfakelocation.manager.ui.navigation.AppNavGraph
 import com.noobexon.xposedfakelocation.manager.ui.theme.XposedFakeLocationTheme
 
-// TODO: check where is the appropriate place to instantiate the view models other then the used place itself. kind of like i did with mapviewmodel
-
 class MainActivity : ComponentActivity() {
     @SuppressLint("WorldReadableFiles")
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -24,9 +24,6 @@ import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 
 class PreferencesRepository(context: Context) {
-
-    // 'find /data -name "xposed_shared_prefs.xml"' to find location of shared preferences in fs.
-
     private val tag = "PreferencesRepository"
 
     @SuppressLint("WorldReadableFiles")
