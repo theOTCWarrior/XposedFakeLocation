@@ -6,18 +6,7 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
-import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
-import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
-import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
-import com.noobexon.xposedfakelocation.data.KEY_USE_RANDOMIZE
-import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
-import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
-import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ACCURACY
-import com.noobexon.xposedfakelocation.data.DEFAULT_USE_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
-import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
+import com.noobexon.xposedfakelocation.data.*
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 
