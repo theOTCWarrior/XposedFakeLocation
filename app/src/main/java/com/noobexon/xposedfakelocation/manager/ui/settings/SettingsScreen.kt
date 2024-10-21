@@ -97,7 +97,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Use Accuracy")
+                    Text("Use Custom Accuracy")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
                         checked = useAccuracy,
@@ -115,7 +115,7 @@ fun SettingsScreen(
                                 settingsViewModel.setAccuracy(value)
                             }
                         },
-                        label = { Text("Accuracy") },
+                        label = { Text("Accuracy (meters)") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
@@ -138,7 +138,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Use Altitude")
+                    Text("Use Custom Altitude")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
                         checked = useAltitude,
@@ -156,7 +156,7 @@ fun SettingsScreen(
                                 settingsViewModel.setAltitude(value)
                             }
                         },
-                        label = { Text("Altitude") },
+                        label = { Text("Altitude (meters)") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
