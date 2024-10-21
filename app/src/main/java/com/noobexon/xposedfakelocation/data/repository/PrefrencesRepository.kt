@@ -1,7 +1,6 @@
 // PreferencesRepository.kt
 package com.noobexon.xposedfakelocation.data.repository
 
-import java.io.File
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -29,14 +28,12 @@ class PreferencesRepository(context: Context) {
     @SuppressLint("WorldReadableFiles")
     private val sharedPrefs = try {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_WORLD_READABLE)
+
     } catch (e: SecurityException) {
         context.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE) // Fallback to MODE_PRIVATE
     }
 
     private val gson = Gson()
-
-    // Get the path to the shared preferences file
-    private val prefsFile: File = File(context.filesDir.parentFile, "shared_prefs/$SHARED_PREFS_FILE.xml")
 
     // Is Playing
     fun saveIsPlaying(isPlaying: Boolean) {
@@ -45,7 +42,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putString(KEY_IS_PLAYING_PREF, json)
             .apply()
-        Log.d(tag, "Saved IsPlaying: $json to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved IsPlaying: $json")
     }
 
     // Last Clicked Location
@@ -55,7 +52,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putString(KEY_LAST_CLICKED_LOCATION, json)
             .apply()
-        Log.d(tag, "Saved LastClickedLocation: $json to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved LastClickedLocation: $json")
     }
 
     fun clearNonPersistentSettings() {
@@ -63,7 +60,7 @@ class PreferencesRepository(context: Context) {
             .remove(KEY_LAST_CLICKED_LOCATION)
             .apply()
         saveIsPlaying(false)
-        Log.d(tag, "Cleared LastClickedLocation from ${prefsFile.absolutePath} and set isPlaying to false")
+        Log.d(tag, "Cleared 'LastClickedLocation' from shared preferences and set 'IsPlaying' to false")
     }
 
     // Settings
@@ -71,7 +68,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putBoolean(KEY_USE_ACCURACY, useAccuracy)
             .apply()
-        Log.d(tag, "Saved UseAccuracy: $useAccuracy to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved UseAccuracy: $useAccuracy")
     }
 
     fun getUseAccuracy(): Boolean {
@@ -82,7 +79,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putFloat(KEY_ACCURACY, accuracy)
             .apply()
-        Log.d(tag, "Saved Accuracy: $accuracy to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved Accuracy: $accuracy")
     }
 
     fun getAccuracy(): Float {
@@ -93,7 +90,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putBoolean(KEY_USE_ALTITUDE, useAltitude)
             .apply()
-        Log.d(tag, "Saved UseAltitude: $useAltitude to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved UseAltitude: $useAltitude")
     }
 
     fun getUseAltitude(): Boolean {
@@ -104,7 +101,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putFloat(KEY_ALTITUDE, altitude)
             .apply()
-        Log.d(tag, "Saved Altitude: $altitude to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved Altitude: $altitude")
     }
 
     fun getAltitude(): Float {
@@ -115,7 +112,7 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putBoolean(KEY_RANDOMIZE, randomize)
             .apply()
-        Log.d(tag, "Saved Randomize: $randomize to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved Randomize: $randomize")
     }
 
     fun getRandomize(): Boolean {
@@ -127,7 +124,7 @@ class PreferencesRepository(context: Context) {
         val favorites = getFavorites().toMutableList()
         favorites.add(favorite)
         saveFavorites(favorites)
-        Log.d(tag, "Added Favorite: $favorite to ${prefsFile.absolutePath}")
+        Log.d(tag, "Added Favorite: $favorite")
     }
 
     fun getFavorites(): List<FavoriteLocation> {
@@ -145,13 +142,13 @@ class PreferencesRepository(context: Context) {
         sharedPrefs.edit()
             .putString("favorites", json)
             .apply()
-        Log.d(tag, "Saved Favorites: $json to ${prefsFile.absolutePath}")
+        Log.d(tag, "Saved Favorites: $json")
     }
 
     fun removeFavorite(favorite: FavoriteLocation) {
         val favorites = getFavorites().toMutableList()
         favorites.remove(favorite)
         saveFavorites(favorites)
-        Log.d(tag, "Removed Favorite: $favorite from ${prefsFile.absolutePath}")
+        Log.d(tag, "Removed Favorite: $favorite from shared preferences")
     }
 }
