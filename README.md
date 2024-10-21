@@ -1,4 +1,3 @@
-+++markdown
 # **Xposed Fake Location**
 
 [![License](https://img.shields.io/github/license/yourusername/xposed-fake-location)](LICENSE)
@@ -250,4 +249,3 @@ This application is intended for **development and testing purposes only**. Misu
 **Your Name** - [@your_twitter](https://twitter.com/your_twitter) - your.email@example.com
 
 Project Link: [https://github.com/yourusername/xposed-fake-location](https://github.com/yourusername/xposed-fake-location)
-+++
