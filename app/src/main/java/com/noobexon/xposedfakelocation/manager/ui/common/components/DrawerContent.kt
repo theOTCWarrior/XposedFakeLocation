@@ -14,9 +14,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.noobexon.xposedfakelocation.manager.ui.navigation.Screen
 import compose.icons.LineAwesomeIcons
 import compose.icons.lineawesomeicons.*
+import com.noobexon.xposedfakelocation.manager.ui.navigation.Screen
 
 @Composable
 fun DrawerContent(
@@ -44,24 +44,24 @@ fun DrawerContent(
                     onCloseDrawer()
                 }
             )
-//            DrawerItem(
-//                icon = LineAwesomeIcons.QuestionCircle,
-//                label = "How-to-Use",
-//                onClick = {
-//                    navController.navigate(Screen.HowToUse.route)
-//                    onCloseDrawer()
-//                }
-//            )
-//            DrawerItem(
-//                icon = LineAwesomeIcons.Telegram,
-//                label = "Telegram",
-//                onClick = { /* Implement this */ }
-//            )
-//            DrawerItem(
-//                icon = LineAwesomeIcons.Discord,
-//                label = "Discord",
-//                onClick = { /* Implement this */ }
-//            )
+            DrawerItem(
+                icon = LineAwesomeIcons.QuestionCircle,
+                label = "How-to-Use",
+                onClick = {
+                    navController.navigate(Screen.HowToUse.route)
+                    onCloseDrawer()
+                }
+            )
+            DrawerItem(
+                icon = LineAwesomeIcons.Telegram,
+                label = "Telegram",
+                onClick = { /* Implement this */ }
+            )
+            DrawerItem(
+                icon = LineAwesomeIcons.Discord,
+                label = "Discord",
+                onClick = { /* Implement this */ }
+            )
             DrawerItem(
                 icon = LineAwesomeIcons.Github,
                 label = "Github",
