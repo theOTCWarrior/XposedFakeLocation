@@ -22,24 +22,23 @@ fun AppNavGraph(
         navController = navController,
         startDestination = Screen.Permissions.route,
     ) {
-        composable(route = Screen.Permissions.route) {
-            PermissionsScreen(navController = navController)
-        }
-        composable(route = Screen.Map.route) {
-            MapScreen(navController = navController, mapViewModel)
+        composable(route = Screen.About.route) {
+            AboutScreen(navController = navController)
         }
         composable(route = Screen.Favorites.route) {
             FavoritesScreen(navController = navController, mapViewModel)
         }
-        composable(route = Screen.Settings.route) {
-            SettingsScreen(navController = navController)
-        }
-        composable(route = Screen.About.route) {
-            AboutScreen(navController = navController)
-        }
         composable(route = Screen.HowToUse.route) {
             HowToUseScreen(navController = navController)
         }
-        // Add other composable destinations here
+        composable(route = Screen.Map.route) {
+            MapScreen(navController = navController, mapViewModel)
+        }
+        composable(route = Screen.Permissions.route) {
+            PermissionsScreen(navController = navController)
+        }
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(navController = navController)
+        }
     }
 }

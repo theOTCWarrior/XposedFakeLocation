@@ -27,43 +27,34 @@ fun PermissionsScreen(navController: NavController, permissionsViewModel: Permis
         return
     }
 
-    // Observe the permissions state
     val hasPermissions by permissionsViewModel.hasPermissions
     val permanentlyDenied by permissionsViewModel.permanentlyDenied
     val permissionsChecked by permissionsViewModel.permissionsChecked
 
-    // Launcher to request permissions
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             permissionsViewModel.updatePermissionsStatus(granted)
-
             if (granted) {
-                // Navigate to MapScreen
                 navController.navigate(Screen.Map.route) {
                     popUpTo(Screen.Permissions.route) { inclusive = true }
                 }
             } else {
-                // Check if permissions were denied permanently
                 permissionsViewModel.checkIfPermanentlyDenied(activity)
             }
         }
     )
 
-    // Check permissions when the composable is first displayed
     LaunchedEffect(Unit) {
         permissionsViewModel.checkPermissions(context)
         if (hasPermissions) {
-            // Navigate to MapScreen
             navController.navigate(Screen.Map.route) {
                 popUpTo(Screen.Permissions.route) { inclusive = true }
             }
         }
     }
 
-    // UI observing permission state
     if (!permissionsChecked) {
-        // Show a loading indicator while checking permissions
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -71,7 +62,6 @@ fun PermissionsScreen(navController: NavController, permissionsViewModel: Permis
             CircularProgressIndicator()
         }
     } else if (!hasPermissions) {
-        // Display the permission request UI
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

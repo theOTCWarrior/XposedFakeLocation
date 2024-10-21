@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PermissionRequestScreen(onGrantPermission: () -> Unit) {
     Text(
-        text = "Permissions are required to use this app!",
+        text = "Permissions are required to use this app",
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center
     )

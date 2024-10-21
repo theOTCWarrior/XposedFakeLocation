@@ -68,7 +68,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                 it.latitude.toFloat(),
                 it.longitude.toFloat()
             )
-        } ?: preferencesRepository.clearLastClickedLocation()
+        } ?: preferencesRepository.clearNonPersistentSettings()
     }
 
     fun addFavoriteLocation(favoriteLocation: FavoriteLocation) {

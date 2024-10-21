@@ -6,10 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
+import org.osmdroid.config.Configuration
 import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import com.noobexon.xposedfakelocation.manager.ui.navigation.AppNavGraph
 import com.noobexon.xposedfakelocation.manager.ui.theme.XposedFakeLocationTheme
-import org.osmdroid.config.Configuration
+
+// TODO: check where is the appropriate place to instantiate the view models other then the used place itself. kind of like i did with mapviewmodel
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("WorldReadableFiles")
@@ -17,20 +19,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // TODO - test this in fresh install without activating the module first. i think its problematic.
         Configuration.getInstance().load(this, getPreferences(MODE_WORLD_READABLE))
+        PreferencesRepository(this.application).clearNonPersistentSettings()
         enableEdgeToEdge()
-        resetSettings()
         setContent {
             XposedFakeLocationTheme {
                 val navController = rememberNavController()
                 AppNavGraph(navController = navController)
             }
-        }
-    }
-
-    private fun resetSettings() {
-        PreferencesRepository(this.application).apply {
-            clearLastClickedLocation()
-            saveIsPlaying(false)
         }
     }
 }

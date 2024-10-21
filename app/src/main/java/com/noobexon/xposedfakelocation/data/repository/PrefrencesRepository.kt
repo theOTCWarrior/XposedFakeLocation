@@ -1,6 +1,7 @@
 // PreferencesRepository.kt
 package com.noobexon.xposedfakelocation.data.repository
 
+import java.io.File
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -21,7 +22,6 @@ import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
 import com.noobexon.xposedfakelocation.data.model.FavoriteLocation
 import com.noobexon.xposedfakelocation.data.model.IsPlayingPreference
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
-import java.io.File
 
 class PreferencesRepository(context: Context) {
 
@@ -61,11 +61,12 @@ class PreferencesRepository(context: Context) {
         Log.d(tag, "Saved LastClickedLocation: $json to ${prefsFile.absolutePath}")
     }
 
-    fun clearLastClickedLocation() {
+    fun clearNonPersistentSettings() {
         sharedPrefs.edit()
             .remove(KEY_LAST_CLICKED_LOCATION)
             .apply()
-        Log.d(tag, "Cleared LastClickedLocation from ${prefsFile.absolutePath}")
+        saveIsPlaying(false)
+        Log.d(tag, "Cleared LastClickedLocation from ${prefsFile.absolutePath} and set isPlaying to false")
     }
 
     // Settings

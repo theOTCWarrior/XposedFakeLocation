@@ -20,7 +20,6 @@ fun PermanentlyDeniedScreen(context: Context) {
     )
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = {
-        // Open app settings
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             data = Uri.fromParts("package", context.packageName, null)
         }
