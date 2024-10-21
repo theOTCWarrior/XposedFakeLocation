@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.font.awesome)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.gson)
+    implementation(libs.hiddenapibypass)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

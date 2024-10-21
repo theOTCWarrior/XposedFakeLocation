@@ -2,7 +2,9 @@ package com.noobexon.xposedfakelocation.xposed
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
 import com.noobexon.xposedfakelocation.xposed.location.LocationApiHooks
 import de.robv.android.xposed.IXposedHookLoadPackage
@@ -35,6 +37,7 @@ class MainHook : IXposedHookLoadPackage {
             "callApplicationOnCreate",
             Application::class.java,
             object : XC_MethodHook() {
+                @RequiresApi(Build.VERSION_CODES.S)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     context = (param.args[0] as Application).applicationContext.also {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")

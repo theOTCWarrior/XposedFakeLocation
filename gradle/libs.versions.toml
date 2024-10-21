@@ -15,6 +15,7 @@ lineAwesomeAndroid = "1.1.1"
 fontAwesome = "1.0.0"
 navigationCompose = "2.8.2"
 gson = "2.11.0"
+hiddenapibypass = "4.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,7 @@ line-awesome-android = { group = "br.com.devsrsouza.compose.icons", name = "line
 font-awesome = { group = "br.com.devsrsouza.compose.icons.android", name = "font-awesome", version.ref = "fontAwesome" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
