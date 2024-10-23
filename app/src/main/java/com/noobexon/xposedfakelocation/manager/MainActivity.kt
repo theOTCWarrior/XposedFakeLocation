@@ -10,7 +10,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import com.noobexon.xposedfakelocation.manager.ui.navigation.AppNavGraph
@@ -19,6 +18,8 @@ import org.osmdroid.config.Configuration
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
+    private val tag = "MainActivity"
+
     @SuppressLint("WorldReadableFiles")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +31,10 @@ class MainActivity : ComponentActivity() {
             Configuration.getInstance().load(this, getPreferences(MODE_WORLD_READABLE))
         } catch (e: SecurityException) {
             isXposedModuleEnabled = false
-            Log.e("MainActivity", "SecurityException: ${e.message}")
+            Log.e(tag, "SecurityException: ${e.message}")
         } catch (e: Exception) {
             isXposedModuleEnabled = false
-            Log.e("MainActivity", "Exception: ${e.message}")
+            Log.e(tag, "Exception: ${e.message}")
         }
 
         if (isXposedModuleEnabled) {
@@ -57,7 +58,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ErrorScreen() {
-    val context = LocalContext.current
     AlertDialog(
         onDismissRequest = {},
         title = { Text("Module Not Active") },
