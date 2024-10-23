@@ -6,7 +6,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
-import com.noobexon.xposedfakelocation.xposed.location.LocationApiHooks
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
@@ -17,14 +16,22 @@ class MainHook : IXposedHookLoadPackage {
     val tag = "[MainHook]"
 
     lateinit var context: Context
-    var locationApiHooks: LocationApiHooks? = null
 
+    private var locationApiHooks: LocationApiHooks? = null
+    private var systemServicesHooks: SystemServicesHooks? = null
+
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun handleLoadPackage(lpparam: LoadPackageParam) {
         // Avoid hooking own app to prevent recursion
         if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
 
         // If not playing or null, do not proceed with hooking
         if (UserPreferences.getIsPlaying() != true) return
+
+        // Hook system services if user asked for system wide hooks
+        if (lpparam.packageName == "android") {
+            systemServicesHooks = SystemServicesHooks(lpparam).also { it.initHooks() }
+        }
 
         initHookingLogic(lpparam)
     }
@@ -40,7 +47,7 @@ class MainHook : IXposedHookLoadPackage {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     context = (param.args[0] as Application).applicationContext.also {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")
-                        Toast.makeText(it, "Fake Location Is Active!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(it, "Fake Location Is Active!", Toast.LENGTH_SHORT).show()
                     }
                     locationApiHooks = LocationApiHooks(context, lpparam).also { it.initHooks() }
                 }
