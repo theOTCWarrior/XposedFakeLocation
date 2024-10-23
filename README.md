@@ -48,7 +48,7 @@ You can always install the latest stable version from the releases page. If you 
 1. **Clone or Download the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/xposed-fake-location.git
+   git clone https://github.com/noobexon1/XposedFakeLocation.git
    ```
 
 2. **Build the Application**
@@ -154,7 +154,7 @@ You can always install the latest stable version from the releases page. If you 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/xposed-fake-location.git
+   git clone https://github.com/noobexon1/XposedFakeLocation.git
    ```
 
 2. **Open in Android Studio**
@@ -191,6 +191,5 @@ This application is intended for **development and testing purposes only**. Misu
 - [Xposed Framework](https://repo.xposed.info/) 
 - [LSPosed](https://github.com/LSPosed/LSPosed)
 - [OSMDroid](https://github.com/osmdroid/osmdroid) 
-- [Contributors](https://github.com/yourusername/xposed-fake-location/graphs/contributors)
 
 
