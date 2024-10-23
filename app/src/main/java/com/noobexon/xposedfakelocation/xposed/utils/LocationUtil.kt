@@ -11,6 +11,8 @@ import com.noobexon.xposedfakelocation.data.RADIUS_EARTH
 import de.robv.android.xposed.XposedBridge
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.util.Random
+import kotlin.math.asin
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -107,21 +109,43 @@ object LocationUtil {
         }
     }
 
-    // Calculates a random point within a circle around the fake location that has the radius set by by the user.
+    // Calculates a random point within a circle around the fake location that has the radius set by by the user. Uses Haversine's formula.
     private fun getRandomLocation(lat: Double, lon: Double, radiusInMeters: Double): Pair<Double, Double> {
-        val radiusInDegrees = radiusInMeters / RADIUS_EARTH * (180 / PI)
+        val radiusInRadians = radiusInMeters / RADIUS_EARTH
 
-        val u = random.nextDouble()
-        val v = random.nextDouble()
-        val w = radiusInDegrees * sqrt(u)
-        val t = 2 * PI * v
-        val xOffset = w * cos(t)
-        val yOffset = w * sin(t)
+        val latRad = Math.toRadians(lat)
+        val lonRad = Math.toRadians(lon)
 
-        var newLat = (lat + yOffset).coerceIn(-90.0, 90.0)
-        var newLon = lon + xOffset / cos(lat * PI / 180)
-        newLon = ((newLon + 180) % 360 + 360) % 360 - 180   // Normalize longitude to -180 to 180
+        val sinLat = sin(latRad)
+        val cosLat = cos(latRad)
 
-        return Pair(newLat, newLon)
+        // Generate two random numbers
+        val rand1 = random.nextDouble()
+        val rand2 = random.nextDouble()
+
+        // Random distance and bearing
+        val distance = radiusInRadians * sqrt(rand1)
+        val bearing = 2 * PI * rand2
+
+        val sinDistance = sin(distance)
+        val cosDistance = cos(distance)
+
+        val newLatRad = asin(sinLat * cosDistance + cosLat * sinDistance * cos(bearing))
+        val newLonRad = lonRad + atan2(
+            sin(bearing) * sinDistance * cosLat,
+            cosDistance - sinLat * sin(newLatRad)
+        )
+
+        // Convert back to degrees
+        val newLat = Math.toDegrees(newLatRad)
+        var newLon = Math.toDegrees(newLonRad)
+
+        // Normalize longitude to be between -180 and 180 degrees
+        newLon = ((newLon + 180) % 360 + 360) % 360 - 180
+
+        // Clamp latitude to -90 to 90 degrees
+        val finalLat = newLat.coerceIn(-90.0, 90.0)
+
+        return Pair(finalLat, newLon)
     }
 }
