@@ -1,13 +1,14 @@
-package com.noobexon.xposedfakelocation.xposed
+package com.noobexon.xposedfakelocation.xposed.hooks
 
-import android.content.Context
 import android.location.Location
+import com.noobexon.xposedfakelocation.xposed.utils.LocationUtil
+import com.noobexon.xposedfakelocation.xposed.utils.PreferencesUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
-class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam) {
+class LocationApiHooks(val appLpparam: LoadPackageParam) {
     private val tag = "[LocationApiHooks]"
 
     fun initHooks() {
@@ -31,8 +32,8 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getLatitude()")
-                        param.result = LocationUtil.latitude
-                        XposedBridge.log("\t Modified to: ${LocationUtil.latitude} (original method not executed)")
+                        param.result = LocationUtil.fakeLatitude
+                        XposedBridge.log("\t Modified to: ${LocationUtil.fakeLatitude} (original method not executed)")
                     }
                 })
 
@@ -43,8 +44,8 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getLongitude()")
-                        param.result =  LocationUtil.longitude
-                        XposedBridge.log("\t Modified to: ${LocationUtil.longitude} (original method not executed)")
+                        param.result =  LocationUtil.fakeLongitude
+                        XposedBridge.log("\t Modified to: ${LocationUtil.fakeLongitude} (original method not executed)")
 
                     }
                 })
@@ -56,10 +57,10 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getAccuracy()")
-                        XposedBridge.log("\t Should modify: ${UserPreferences.getUseAccuracy()}")
-                        if ( LocationUtil.userAccuracy != null) {
-                            param.result =  LocationUtil.userAccuracy!!
-                            XposedBridge.log("\t Modified to: ${LocationUtil.userAccuracy} (original method not executed)")
+                        XposedBridge.log("\t Should modify: ${PreferencesUtil.getUseAccuracy()}")
+                        if (PreferencesUtil.getUseAccuracy() == true) {
+                            param.result =  LocationUtil.fakeAccuracy
+                            XposedBridge.log("\t Modified to: ${LocationUtil.fakeAccuracy} (original method not executed)")
                         }
                     }
                 })
@@ -71,10 +72,10 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getAltitude()")
-                        XposedBridge.log("\t Should modify: ${UserPreferences.getUseAltitude()}")
-                        if ( LocationUtil.userAltitude != null) {
-                            param.result =  LocationUtil.userAltitude!!
-                            XposedBridge.log("\t Modified to: ${LocationUtil.userAltitude} (original method not executed)")
+                        XposedBridge.log("\t Should modify: ${PreferencesUtil.getUseAltitude()}")
+                        if (PreferencesUtil.getUseAltitude() == true) {
+                            param.result =  LocationUtil.fakeAltitude
+                            XposedBridge.log("\t Modified to: ${LocationUtil.fakeAltitude} (original method not executed)")
                         }
                     }
                 })
@@ -87,9 +88,9 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method set(location)")
-                        val location =  LocationUtil.createMockLocation(param.args[0] as? Location)
-                        param.args[0] = location
-                        XposedBridge.log("\t Modified to: $location")
+                        val fakeLocation =  LocationUtil.createFakeLocation(param.args[0] as? Location)
+                        param.args[0] = fakeLocation
+                        XposedBridge.log("\t Modified to: $fakeLocation")
                     }
                 })
 
@@ -111,10 +112,10 @@ class LocationApiHooks(val appContext: Context, val appLpparam: LoadPackageParam
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getLastKnownLocation(provider)")
                         val provider = param.args[0] as String
-                        XposedBridge.log("\t Requested provider: $provider")
-                        val location =  LocationUtil.createMockLocation(provider = provider)
-                        param.result = location
-                        XposedBridge.log("\t Modified to: $location")
+                        XposedBridge.log("\t Requested data from: $provider")
+                        val fakeLocation =  LocationUtil.createFakeLocation(provider = provider)
+                        param.result = fakeLocation
+                        XposedBridge.log("\t Modified to: $fakeLocation")
                     }
                 })
 

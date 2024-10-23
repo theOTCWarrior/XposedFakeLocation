@@ -1,5 +1,5 @@
 // UserPreferences.kt
-package com.noobexon.xposedfakelocation.xposed
+package com.noobexon.xposedfakelocation.xposed.utils
 
 import com.google.gson.Gson
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
@@ -19,8 +19,8 @@ import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
 
-object UserPreferences {
-    private const val tag = "[UserPreferences]"
+object PreferencesUtil {
+    private const val TAG = "[PreferencesUtil]"
 
     private val preferences: XSharedPreferences = XSharedPreferences(MANAGER_APP_PACKAGE_NAME, SHARED_PREFS_FILE).apply {
         makeWorldReadable()
@@ -78,14 +78,14 @@ object UserPreferences {
                 if (json != null) {
                     try {
                         Gson().fromJson(json, T::class.java).also {
-                            XposedBridge.log("$tag Retrieved $key: $it")
+                            XposedBridge.log("$TAG Retrieved $key: $it")
                         }
                     } catch (e: Exception) {
-                        XposedBridge.log("$tag Error parsing $key JSON: ${e.message}")
+                        XposedBridge.log("$TAG Error parsing $key JSON: ${e.message}")
                         null
                     }
                 } else {
-                    XposedBridge.log("$tag $key not found in preferences.")
+                    XposedBridge.log("$TAG $key not found in preferences.")
                     null
                 }
             }

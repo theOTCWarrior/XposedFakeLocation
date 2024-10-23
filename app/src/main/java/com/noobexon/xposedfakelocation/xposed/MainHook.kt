@@ -6,6 +6,9 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
+import com.noobexon.xposedfakelocation.xposed.hooks.LocationApiHooks
+import com.noobexon.xposedfakelocation.xposed.hooks.SystemServicesHooks
+import com.noobexon.xposedfakelocation.xposed.utils.PreferencesUtil
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
@@ -26,7 +29,7 @@ class MainHook : IXposedHookLoadPackage {
         if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
 
         // If not playing or null, do not proceed with hooking
-        if (UserPreferences.getIsPlaying() != true) return
+        if (PreferencesUtil.getIsPlaying() != true) return
 
         // Hook system services if user asked for system wide hooks
         if (lpparam.packageName == "android") {
@@ -49,7 +52,7 @@ class MainHook : IXposedHookLoadPackage {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")
                         Toast.makeText(it, "Fake Location Is Active!", Toast.LENGTH_SHORT).show()
                     }
-                    locationApiHooks = LocationApiHooks(context, lpparam).also { it.initHooks() }
+                    locationApiHooks = LocationApiHooks(lpparam).also { it.initHooks() }
                 }
             }
         )

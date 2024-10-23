@@ -1,9 +1,10 @@
-package com.noobexon.xposedfakelocation.xposed
+package com.noobexon.xposedfakelocation.xposed.hooks
 
 import android.location.Location
 import android.location.LocationRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.noobexon.xposedfakelocation.xposed.utils.LocationUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
@@ -32,9 +33,9 @@ class SystemServicesHooks(val appLpparam: LoadPackageParam) {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         XposedBridge.log("$tag [SystemHook] Entered method getLastLocation(locationRequest, packageName)")
                         XposedBridge.log("\t Request comes from: ${param.args[1] as String}")
-                        val location = LocationUtil.createMockLocation()
-                        param.result = location
-                        XposedBridge.log("\t Modified to: $location (original method not executed)")
+                        val fakeLocation = LocationUtil.createFakeLocation()
+                        param.result = fakeLocation
+                        XposedBridge.log("\t Modified to: $fakeLocation (original method not executed)")
                     }
                 })
 
@@ -60,9 +61,9 @@ class SystemServicesHooks(val appLpparam: LoadPackageParam) {
                 object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         XposedBridge.log("$tag [SystemHook] Entered method callLocationChangedLocked(location)")
-                        val location = LocationUtil.createMockLocation(param.args[0] as? Location)
-                        param.args[0] = location
-                        XposedBridge.log("\t Modified to: $location")
+                        val fakeLocation = LocationUtil.createFakeLocation(param.args[0] as? Location)
+                        param.args[0] = fakeLocation
+                        XposedBridge.log("\t Modified to: $fakeLocation")
                     }
                 })
 
