@@ -4,6 +4,7 @@
 [![Platform](https://img.shields.io/badge/platform-Android-green.svg)]()
 
 **XposedFakeLocation** is an Android application and Xposed module that allows you to spoof your device's location globally or for specific apps. Customize your location with precision, including sensor data, and add randomization within a specified radius for enhanced privacy.
+**XposedFakeLocation** is free and forever will be. 
 
 ---
 
@@ -186,10 +187,10 @@ This application is intended for **development and testing purposes only**. Misu
 
 ## **Acknowledgements**
 
-- [Xposed Framework](https://repo.xposed.info/)
+- [GpsSetter](https://github.com/Android1500/GpsSetter) - Highly inspired by this amazing project!
+- [Xposed Framework](https://repo.xposed.info/) 
 - [LSPosed](https://github.com/LSPosed/LSPosed)
-- [OSMDroid](https://github.com/osmdroid/osmdroid)
-- [Jetpack Compose](https://developer.android.com/jetpack/compose)
+- [OSMDroid](https://github.com/osmdroid/osmdroid) 
 - [Contributors](https://github.com/yourusername/xposed-fake-location/graphs/contributors)
 
 
