@@ -38,13 +38,14 @@
 ## **Prerequisites**
 
 - **Rooted Android Device**: The app requires root access to function properly. That being said, you can try working with Xposed virtual environement on non rooted device.
-- **LSPosed or any other Xposed manager app**: Install the Xposed Framework compatible with your Android version.
-  - [Xposed Framework](https://repo.xposed.info/module/de.robv.android.xposed.installer)
+- **LSPosed**: Install the Xposed Framework compatible with your Android version.
   - [LSPosed](https://github.com/LSPosed/LSPosed)
 
 ---
 
 ## **Installation**
+
+You can always simply install the latest version from the releases page. If you want to build by yourself:
 
 1. **Clone or Download the Repository**
 
