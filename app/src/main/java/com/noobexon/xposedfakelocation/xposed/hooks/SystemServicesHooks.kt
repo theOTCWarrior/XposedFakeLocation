@@ -1,9 +1,9 @@
+// SystemServicesHooks.kt
 package com.noobexon.xposedfakelocation.xposed.hooks
 
 import android.location.Location
 import android.location.LocationRequest
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.xposed.utils.LocationUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
@@ -11,7 +11,6 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
-@RequiresApi(Build.VERSION_CODES.S)
 class SystemServicesHooks(val appLpparam: LoadPackageParam) {
     private val tag = "[SystemServicesHooks]"
 
@@ -24,20 +23,24 @@ class SystemServicesHooks(val appLpparam: LoadPackageParam) {
         try {
             val locationManagerServiceClass = XposedHelpers.findClass("com.android.server.LocationManagerService", classLoader)
 
-            XposedHelpers.findAndHookMethod(
-                locationManagerServiceClass,
-                "getLastLocation",
-                LocationRequest::class.java,
-                String::class.java,
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        XposedBridge.log("$tag [SystemHook] Entered method getLastLocation(locationRequest, packageName)")
-                        XposedBridge.log("\t Request comes from: ${param.args[1] as String}")
-                        val fakeLocation = LocationUtil.createFakeLocation()
-                        param.result = fakeLocation
-                        XposedBridge.log("\t Modified to: $fakeLocation (original method not executed)")
-                    }
-                })
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                XposedHelpers.findAndHookMethod(
+                    locationManagerServiceClass,
+                    "getLastLocation",
+                    LocationRequest::class.java,
+                    String::class.java,
+                    object : XC_MethodHook() {
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            XposedBridge.log("$tag [SystemHook] Entered method getLastLocation(locationRequest, packageName)")
+                            XposedBridge.log("\t Request comes from: ${param.args[1] as String}")
+                            val fakeLocation = LocationUtil.createFakeLocation()
+                            param.result = fakeLocation
+                            XposedBridge.log("\t Modified to: $fakeLocation (original method not executed)")
+                        }
+                    })
+            } else {
+                XposedBridge.log("$tag API level too low. System services hooks are not available.")
+            }
 
             val methodsToReplace = arrayOf(
                 "addGnssBatchingCallback",

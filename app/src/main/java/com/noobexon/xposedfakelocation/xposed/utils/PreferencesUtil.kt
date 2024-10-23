@@ -1,4 +1,4 @@
-// UserPreferences.kt
+// PreferencesUtil.kt
 package com.noobexon.xposedfakelocation.xposed.utils
 
 import com.google.gson.Gson

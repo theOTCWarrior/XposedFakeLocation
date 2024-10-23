@@ -1,10 +1,9 @@
+// MainHook.kt
 package com.noobexon.xposedfakelocation.xposed
 
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
 import com.noobexon.xposedfakelocation.xposed.hooks.LocationApiHooks
 import com.noobexon.xposedfakelocation.xposed.hooks.SystemServicesHooks
@@ -23,7 +22,6 @@ class MainHook : IXposedHookLoadPackage {
     private var locationApiHooks: LocationApiHooks? = null
     private var systemServicesHooks: SystemServicesHooks? = null
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun handleLoadPackage(lpparam: LoadPackageParam) {
         // Avoid hooking own app to prevent recursion
         if (lpparam.packageName == MANAGER_APP_PACKAGE_NAME) return
@@ -46,7 +44,6 @@ class MainHook : IXposedHookLoadPackage {
             "callApplicationOnCreate",
             Application::class.java,
             object : XC_MethodHook() {
-                @RequiresApi(Build.VERSION_CODES.S)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     context = (param.args[0] as Application).applicationContext.also {
                         XposedBridge.log("$tag Target App's context has been acquired successfully.")

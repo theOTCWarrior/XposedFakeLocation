@@ -1,3 +1,4 @@
+// LocationUtil.kt
 package com.noobexon.xposedfakelocation.xposed.utils
 
 import android.location.Location
