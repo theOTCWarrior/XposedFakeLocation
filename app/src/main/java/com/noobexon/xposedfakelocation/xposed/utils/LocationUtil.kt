@@ -29,6 +29,7 @@ object LocationUtil {
     var fakeAltitude: Double = 0.0
     var randomizationRadius: Double = 0.0
 
+    @Synchronized
     fun createFakeLocation(originalLocation: Location? = null, provider: String = LocationManager.GPS_PROVIDER): Location {
         val fakeLocation = if (originalLocation == null) {
             Location(provider).apply {
@@ -73,6 +74,7 @@ object LocationUtil {
         }
     }
 
+    @Synchronized
     fun updateLocation() {
         try {
             PreferencesUtil.getLastClickedLocation()?.let {
