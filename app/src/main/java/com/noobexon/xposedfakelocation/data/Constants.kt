@@ -26,8 +26,8 @@ const val DEFAULT_ACCURACY = 0.0
 const val DEFAULT_USE_ALTITUDE = false
 const val DEFAULT_ALTITUDE = 0.0
 
-const val DEFAULT_USE_RANDOMIZE = true
-const val DEFAULT_RANDOMIZE_RADIUS = 3.0
+const val DEFAULT_USE_RANDOMIZE = false
+const val DEFAULT_RANDOMIZE_RADIUS = 0.0
 
 // MATH & PHYS
 const val PI = 3.14159265359
