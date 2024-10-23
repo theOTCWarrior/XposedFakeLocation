@@ -42,7 +42,7 @@
 
 ## **Installation**
 
-You can always simply install the latest version from the releases page. If you want to build by yourself:
+You can always install the latest stable version from the releases page. If you want to build by yourself:
 
 1. **Clone or Download the Repository**
 
