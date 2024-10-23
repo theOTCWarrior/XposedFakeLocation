@@ -73,7 +73,7 @@ You can always install the latest stable version from the releases page. If you 
 
    - Open **Xposed Installer** or **LSPosed Manager**.
    - Enable the **XposedFakeLocation** module.
-   - Reboot your device to apply changes.
+   - If you decide to apply the module system wide, Reboot your device to apply changes.
 
 ---
 
