@@ -11,7 +11,6 @@
 ## **Table of Contents**
 
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -33,24 +32,13 @@
 - **Altitude and Accuracy Settings**: Customize altitude and accuracy values.
 - **Randomization**: Add random offsets within a specified radius for enhanced privacy.
 - **User-Friendly Interface**: Intuitive design for easy configuration.
-- **Open Source**: Contributions are welcome!
-
----
-
-## **Screenshots**
-
-<p align="center">
-  <img src="screenshots/main_screen.png" alt="Main Screen" width="250">
-  <img src="screenshots/settings_screen.png" alt="Settings Screen" width="250">
-  <img src="screenshots/map_view.png" alt="Map View" width="250">
-</p>
 
 ---
 
 ## **Prerequisites**
 
-- **Rooted Android Device**: The app requires root access to function properly.
-- **Xposed Framework or LSPosed**: Install the Xposed Framework compatible with your Android version.
+- **Rooted Android Device**: The app requires root access to function properly. That being said, you can try working with Xposed virtual environement on non rooted device.
+- **LSPosed or any other Xposed manager app**: Install the Xposed Framework compatible with your Android version.
   - [Xposed Framework](https://repo.xposed.info/module/de.robv.android.xposed.installer)
   - [LSPosed](https://github.com/LSPosed/LSPosed)
 
