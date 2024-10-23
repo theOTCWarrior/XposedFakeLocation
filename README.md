@@ -26,7 +26,7 @@
 
 ## **Features**
 
-- **Global Location Spoofing**: Override your device's location data system-wide.
+- **Global Location Spoofing**: Override your device's location data system-wide (Requires Android 11+).
 - **Per-App Location Control**: Apply location spoofing to specific applications.
 - **Custom Coordinates**: Set precise latitude and longitude.
 - **Altitude and Accuracy Settings**: Customize altitude and accuracy values.
