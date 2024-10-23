@@ -118,8 +118,9 @@ object LocationUtil {
         val xOffset = w * cos(t)
         val yOffset = w * sin(t)
 
-        val newLat = lat + yOffset
-        val newLon = lon + xOffset / cos(lat * PI / 180)
+        var newLat = (lat + yOffset).coerceIn(-90.0, 90.0)
+        var newLon = lon + xOffset / cos(lat * PI / 180)
+        newLon = ((newLon + 180) % 360 + 360) % 360 - 180   // Normalize longitude to -180 to 180
 
         return Pair(newLat, newLon)
     }
