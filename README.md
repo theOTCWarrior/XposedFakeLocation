@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/github/license/yourusername/xposed-fake-location)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android-green.svg)]()
-[![API](https://img.shields.io/badge/API-21%2B-blue.svg)]()
 
 **XposedFakeLocation** is an Android application and Xposed module that allows you to spoof your device's location globally or for specific apps. Customize your location with precision, including sensor data, and add randomization within a specified radius for enhanced privacy.
 
@@ -16,11 +15,9 @@
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Development](#development)
-- [Contributing](#contributing)
 - [License](#license)
 - [Disclaimer](#disclaimer)
 - [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
 
 ---
 
@@ -75,7 +72,7 @@ You can always simply install the latest version from the releases page. If you 
 4. **Activate the Xposed Module**
 
    - Open **Xposed Installer** or **LSPosed Manager**.
-   - Enable the **Xposed Fake Location** module.
+   - Enable the **XposedFakeLocation** module.
    - Reboot your device to apply changes.
 
 ---
@@ -84,7 +81,7 @@ You can always simply install the latest version from the releases page. If you 
 
 1. **Launch the App**
 
-   - Open **Xposed Fake Location** from your app drawer.
+   - Open **XposedFakeLocation** from your app drawer.
 
 2. **Select a Location**
 
@@ -102,7 +99,7 @@ You can always simply install the latest version from the releases page. If you 
 4. **Start Spoofing**
 
    - Toggle the **Start** button to begin location spoofing.
-   - The app will now override your device's location data.
+   - The app will now override your device's location data based on the target(s) specified in the Xpsoed manager app.
 
 5. **Stop Spoofing**
 
@@ -127,11 +124,12 @@ You can always simply install the latest version from the releases page. If you 
 - **Randomization Radius**
 
   - Set the radius in meters to randomize your location within a circle around the selected point.
-  - **Value**: Enter `0` to disable randomization.
+  - **Value**: specify the radius in meters.
 
 ### **Favorites**
 
 - Save frequently used locations for quick access.
+- If a marker is already present on the map, the coordinates for the new favorite location will automatically be copied to the fields from it.
 - Manage your favorites by adding or removing locations.
 
 ---
@@ -144,11 +142,6 @@ You can always simply install the latest version from the releases page. If you 
 - **Jetpack Compose**: Modern toolkit for building native Android UI.
 - **Xposed API**: Framework for runtime modification of system and app behavior.
 - **OSMDroid**: Open-source map rendering engine for Android.
-
-### **Project Structure**
-
-- **App Module**: Contains the main application code and UI.
-- **Xposed Module**: Contains the hooks and modifications applied via Xposed.
 
 ### **Prerequisites**
 
@@ -179,38 +172,6 @@ You can always simply install the latest version from the releases page. If you 
 
 ---
 
-## **Contributing**
-
-Contributions are what make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. **Fork the Project**
-
-   ```bash
-   git fork https://github.com/yourusername/xposed-fake-location.git
-   ```
-
-2. **Create Your Feature Branch**
-
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-
-3. **Commit Your Changes**
-
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-
-4. **Push to the Branch**
-
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-
-5. **Open a Pull Request**
-
----
-
 ## **License**
 
 Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
@@ -231,10 +192,4 @@ This application is intended for **development and testing purposes only**. Misu
 - [Jetpack Compose](https://developer.android.com/jetpack/compose)
 - [Contributors](https://github.com/yourusername/xposed-fake-location/graphs/contributors)
 
----
 
-## **Contact**
-
-**Your Name** - [@your_twitter](https://twitter.com/your_twitter) - your.email@example.com
-
-Project Link: [https://github.com/yourusername/xposed-fake-location](https://github.com/yourusername/xposed-fake-location)
