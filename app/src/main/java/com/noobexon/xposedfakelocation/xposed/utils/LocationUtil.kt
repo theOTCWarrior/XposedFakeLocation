@@ -22,7 +22,6 @@ object LocationUtil {
 
     private val random: Random = Random()
 
-    var lastUpdateTime: Long = 0
     var fakeLatitude: Double = 0.0
     var fakeLongitude: Double = 0.0
     var fakeAccuracy: Float = 0F
@@ -78,8 +77,6 @@ object LocationUtil {
     fun updateLocation() {
         try {
             PreferencesUtil.getLastClickedLocation()?.let {
-                lastUpdateTime = System.currentTimeMillis()
-
                 if (PreferencesUtil.getUseAccuracy() == true) {
                     fakeAccuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
                 }
