@@ -18,11 +18,11 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
     }
 
     private fun hookLocationAPI() {
-        hookLocationClass(appLpparam.classLoader)
+        hookLocation(appLpparam.classLoader)
         hookLocationManager(appLpparam.classLoader)
     }
 
-    private fun hookLocationClass(classLoader: ClassLoader) {
+    private fun hookLocation(classLoader: ClassLoader) {
         try {
             val locationClass = XposedHelpers.findClass("android.location.Location", classLoader)
 
@@ -58,7 +58,6 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getAccuracy()")
-                        XposedBridge.log("\t Should modify: ${PreferencesUtil.getUseAccuracy()}")
                         if (PreferencesUtil.getUseAccuracy() == true) {
                             param.result =  LocationUtil.fakeAccuracy
                             XposedBridge.log("\t Modified to: ${LocationUtil.fakeAccuracy} (original method not executed)")
@@ -73,7 +72,6 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
                         XposedBridge.log("$tag Entered method getAltitude()")
-                        XposedBridge.log("\t Should modify: ${PreferencesUtil.getUseAltitude()}")
                         if (PreferencesUtil.getUseAltitude() == true) {
                             param.result =  LocationUtil.fakeAltitude
                             XposedBridge.log("\t Modified to: ${LocationUtil.fakeAltitude} (original method not executed)")
