@@ -12,7 +12,7 @@
 
 
 <div align="center">
-    <img src="images/xposedfakelocation.webp" alt="App Logo" width="512" />
+    <img src="images/xposedfakelocation.webp" alt="App Logo" width="256" />
 </div>
 
 
