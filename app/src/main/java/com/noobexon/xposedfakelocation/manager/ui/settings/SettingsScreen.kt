@@ -33,86 +33,102 @@ fun SettingsScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    val settings = listOf(
+    val settings = listOf<SettingData>(
         // Randomize Nearby Location
-        SettingData(
+        DoubleSettingData(
             title = "Randomize Nearby Location",
             useValueState = settingsViewModel.useRandomize.collectAsState(),
             valueState = settingsViewModel.randomizeRadius.collectAsState(),
             setUseValue = settingsViewModel::setUseRandomize,
             setValue = settingsViewModel::setRandomizeRadius,
             label = "Randomization Radius (m)",
-            isDouble = true
+            minValue = 0f,
+            maxValue = 50f,
+            step = 0.1f
         ),
         // Custom Horizontal Accuracy
-        SettingData(
+        DoubleSettingData(
             title = "Custom Horizontal Accuracy",
             useValueState = settingsViewModel.useAccuracy.collectAsState(),
             valueState = settingsViewModel.accuracy.collectAsState(),
             setUseValue = settingsViewModel::setUseAccuracy,
             setValue = settingsViewModel::setAccuracy,
             label = "Horizontal Accuracy (m)",
-            isDouble = true
+            minValue = 0f,
+            maxValue = 100f,
+            step = 1f
         ),
         // Custom Vertical Accuracy
-        SettingData(
+        FloatSettingData(
             title = "Custom Vertical Accuracy",
             useValueState = settingsViewModel.useVerticalAccuracy.collectAsState(),
             valueState = settingsViewModel.verticalAccuracy.collectAsState(),
             setUseValue = settingsViewModel::setUseVerticalAccuracy,
             setValue = settingsViewModel::setVerticalAccuracy,
             label = "Vertical Accuracy (m)",
-            isDouble = false
+            minValue = 0f,
+            maxValue = 100f,
+            step = 1f
         ),
         // Custom Altitude
-        SettingData(
+        DoubleSettingData(
             title = "Custom Altitude",
             useValueState = settingsViewModel.useAltitude.collectAsState(),
             valueState = settingsViewModel.altitude.collectAsState(),
             setUseValue = settingsViewModel::setUseAltitude,
             setValue = settingsViewModel::setAltitude,
             label = "Altitude (m)",
-            isDouble = true
+            minValue = 0f,
+            maxValue = 2000f,
+            step = 0.5f
         ),
         // Custom MSL
-        SettingData(
+        DoubleSettingData(
             title = "Custom MSL",
             useValueState = settingsViewModel.useMeanSeaLevel.collectAsState(),
             valueState = settingsViewModel.meanSeaLevel.collectAsState(),
             setUseValue = settingsViewModel::setUseMeanSeaLevel,
             setValue = settingsViewModel::setMeanSeaLevel,
             label = "MSL (m)",
-            isDouble = true
+            minValue = -400f,
+            maxValue = 2000f,
+            step = 0.5f
         ),
         // Custom MSL Accuracy
-        SettingData(
+        FloatSettingData(
             title = "Custom MSL Accuracy",
             useValueState = settingsViewModel.useMeanSeaLevelAccuracy.collectAsState(),
             valueState = settingsViewModel.meanSeaLevelAccuracy.collectAsState(),
             setUseValue = settingsViewModel::setUseMeanSeaLevelAccuracy,
             setValue = settingsViewModel::setMeanSeaLevelAccuracy,
             label = "MSL Accuracy (m)",
-            isDouble = false
+            minValue = 0f,
+            maxValue = 100f,
+            step = 1f
         ),
         // Custom Speed
-        SettingData(
+        FloatSettingData(
             title = "Custom Speed",
             useValueState = settingsViewModel.useSpeed.collectAsState(),
             valueState = settingsViewModel.speed.collectAsState(),
             setUseValue = settingsViewModel::setUseSpeed,
             setValue = settingsViewModel::setSpeed,
             label = "Speed (m/s)",
-            isDouble = false
+            minValue = 0f,
+            maxValue = 30f,
+            step = 0.1f
         ),
         // Custom Speed Accuracy
-        SettingData(
+        FloatSettingData(
             title = "Custom Speed Accuracy",
             useValueState = settingsViewModel.useSpeedAccuracy.collectAsState(),
             valueState = settingsViewModel.speedAccuracy.collectAsState(),
             setUseValue = settingsViewModel::setUseSpeedAccuracy,
             setValue = settingsViewModel::setSpeedAccuracy,
             label = "Speed Accuracy (m/s)",
-            isDouble = false
+            minValue = 0f,
+            maxValue = 100f,
+            step = 1f
         )
     )
 
@@ -150,16 +166,13 @@ fun SettingsScreen(
                     .verticalScroll(scrollState)
             ) {
                 settings.forEach { setting ->
-                    if (setting.isDouble) {
-                        DoubleSettingComposable(
-                            setting = setting as SettingData<Double>,
-                            focusManager = focusManager
-                        )
-                    } else {
-                        FloatSettingComposable(
-                            setting = setting as SettingData<Float>,
-                            focusManager = focusManager
-                        )
+                    when (setting) {
+                        is DoubleSettingData -> {
+                            DoubleSettingComposable(setting)
+                        }
+                        is FloatSettingData -> {
+                            FloatSettingComposable(setting)
+                        }
                     }
                 }
             }
@@ -172,24 +185,25 @@ fun DoubleSettingItem(
     title: String,
     useValue: Boolean,
     onUseValueChange: (Boolean) -> Unit,
+    value: Double,
     onValueChange: (Double) -> Unit,
-    valueInput: String,
-    onValueInputChange: (String) -> Unit,
     label: String,
-    isError: Boolean,
-    focusManager: FocusManager
+    minValue: Float,
+    maxValue: Float,
+    step: Float
 ) {
     SettingItem(
         title = title,
         useValue = useValue,
         onUseValueChange = onUseValueChange,
-        valueInput = valueInput,
-        onValueInputChange = onValueInputChange,
+        value = value,
+        onValueChange = onValueChange,
         label = label,
-        isError = isError,
-        parseValue = String::toDoubleOrNull,
-        onParsedValueChange = onValueChange,
-        focusManager = focusManager
+        minValue = minValue,
+        maxValue = maxValue,
+        step = step,
+        valueFormatter = { "%.2f".format(it) },
+        parseValue = { it.toDouble() }
     )
 }
 
@@ -198,137 +212,146 @@ fun FloatSettingItem(
     title: String,
     useValue: Boolean,
     onUseValueChange: (Boolean) -> Unit,
+    value: Float,
     onValueChange: (Float) -> Unit,
-    valueInput: String,
-    onValueInputChange: (String) -> Unit,
     label: String,
-    isError: Boolean,
-    focusManager: FocusManager
+    minValue: Float,
+    maxValue: Float,
+    step: Float
 ) {
     SettingItem(
         title = title,
         useValue = useValue,
         onUseValueChange = onUseValueChange,
-        valueInput = valueInput,
-        onValueInputChange = onValueInputChange,
+        value = value,
+        onValueChange = onValueChange,
         label = label,
-        isError = isError,
-        parseValue = String::toFloatOrNull,
-        onParsedValueChange = onValueChange,
-        focusManager = focusManager
+        minValue = minValue,
+        maxValue = maxValue,
+        step = step,
+        valueFormatter = { "%.2f".format(it) },
+        parseValue = { it }
     )
 }
 
 @Composable
-private fun <T> SettingItem(
+private fun <T : Number> SettingItem(
     title: String,
     useValue: Boolean,
     onUseValueChange: (Boolean) -> Unit,
-    valueInput: String,
-    onValueInputChange: (String) -> Unit,
+    value: T,
+    onValueChange: (T) -> Unit,
     label: String,
-    isError: Boolean,
-    parseValue: (String) -> T?,
-    onParsedValueChange: (T) -> Unit,
-    focusManager: FocusManager
+    minValue: Float,
+    maxValue: Float,
+    step: Float,
+    valueFormatter: (T) -> String,
+    parseValue: (Float) -> T
 ) {
-    Spacer(modifier = Modifier.height(16.dp))
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(title)
-        Spacer(modifier = Modifier.weight(1f))
-        Switch(
-            checked = useValue,
-            onCheckedChange = onUseValueChange
-        )
-    }
-
-    if (useValue) {
-        OutlinedTextField(
-            value = valueInput,
-            onValueChange = {
-                onValueInputChange(it)
-                val parsedValue = parseValue(it)
-                if (parsedValue != null) {
-                    onParsedValueChange(parsedValue)
-                }
-            },
-            label = { Text(label) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            isError = isError,
-            singleLine = true,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = useValue,
+                onCheckedChange = onUseValueChange
+            )
+        }
+
+        if (useValue) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "$label: ${valueFormatter(value)}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            Slider(
+                value = value.toFloat(),
+                onValueChange = { newValue ->
+                    onValueChange(parseValue(newValue))
+                },
+                valueRange = minValue..maxValue,
+                steps = ((maxValue - minValue) / step).toInt() - 1,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
-data class SettingData<T>(
-    val title: String,
-    val useValueState: State<Boolean>,
-    val valueState: State<T>,
-    val setUseValue: (Boolean) -> Unit,
-    val setValue: (T) -> Unit,
-    val label: String,
-    val isDouble: Boolean
-)
+sealed class SettingData {
+    abstract val title: String
+    abstract val useValueState: State<Boolean>
+    abstract val setUseValue: (Boolean) -> Unit
+    abstract val label: String
+    abstract val minValue: Float
+    abstract val maxValue: Float
+    abstract val step: Float
+}
+
+data class DoubleSettingData(
+    override val title: String,
+    override val useValueState: State<Boolean>,
+    val valueState: State<Double>,
+    override val setUseValue: (Boolean) -> Unit,
+    val setValue: (Double) -> Unit,
+    override val label: String,
+    override val minValue: Float,
+    override val maxValue: Float,
+    override val step: Float
+) : SettingData()
+
+data class FloatSettingData(
+    override val title: String,
+    override val useValueState: State<Boolean>,
+    val valueState: State<Float>,
+    override val setUseValue: (Boolean) -> Unit,
+    val setValue: (Float) -> Unit,
+    override val label: String,
+    override val minValue: Float,
+    override val maxValue: Float,
+    override val step: Float
+) : SettingData()
 
 @Composable
 fun DoubleSettingComposable(
-    setting: SettingData<Double>,
-    focusManager: FocusManager
+    setting: DoubleSettingData
 ) {
-    var valueInput by remember { mutableStateOf(setting.valueState.value.toString()) }
-    val isError = valueInput.toDoubleOrNull() == null
-
-    LaunchedEffect(setting.valueState.value) {
-        if (setting.valueState.value.toString() != valueInput) {
-            valueInput = setting.valueState.value.toString()
-        }
-    }
-
     DoubleSettingItem(
         title = setting.title,
         useValue = setting.useValueState.value,
         onUseValueChange = setting.setUseValue,
+        value = setting.valueState.value,
         onValueChange = setting.setValue,
-        valueInput = valueInput,
-        onValueInputChange = { valueInput = it },
         label = setting.label,
-        isError = isError,
-        focusManager = focusManager
+        minValue = setting.minValue,
+        maxValue = setting.maxValue,
+        step = setting.step
     )
 }
 
 @Composable
 fun FloatSettingComposable(
-    setting: SettingData<Float>,
-    focusManager: FocusManager
+    setting: FloatSettingData
 ) {
-    var valueInput by remember { mutableStateOf(setting.valueState.value.toString()) }
-    val isError = valueInput.toFloatOrNull() == null
-
-    LaunchedEffect(setting.valueState.value) {
-        if (setting.valueState.value.toString() != valueInput) {
-            valueInput = setting.valueState.value.toString()
-        }
-    }
-
     FloatSettingItem(
         title = setting.title,
         useValue = setting.useValueState.value,
         onUseValueChange = setting.setUseValue,
+        value = setting.valueState.value,
         onValueChange = setting.setValue,
-        valueInput = valueInput,
-        onValueInputChange = { valueInput = it },
         label = setting.label,
-        isError = isError,
-        focusManager = focusManager
+        minValue = setting.minValue,
+        maxValue = setting.maxValue,
+        step = setting.step
     )
 }
