@@ -269,16 +269,30 @@ private fun <T : Number> SettingItem(
         if (useValue) {
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Local state to track the slider's value
+            var sliderValue by remember { mutableStateOf(value.toFloat()) }
+
+            // Synchronize sliderValue with external value changes
+            LaunchedEffect(value) {
+                if (sliderValue != value.toFloat()) {
+                    sliderValue = value.toFloat()
+                }
+            }
+
+            // Display the current value
             Text(
-                text = "$label: ${valueFormatter(value)}",
+                text = "$label: ${valueFormatter(parseValue(sliderValue))}",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
             Slider(
-                value = value.toFloat(),
+                value = sliderValue,
                 onValueChange = { newValue ->
-                    onValueChange(parseValue(newValue))
+                    sliderValue = newValue // Update local state
+                },
+                onValueChangeFinished = {
+                    onValueChange(parseValue(sliderValue)) // Update ViewModel when interaction ends
                 },
                 valueRange = minValue..maxValue,
                 steps = ((maxValue - minValue) / step).toInt() - 1,
