@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +41,28 @@ fun SettingsScreen(
     val randomizeRadius by settingsViewModel.randomizeRadius.collectAsState()
     var randomizeRadiusInput by remember { mutableStateOf(randomizeRadius.toString()) }
 
+    val useVerticalAccuracy by settingsViewModel.useVerticalAccuracy.collectAsState()
+    val verticalAccuracy by settingsViewModel.verticalAccuracy.collectAsState()
+    var verticalAccuracyInput by remember { mutableStateOf(verticalAccuracy.toString()) }
+
+    val useMeanSeaLevel by settingsViewModel.useMeanSeaLevel.collectAsState()
+    val meanSeaLevel by settingsViewModel.meanSeaLevel.collectAsState()
+    var meanSeaLevelInput by remember { mutableStateOf(meanSeaLevel.toString()) }
+
+    val useMeanSeaLevelAccuracy by settingsViewModel.useMeanSeaLevelAccuracy.collectAsState()
+    val meanSeaLevelAccuracy by settingsViewModel.meanSeaLevelAccuracy.collectAsState()
+    var meanSeaLevelAccuracyInput by remember { mutableStateOf(meanSeaLevelAccuracy.toString()) }
+
+    val useSpeed by settingsViewModel.useSpeed.collectAsState()
+    val speed by settingsViewModel.speed.collectAsState()
+    var speedInput by remember { mutableStateOf(speed.toString()) }
+
+    val useSpeedAccuracy by settingsViewModel.useSpeedAccuracy.collectAsState()
+    val speedAccuracy by settingsViewModel.speedAccuracy.collectAsState()
+    var speedAccuracyInput by remember { mutableStateOf(speedAccuracy.toString()) }
+
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(accuracy) {
         if (accuracy.toString() != accuracyInput) {
@@ -56,6 +79,36 @@ fun SettingsScreen(
     LaunchedEffect(randomizeRadius) {
         if (randomizeRadius.toString() != randomizeRadiusInput) {
             randomizeRadiusInput = randomizeRadius.toString()
+        }
+    }
+
+    LaunchedEffect(verticalAccuracy) {
+        if (verticalAccuracy.toString() != verticalAccuracyInput) {
+            verticalAccuracyInput = verticalAccuracy.toString()
+        }
+    }
+
+    LaunchedEffect(meanSeaLevel) {
+        if (meanSeaLevel.toString() != meanSeaLevelInput) {
+            meanSeaLevelInput = meanSeaLevel.toString()
+        }
+    }
+
+    LaunchedEffect(meanSeaLevelAccuracy) {
+        if (meanSeaLevelAccuracy.toString() != meanSeaLevelAccuracyInput) {
+            meanSeaLevelAccuracyInput = meanSeaLevelAccuracy.toString()
+        }
+    }
+
+    LaunchedEffect(speed) {
+        if (speed.toString() != speedInput) {
+            speedInput = speed.toString()
+        }
+    }
+
+    LaunchedEffect(speedAccuracy) {
+        if (speedAccuracy.toString() != speedAccuracyInput) {
+            speedAccuracyInput = speedAccuracy.toString()
         }
     }
 
@@ -92,12 +145,13 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
+                    .verticalScroll(scrollState)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Use Custom Accuracy")
+                    Text("Custom Horizontal Accuracy")
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
                         checked = useAccuracy,
@@ -115,7 +169,7 @@ fun SettingsScreen(
                                 settingsViewModel.setAccuracy(value)
                             }
                         },
-                        label = { Text("Accuracy (meters)") },
+                        label = { Text("Horizontal Accuracy (m)") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
@@ -129,6 +183,46 @@ fun SettingsScreen(
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Custom Vertical Accuracy")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = useVerticalAccuracy,
+                        onCheckedChange = { settingsViewModel.setUseVerticalAccuracy(it) }
+                    )
+                }
+
+                if (useVerticalAccuracy) {
+                    OutlinedTextField(
+                        value = verticalAccuracyInput,
+                        onValueChange = {
+                            verticalAccuracyInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setVerticalAccuracy(value)
+                            }
+                        },
+                        label = { Text("Vertical Accuracy (m)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = verticalAccuracyInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
@@ -156,7 +250,7 @@ fun SettingsScreen(
                                 settingsViewModel.setAltitude(value)
                             }
                         },
-                        label = { Text("Altitude (meters)") },
+                        label = { Text("Altitude (m)") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
@@ -183,7 +277,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     Switch(
                         checked = useRandomize,
-                        onCheckedChange = { settingsViewModel.setRandomize(it) }
+                        onCheckedChange = { settingsViewModel.setUseRandomize(it) }
                     )
                 }
 
@@ -197,7 +291,7 @@ fun SettingsScreen(
                                 settingsViewModel.setRandomizeRadius(value)
                             }
                         },
-                        label = { Text("Randomization Radius (meters)") },
+                        label = { Text("Randomization Radius (m)") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
@@ -211,6 +305,166 @@ fun SettingsScreen(
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Use Custom Mean Sea Level")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = useMeanSeaLevel,
+                        onCheckedChange = { settingsViewModel.setUseMeanSeaLevel(it) }
+                    )
+                }
+
+                if (useMeanSeaLevel) {
+                    OutlinedTextField(
+                        value = meanSeaLevelInput,
+                        onValueChange = {
+                            meanSeaLevelInput = it
+                            val value = it.toDoubleOrNull()
+                            if (value != null) {
+                                settingsViewModel.setMeanSeaLevel(value)
+                            }
+                        },
+                        label = { Text("Mean Sea Level (m)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = meanSeaLevelInput.toDoubleOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Use Mean Sea Level Accuracy")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = useMeanSeaLevelAccuracy,
+                        onCheckedChange = { settingsViewModel.setUseMeanSeaLevelAccuracy(it) }
+                    )
+                }
+
+                if (useMeanSeaLevelAccuracy) {
+                    OutlinedTextField(
+                        value = meanSeaLevelAccuracyInput,
+                        onValueChange = {
+                            meanSeaLevelAccuracyInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setMeanSeaLevelAccuracy(value)
+                            }
+                        },
+                        label = { Text("Mean Sea Level Accuracy (m)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = meanSeaLevelAccuracyInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Use Custom Speed")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = useSpeed,
+                        onCheckedChange = { settingsViewModel.setUseSpeed(it) }
+                    )
+                }
+
+                if (useSpeed) {
+                    OutlinedTextField(
+                        value = speedInput,
+                        onValueChange = {
+                            speedInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setSpeed(value)
+                            }
+                        },
+                        label = { Text("Speed (m/s)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = speedInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Use Speed Accuracy")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = useSpeedAccuracy,
+                        onCheckedChange = { settingsViewModel.setUseSpeedAccuracy(it) }
+                    )
+                }
+
+                if (useSpeedAccuracy) {
+                    OutlinedTextField(
+                        value = speedAccuracyInput,
+                        onValueChange = {
+                            speedAccuracyInput = it
+                            val value = it.toFloatOrNull()
+                            if (value != null) {
+                                settingsViewModel.setSpeedAccuracy(value)
+                            }
+                        },
+                        label = { Text("Speed Accuracy (m/s)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = speedAccuracyInput.toFloatOrNull() == null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
