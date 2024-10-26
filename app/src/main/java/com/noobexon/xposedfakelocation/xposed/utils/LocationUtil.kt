@@ -24,11 +24,10 @@ object LocationUtil {
 
     private val random: Random = Random()
 
-    var fakeLatitude: Double = 0.0
-    var fakeLongitude: Double = 0.0
-    var fakeAccuracy: Float = 0F
-    var fakeAltitude: Double = 0.0
-    var randomizationRadius: Double = 0.0
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    var accuracy: Float = 0F
+    var altitude: Double = 0.0
 
     @Synchronized
     fun createFakeLocation(originalLocation: Location? = null, provider: String = LocationManager.GPS_PROVIDER): Location {
@@ -47,15 +46,15 @@ object LocationUtil {
             }
         }
 
-        fakeLocation.latitude = fakeLatitude
-        fakeLocation.longitude = fakeLongitude
+        fakeLocation.latitude = latitude
+        fakeLocation.longitude = longitude
 
-        if (fakeAccuracy != 0F) {
-            fakeLocation.accuracy = fakeAccuracy
+        if (accuracy != 0F) {
+            fakeLocation.accuracy = accuracy
         }
 
-        if (fakeAltitude != 0.0) {
-            fakeLocation.altitude = fakeAltitude
+        if (altitude != 0.0) {
+            fakeLocation.altitude = altitude
         }
 
         fakeLocation.speed = 0F
@@ -80,28 +79,28 @@ object LocationUtil {
         try {
             PreferencesUtil.getLastClickedLocation()?.let {
                 if (PreferencesUtil.getUseAccuracy() == true) {
-                    fakeAccuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
+                    accuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
                 }
 
                  if (PreferencesUtil.getUseAltitude() == true) {
-                     fakeAltitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
+                     altitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
                 }
 
                 if (PreferencesUtil.getUseRandomize() == true) {
-                    randomizationRadius = PreferencesUtil.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
+                    val randomizationRadius = PreferencesUtil.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
                     val randomLocation = getRandomLocation(it.latitude, it.longitude, randomizationRadius)
-                    fakeLatitude = randomLocation.first
-                    fakeLongitude = randomLocation.second
+                    latitude = randomLocation.first
+                    longitude = randomLocation.second
                 } else {
-                    fakeLatitude = it.latitude
-                    fakeLongitude = it.longitude
+                    latitude = it.latitude
+                    longitude = it.longitude
                 }
 
                 if (DEBUG) {
                     XposedBridge.log("$TAG Updated fake location values to:")
-                    XposedBridge.log("\t coordinates: (latitude = $fakeLatitude, longitude = $fakeLongitude)")
-                    XposedBridge.log("\t accuracy: $fakeAccuracy")
-                    XposedBridge.log("\t altitude: $fakeAltitude")
+                    XposedBridge.log("\t coordinates: (latitude = $latitude, longitude = $longitude)")
+                    XposedBridge.log("\t accuracy: $accuracy")
+                    XposedBridge.log("\t altitude: $altitude")
                 }
             } ?: XposedBridge.log("$TAG Last clicked location is null")
         } catch (e: Exception) {

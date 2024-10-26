@@ -30,11 +30,12 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                 locationClass,
                 "getLatitude",
                 object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
+                    override fun afterHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method getLatitude()")
-                        param.result = LocationUtil.fakeLatitude
-                        XposedBridge.log("\t Modified to: ${LocationUtil.fakeLatitude} (original method not executed)")
+                        XposedBridge.log("$tag Leaving method getLatitude()")
+                        XposedBridge.log("\t Original latitude: ${param.result as Double}")
+                        param.result = LocationUtil.latitude
+                        XposedBridge.log("\t Modified to: ${LocationUtil.latitude}")
                     }
                 })
 
@@ -42,12 +43,12 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                 locationClass,
                 "getLongitude",
                 object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
+                    override fun afterHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method getLongitude()")
-                        param.result =  LocationUtil.fakeLongitude
-                        XposedBridge.log("\t Modified to: ${LocationUtil.fakeLongitude} (original method not executed)")
-
+                        XposedBridge.log("$tag Leaving method getLongitude()")
+                        XposedBridge.log("\t Original longitude: ${param.result as Double}")
+                        param.result =  LocationUtil.longitude
+                        XposedBridge.log("\t Modified to: ${LocationUtil.longitude}")
                     }
                 })
 
@@ -55,44 +56,33 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                 locationClass,
                 "getAccuracy",
                 object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
+                    override fun afterHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method getAccuracy()")
+                        XposedBridge.log("$tag Leaving method getAccuracy()")
+                        XposedBridge.log("\t Original accuracy: ${param.result as Float}")
                         if (PreferencesUtil.getUseAccuracy() == true) {
-                            param.result =  LocationUtil.fakeAccuracy
-                            XposedBridge.log("\t Modified to: ${LocationUtil.fakeAccuracy} (original method not executed)")
+                            param.result =  LocationUtil.accuracy
+                            XposedBridge.log("\t Modified to: ${LocationUtil.accuracy}")
                         }
                     }
-                })
+
+                    })
 
             XposedHelpers.findAndHookMethod(
                 locationClass,
                 "getAltitude",
                 object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
+                    override fun afterHookedMethod(param: MethodHookParam) {
                         LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method getAltitude()")
+                        XposedBridge.log("$tag Leaving method getAltitude()")
+                        XposedBridge.log("\t Original altitude: ${param.result as Double}")
                         if (PreferencesUtil.getUseAltitude() == true) {
-                            param.result =  LocationUtil.fakeAltitude
-                            XposedBridge.log("\t Modified to: ${LocationUtil.fakeAltitude} (original method not executed)")
+                            param.result =  LocationUtil.altitude
+                            XposedBridge.log("\t Modified to: ${LocationUtil.altitude}")
                         }
                     }
-                })
 
-            XposedHelpers.findAndHookMethod(
-                locationClass,
-                "set",
-                Location::class.java,
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method set(location)")
-                        val fakeLocation =  LocationUtil.createFakeLocation(param.args[0] as? Location)
-                        param.args[0] = fakeLocation
-                        XposedBridge.log("\t Modified to: $fakeLocation")
-                    }
                 })
-
         } catch (e: Exception) {
             XposedBridge.log("$tag Error hooking Location class - ${e.message}")
         }
@@ -107,14 +97,14 @@ class LocationApiHooks(val appLpparam: LoadPackageParam) {
                 "getLastKnownLocation",
                 String::class.java,
                 object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        LocationUtil.updateLocation()
-                        XposedBridge.log("$tag Entered method getLastKnownLocation(provider)")
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        XposedBridge.log("$tag Leaving method getLastKnownLocation(provider)")
+                        XposedBridge.log("\t Original location: ${param.result as? Location}")
                         val provider = param.args[0] as String
                         XposedBridge.log("\t Requested data from: $provider")
                         val fakeLocation =  LocationUtil.createFakeLocation(provider = provider)
                         param.result = fakeLocation
-                        XposedBridge.log("\t Modified to: $fakeLocation")
+                        XposedBridge.log("\t Modified location: $fakeLocation")
                     }
                 })
 
