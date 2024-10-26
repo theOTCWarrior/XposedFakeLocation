@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
@@ -29,88 +30,91 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = viewModel ()
 ) {
-    val useAccuracy by settingsViewModel.useAccuracy.collectAsState()
-    val accuracy by settingsViewModel.accuracy.collectAsState()
-    var accuracyInput by remember { mutableStateOf(accuracy.toString()) }
-
-    val useAltitude by settingsViewModel.useAltitude.collectAsState()
-    val altitude by settingsViewModel.altitude.collectAsState()
-    var altitudeInput by remember { mutableStateOf(altitude.toString()) }
-
-    val useRandomize by settingsViewModel.useRandomize.collectAsState()
-    val randomizeRadius by settingsViewModel.randomizeRadius.collectAsState()
-    var randomizeRadiusInput by remember { mutableStateOf(randomizeRadius.toString()) }
-
-    val useVerticalAccuracy by settingsViewModel.useVerticalAccuracy.collectAsState()
-    val verticalAccuracy by settingsViewModel.verticalAccuracy.collectAsState()
-    var verticalAccuracyInput by remember { mutableStateOf(verticalAccuracy.toString()) }
-
-    val useMeanSeaLevel by settingsViewModel.useMeanSeaLevel.collectAsState()
-    val meanSeaLevel by settingsViewModel.meanSeaLevel.collectAsState()
-    var meanSeaLevelInput by remember { mutableStateOf(meanSeaLevel.toString()) }
-
-    val useMeanSeaLevelAccuracy by settingsViewModel.useMeanSeaLevelAccuracy.collectAsState()
-    val meanSeaLevelAccuracy by settingsViewModel.meanSeaLevelAccuracy.collectAsState()
-    var meanSeaLevelAccuracyInput by remember { mutableStateOf(meanSeaLevelAccuracy.toString()) }
-
-    val useSpeed by settingsViewModel.useSpeed.collectAsState()
-    val speed by settingsViewModel.speed.collectAsState()
-    var speedInput by remember { mutableStateOf(speed.toString()) }
-
-    val useSpeedAccuracy by settingsViewModel.useSpeedAccuracy.collectAsState()
-    val speedAccuracy by settingsViewModel.speedAccuracy.collectAsState()
-    var speedAccuracyInput by remember { mutableStateOf(speedAccuracy.toString()) }
-
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(accuracy) {
-        if (accuracy.toString() != accuracyInput) {
-            accuracyInput = accuracy.toString()
-        }
-    }
-
-    LaunchedEffect(altitude) {
-        if (altitude.toString() != altitudeInput) {
-            altitudeInput = altitude.toString()
-        }
-    }
-
-    LaunchedEffect(randomizeRadius) {
-        if (randomizeRadius.toString() != randomizeRadiusInput) {
-            randomizeRadiusInput = randomizeRadius.toString()
-        }
-    }
-
-    LaunchedEffect(verticalAccuracy) {
-        if (verticalAccuracy.toString() != verticalAccuracyInput) {
-            verticalAccuracyInput = verticalAccuracy.toString()
-        }
-    }
-
-    LaunchedEffect(meanSeaLevel) {
-        if (meanSeaLevel.toString() != meanSeaLevelInput) {
-            meanSeaLevelInput = meanSeaLevel.toString()
-        }
-    }
-
-    LaunchedEffect(meanSeaLevelAccuracy) {
-        if (meanSeaLevelAccuracy.toString() != meanSeaLevelAccuracyInput) {
-            meanSeaLevelAccuracyInput = meanSeaLevelAccuracy.toString()
-        }
-    }
-
-    LaunchedEffect(speed) {
-        if (speed.toString() != speedInput) {
-            speedInput = speed.toString()
-        }
-    }
-
-    LaunchedEffect(speedAccuracy) {
-        if (speedAccuracy.toString() != speedAccuracyInput) {
-            speedAccuracyInput = speedAccuracy.toString()
-        }
-    }
+    val settings = listOf(
+        // Randomize Nearby Location
+        SettingData(
+            title = "Randomize Nearby Location",
+            useValueState = settingsViewModel.useRandomize.collectAsState(),
+            valueState = settingsViewModel.randomizeRadius.collectAsState(),
+            setUseValue = settingsViewModel::setUseRandomize,
+            setValue = settingsViewModel::setRandomizeRadius,
+            label = "Randomization Radius (m)",
+            isDouble = true
+        ),
+        // Custom Horizontal Accuracy
+        SettingData(
+            title = "Custom Horizontal Accuracy",
+            useValueState = settingsViewModel.useAccuracy.collectAsState(),
+            valueState = settingsViewModel.accuracy.collectAsState(),
+            setUseValue = settingsViewModel::setUseAccuracy,
+            setValue = settingsViewModel::setAccuracy,
+            label = "Horizontal Accuracy (m)",
+            isDouble = true
+        ),
+        // Custom Vertical Accuracy
+        SettingData(
+            title = "Custom Vertical Accuracy",
+            useValueState = settingsViewModel.useVerticalAccuracy.collectAsState(),
+            valueState = settingsViewModel.verticalAccuracy.collectAsState(),
+            setUseValue = settingsViewModel::setUseVerticalAccuracy,
+            setValue = settingsViewModel::setVerticalAccuracy,
+            label = "Vertical Accuracy (m)",
+            isDouble = false
+        ),
+        // Custom Altitude
+        SettingData(
+            title = "Custom Altitude",
+            useValueState = settingsViewModel.useAltitude.collectAsState(),
+            valueState = settingsViewModel.altitude.collectAsState(),
+            setUseValue = settingsViewModel::setUseAltitude,
+            setValue = settingsViewModel::setAltitude,
+            label = "Altitude (m)",
+            isDouble = true
+        ),
+        // Custom MSL
+        SettingData(
+            title = "Custom MSL",
+            useValueState = settingsViewModel.useMeanSeaLevel.collectAsState(),
+            valueState = settingsViewModel.meanSeaLevel.collectAsState(),
+            setUseValue = settingsViewModel::setUseMeanSeaLevel,
+            setValue = settingsViewModel::setMeanSeaLevel,
+            label = "MSL (m)",
+            isDouble = true
+        ),
+        // Custom MSL Accuracy
+        SettingData(
+            title = "Custom MSL Accuracy",
+            useValueState = settingsViewModel.useMeanSeaLevelAccuracy.collectAsState(),
+            valueState = settingsViewModel.meanSeaLevelAccuracy.collectAsState(),
+            setUseValue = settingsViewModel::setUseMeanSeaLevelAccuracy,
+            setValue = settingsViewModel::setMeanSeaLevelAccuracy,
+            label = "MSL Accuracy (m)",
+            isDouble = false
+        ),
+        // Custom Speed
+        SettingData(
+            title = "Custom Speed",
+            useValueState = settingsViewModel.useSpeed.collectAsState(),
+            valueState = settingsViewModel.speed.collectAsState(),
+            setUseValue = settingsViewModel::setUseSpeed,
+            setValue = settingsViewModel::setSpeed,
+            label = "Speed (m/s)",
+            isDouble = false
+        ),
+        // Custom Speed Accuracy
+        SettingData(
+            title = "Custom Speed Accuracy",
+            useValueState = settingsViewModel.useSpeedAccuracy.collectAsState(),
+            valueState = settingsViewModel.speedAccuracy.collectAsState(),
+            setUseValue = settingsViewModel::setUseSpeedAccuracy,
+            setValue = settingsViewModel::setSpeedAccuracy,
+            label = "Speed Accuracy (m/s)",
+            isDouble = false
+        )
+    )
 
     Scaffold(
         topBar = {
@@ -137,9 +141,7 @@ fun SettingsScreen(
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    focusManager.clearFocus()
-                }
+                ) { focusManager.clearFocus() }
         ) {
             Column(
                 modifier = Modifier
@@ -147,327 +149,186 @@ fun SettingsScreen(
                     .padding(16.dp)
                     .verticalScroll(scrollState)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Custom Horizontal Accuracy")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useAccuracy,
-                        onCheckedChange = { settingsViewModel.setUseAccuracy(it) }
-                    )
-                }
-
-                if (useAccuracy) {
-                    OutlinedTextField(
-                        value = accuracyInput,
-                        onValueChange = {
-                            accuracyInput = it
-                            val value = it.toDoubleOrNull()
-                            if (value != null) {
-                                settingsViewModel.setAccuracy(value)
-                            }
-                        },
-                        label = { Text("Horizontal Accuracy (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = accuracyInput.toDoubleOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Custom Vertical Accuracy")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useVerticalAccuracy,
-                        onCheckedChange = { settingsViewModel.setUseVerticalAccuracy(it) }
-                    )
-                }
-
-                if (useVerticalAccuracy) {
-                    OutlinedTextField(
-                        value = verticalAccuracyInput,
-                        onValueChange = {
-                            verticalAccuracyInput = it
-                            val value = it.toFloatOrNull()
-                            if (value != null) {
-                                settingsViewModel.setVerticalAccuracy(value)
-                            }
-                        },
-                        label = { Text("Vertical Accuracy (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = verticalAccuracyInput.toFloatOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Use Custom Altitude")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useAltitude,
-                        onCheckedChange = { settingsViewModel.setUseAltitude(it) }
-                    )
-                }
-
-                if (useAltitude) {
-                    OutlinedTextField(
-                        value = altitudeInput,
-                        onValueChange = {
-                            altitudeInput = it
-                            val value = it.toDoubleOrNull()
-                            if (value != null) {
-                                settingsViewModel.setAltitude(value)
-                            }
-                        },
-                        label = { Text("Altitude (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = altitudeInput.toDoubleOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Randomize Nearby Location")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useRandomize,
-                        onCheckedChange = { settingsViewModel.setUseRandomize(it) }
-                    )
-                }
-
-                if (useRandomize) {
-                    OutlinedTextField(
-                        value = randomizeRadiusInput,
-                        onValueChange = {
-                            randomizeRadiusInput = it
-                            val value = it.toDoubleOrNull()
-                            if (value != null) {
-                                settingsViewModel.setRandomizeRadius(value)
-                            }
-                        },
-                        label = { Text("Randomization Radius (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = randomizeRadiusInput.toDoubleOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Use Custom Mean Sea Level")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useMeanSeaLevel,
-                        onCheckedChange = { settingsViewModel.setUseMeanSeaLevel(it) }
-                    )
-                }
-
-                if (useMeanSeaLevel) {
-                    OutlinedTextField(
-                        value = meanSeaLevelInput,
-                        onValueChange = {
-                            meanSeaLevelInput = it
-                            val value = it.toDoubleOrNull()
-                            if (value != null) {
-                                settingsViewModel.setMeanSeaLevel(value)
-                            }
-                        },
-                        label = { Text("Mean Sea Level (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = meanSeaLevelInput.toDoubleOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Use Mean Sea Level Accuracy")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useMeanSeaLevelAccuracy,
-                        onCheckedChange = { settingsViewModel.setUseMeanSeaLevelAccuracy(it) }
-                    )
-                }
-
-                if (useMeanSeaLevelAccuracy) {
-                    OutlinedTextField(
-                        value = meanSeaLevelAccuracyInput,
-                        onValueChange = {
-                            meanSeaLevelAccuracyInput = it
-                            val value = it.toFloatOrNull()
-                            if (value != null) {
-                                settingsViewModel.setMeanSeaLevelAccuracy(value)
-                            }
-                        },
-                        label = { Text("Mean Sea Level Accuracy (m)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = meanSeaLevelAccuracyInput.toFloatOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Use Custom Speed")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useSpeed,
-                        onCheckedChange = { settingsViewModel.setUseSpeed(it) }
-                    )
-                }
-
-                if (useSpeed) {
-                    OutlinedTextField(
-                        value = speedInput,
-                        onValueChange = {
-                            speedInput = it
-                            val value = it.toFloatOrNull()
-                            if (value != null) {
-                                settingsViewModel.setSpeed(value)
-                            }
-                        },
-                        label = { Text("Speed (m/s)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = speedInput.toFloatOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Use Speed Accuracy")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = useSpeedAccuracy,
-                        onCheckedChange = { settingsViewModel.setUseSpeedAccuracy(it) }
-                    )
-                }
-
-                if (useSpeedAccuracy) {
-                    OutlinedTextField(
-                        value = speedAccuracyInput,
-                        onValueChange = {
-                            speedAccuracyInput = it
-                            val value = it.toFloatOrNull()
-                            if (value != null) {
-                                settingsViewModel.setSpeedAccuracy(value)
-                            }
-                        },
-                        label = { Text("Speed Accuracy (m/s)") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        isError = speedAccuracyInput.toFloatOrNull() == null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                settings.forEach { setting ->
+                    if (setting.isDouble) {
+                        DoubleSettingComposable(
+                            setting = setting as SettingData<Double>,
+                            focusManager = focusManager
+                        )
+                    } else {
+                        FloatSettingComposable(
+                            setting = setting as SettingData<Float>,
+                            focusManager = focusManager
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun DoubleSettingItem(
+    title: String,
+    useValue: Boolean,
+    onUseValueChange: (Boolean) -> Unit,
+    onValueChange: (Double) -> Unit,
+    valueInput: String,
+    onValueInputChange: (String) -> Unit,
+    label: String,
+    isError: Boolean,
+    focusManager: FocusManager
+) {
+    SettingItem(
+        title = title,
+        useValue = useValue,
+        onUseValueChange = onUseValueChange,
+        valueInput = valueInput,
+        onValueInputChange = onValueInputChange,
+        label = label,
+        isError = isError,
+        parseValue = String::toDoubleOrNull,
+        onParsedValueChange = onValueChange,
+        focusManager = focusManager
+    )
+}
+
+@Composable
+fun FloatSettingItem(
+    title: String,
+    useValue: Boolean,
+    onUseValueChange: (Boolean) -> Unit,
+    onValueChange: (Float) -> Unit,
+    valueInput: String,
+    onValueInputChange: (String) -> Unit,
+    label: String,
+    isError: Boolean,
+    focusManager: FocusManager
+) {
+    SettingItem(
+        title = title,
+        useValue = useValue,
+        onUseValueChange = onUseValueChange,
+        valueInput = valueInput,
+        onValueInputChange = onValueInputChange,
+        label = label,
+        isError = isError,
+        parseValue = String::toFloatOrNull,
+        onParsedValueChange = onValueChange,
+        focusManager = focusManager
+    )
+}
+
+@Composable
+private fun <T> SettingItem(
+    title: String,
+    useValue: Boolean,
+    onUseValueChange: (Boolean) -> Unit,
+    valueInput: String,
+    onValueInputChange: (String) -> Unit,
+    label: String,
+    isError: Boolean,
+    parseValue: (String) -> T?,
+    onParsedValueChange: (T) -> Unit,
+    focusManager: FocusManager
+) {
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(title)
+        Spacer(modifier = Modifier.weight(1f))
+        Switch(
+            checked = useValue,
+            onCheckedChange = onUseValueChange
+        )
+    }
+
+    if (useValue) {
+        OutlinedTextField(
+            value = valueInput,
+            onValueChange = {
+                onValueInputChange(it)
+                val parsedValue = parseValue(it)
+                if (parsedValue != null) {
+                    onParsedValueChange(parsedValue)
+                }
+            },
+            label = { Text(label) },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            isError = isError,
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+data class SettingData<T>(
+    val title: String,
+    val useValueState: State<Boolean>,
+    val valueState: State<T>,
+    val setUseValue: (Boolean) -> Unit,
+    val setValue: (T) -> Unit,
+    val label: String,
+    val isDouble: Boolean
+)
+
+@Composable
+fun DoubleSettingComposable(
+    setting: SettingData<Double>,
+    focusManager: FocusManager
+) {
+    var valueInput by remember { mutableStateOf(setting.valueState.value.toString()) }
+    val isError = valueInput.toDoubleOrNull() == null
+
+    LaunchedEffect(setting.valueState.value) {
+        if (setting.valueState.value.toString() != valueInput) {
+            valueInput = setting.valueState.value.toString()
+        }
+    }
+
+    DoubleSettingItem(
+        title = setting.title,
+        useValue = setting.useValueState.value,
+        onUseValueChange = setting.setUseValue,
+        onValueChange = setting.setValue,
+        valueInput = valueInput,
+        onValueInputChange = { valueInput = it },
+        label = setting.label,
+        isError = isError,
+        focusManager = focusManager
+    )
+}
+
+@Composable
+fun FloatSettingComposable(
+    setting: SettingData<Float>,
+    focusManager: FocusManager
+) {
+    var valueInput by remember { mutableStateOf(setting.valueState.value.toString()) }
+    val isError = valueInput.toFloatOrNull() == null
+
+    LaunchedEffect(setting.valueState.value) {
+        if (setting.valueState.value.toString() != valueInput) {
+            valueInput = setting.valueState.value.toString()
+        }
+    }
+
+    FloatSettingItem(
+        title = setting.title,
+        useValue = setting.useValueState.value,
+        onUseValueChange = setting.setUseValue,
+        onValueChange = setting.setValue,
+        valueInput = valueInput,
+        onValueInputChange = { valueInput = it },
+        label = setting.label,
+        isError = isError,
+        focusManager = focusManager
+    )
 }
