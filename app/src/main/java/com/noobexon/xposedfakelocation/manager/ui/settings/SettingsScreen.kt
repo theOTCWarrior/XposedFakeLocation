@@ -4,8 +4,6 @@ package com.noobexon.xposedfakelocation.manager.ui.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -16,10 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
@@ -269,17 +264,14 @@ private fun <T : Number> SettingItem(
         if (useValue) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Local state to track the slider's value
-            var sliderValue by remember { mutableStateOf(value.toFloat()) }
+            var sliderValue by remember { mutableFloatStateOf(value.toFloat()) }
 
-            // Synchronize sliderValue with external value changes
             LaunchedEffect(value) {
                 if (sliderValue != value.toFloat()) {
                     sliderValue = value.toFloat()
                 }
             }
 
-            // Display the current value
             Text(
                 text = "$label: ${valueFormatter(parseValue(sliderValue))}",
                 style = MaterialTheme.typography.bodyMedium,
@@ -289,10 +281,10 @@ private fun <T : Number> SettingItem(
             Slider(
                 value = sliderValue,
                 onValueChange = { newValue ->
-                    sliderValue = newValue // Update local state
+                    sliderValue = newValue
                 },
                 onValueChangeFinished = {
-                    onValueChange(parseValue(sliderValue)) // Update ViewModel when interaction ends
+                    onValueChange(parseValue(sliderValue))
                 },
                 valueRange = minValue..maxValue,
                 steps = ((maxValue - minValue) / step).toInt() - 1,

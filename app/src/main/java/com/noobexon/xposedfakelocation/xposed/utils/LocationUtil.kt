@@ -3,9 +3,15 @@ package com.noobexon.xposedfakelocation.xposed.utils
 
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
+import com.noobexon.xposedfakelocation.data.DEFAULT_MEAN_SEA_LEVEL
+import com.noobexon.xposedfakelocation.data.DEFAULT_MEAN_SEA_LEVEL_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
+import com.noobexon.xposedfakelocation.data.DEFAULT_SPEED
+import com.noobexon.xposedfakelocation.data.DEFAULT_SPEED_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_VERTICAL_ACCURACY
 import com.noobexon.xposedfakelocation.data.PI
 import com.noobexon.xposedfakelocation.data.RADIUS_EARTH
 import de.robv.android.xposed.XposedBridge
@@ -20,7 +26,7 @@ import kotlin.math.sqrt
 object LocationUtil {
     private const val TAG = "[LocationUtil]"
 
-    private const val DEBUG: Boolean = false
+    private const val DEBUG: Boolean = true
 
     private val random: Random = Random()
 
@@ -28,6 +34,11 @@ object LocationUtil {
     var longitude: Double = 0.0
     var accuracy: Float = 0F
     var altitude: Double = 0.0
+    var verticalAccuracy: Float = 0F
+    var meanSeaLevel: Double = 0.0
+    var meanSeaLevelAccuracy: Float = 0F
+    var speed: Float = 0F
+    var speedAccuracy: Float = 0F
 
     @Synchronized
     fun createFakeLocation(originalLocation: Location? = null, provider: String = LocationManager.GPS_PROVIDER): Location {
@@ -57,8 +68,27 @@ object LocationUtil {
             fakeLocation.altitude = altitude
         }
 
-        fakeLocation.speed = 0F
-        fakeLocation.speedAccuracyMetersPerSecond = 0F
+        if (verticalAccuracy != 0F) {
+            fakeLocation.verticalAccuracyMeters = verticalAccuracy
+        }
+
+        if (speed != 0F) {
+            fakeLocation.speed = speed
+        }
+
+        if (speedAccuracy != 0F) {
+            fakeLocation.speedAccuracyMetersPerSecond = speedAccuracy
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (meanSeaLevel != 0.0) {
+                fakeLocation.mslAltitudeMeters = meanSeaLevel
+            }
+
+            if (meanSeaLevelAccuracy != 0F) {
+                fakeLocation.mslAltitudeAccuracyMeters = meanSeaLevelAccuracy
+            }
+        }
 
         attemptHideMockProvider(fakeLocation)
 
@@ -78,14 +108,6 @@ object LocationUtil {
     fun updateLocation() {
         try {
             PreferencesUtil.getLastClickedLocation()?.let {
-                if (PreferencesUtil.getUseAccuracy() == true) {
-                    accuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
-                }
-
-                 if (PreferencesUtil.getUseAltitude() == true) {
-                     altitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
-                }
-
                 if (PreferencesUtil.getUseRandomize() == true) {
                     val randomizationRadius = PreferencesUtil.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
                     val randomLocation = getRandomLocation(it.latitude, it.longitude, randomizationRadius)
@@ -96,11 +118,44 @@ object LocationUtil {
                     longitude = it.longitude
                 }
 
+                if (PreferencesUtil.getUseAccuracy() == true) {
+                    accuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
+                }
+
+                 if (PreferencesUtil.getUseAltitude() == true) {
+                     altitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
+                }
+
+                if (PreferencesUtil.getUseVerticalAccuracy() == true) {
+                    verticalAccuracy = PreferencesUtil.getVerticalAccuracy()?.toFloat() ?: DEFAULT_VERTICAL_ACCURACY
+                }
+
+                if (PreferencesUtil.getUseMeanSeaLevel() == true) {
+                    meanSeaLevel = PreferencesUtil.getMeanSeaLevel() ?: DEFAULT_MEAN_SEA_LEVEL
+                }
+
+                if (PreferencesUtil.getUseMeanSeaLevelAccuracy() == true) {
+                    meanSeaLevelAccuracy = PreferencesUtil.getMeanSeaLevelAccuracy()?.toFloat() ?: DEFAULT_MEAN_SEA_LEVEL_ACCURACY
+                }
+
+                if (PreferencesUtil.getUseSpeed() == true) {
+                    speed = PreferencesUtil.getSpeed()?.toFloat() ?: DEFAULT_SPEED
+                }
+
+                if (PreferencesUtil.getUseSpeedAccuracy() == true) {
+                    speedAccuracy = PreferencesUtil.getSpeedAccuracy()?.toFloat() ?: DEFAULT_SPEED_ACCURACY
+                }
+
                 if (DEBUG) {
                     XposedBridge.log("$TAG Updated fake location values to:")
-                    XposedBridge.log("\t coordinates: (latitude = $latitude, longitude = $longitude)")
-                    XposedBridge.log("\t accuracy: $accuracy")
-                    XposedBridge.log("\t altitude: $altitude")
+                    XposedBridge.log("\tCoordinates: (latitude = $latitude, longitude = $longitude)")
+                    XposedBridge.log("\tAccuracy: $accuracy")
+                    XposedBridge.log("\tAltitude: $altitude")
+                    XposedBridge.log("\tVertical Accuracy: $verticalAccuracy")
+                    XposedBridge.log("\tMean Sea Level: $meanSeaLevel")
+                    XposedBridge.log("\tMean Sea Level Accuracy: $meanSeaLevelAccuracy")
+                    XposedBridge.log("\tSpeed: $speed")
+                    XposedBridge.log("\tSpeed Accuracy: $speedAccuracy")
                 }
             } ?: XposedBridge.log("$TAG Last clicked location is null")
         } catch (e: Exception) {
