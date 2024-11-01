@@ -2,19 +2,7 @@
 package com.noobexon.xposedfakelocation.xposed.utils
 
 import com.google.gson.Gson
-import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
-import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
-import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
-import com.noobexon.xposedfakelocation.data.KEY_ACCURACY
-import com.noobexon.xposedfakelocation.data.KEY_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_IS_PLAYING
-import com.noobexon.xposedfakelocation.data.KEY_LAST_CLICKED_LOCATION
-import com.noobexon.xposedfakelocation.data.KEY_RANDOMIZE_RADIUS
-import com.noobexon.xposedfakelocation.data.KEY_USE_ACCURACY
-import com.noobexon.xposedfakelocation.data.KEY_USE_ALTITUDE
-import com.noobexon.xposedfakelocation.data.KEY_USE_RANDOMIZE
-import com.noobexon.xposedfakelocation.data.MANAGER_APP_PACKAGE_NAME
-import com.noobexon.xposedfakelocation.data.SHARED_PREFS_FILE
+import com.noobexon.xposedfakelocation.data.*
 import com.noobexon.xposedfakelocation.data.model.LastClickedLocation
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
@@ -59,6 +47,46 @@ object PreferencesUtil {
         return getPreference<Double>(KEY_RANDOMIZE_RADIUS)
     }
 
+    fun getUseVerticalAccuracy(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_VERTICAL_ACCURACY)
+    }
+
+    fun getVerticalAccuracy(): Float? {
+        return getPreference<Float>(KEY_VERTICAL_ACCURACY)
+    }
+
+    fun getUseMeanSeaLevel(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_MEAN_SEA_LEVEL)
+    }
+
+    fun getMeanSeaLevel(): Double? {
+        return getPreference<Double>(KEY_MEAN_SEA_LEVEL)
+    }
+
+    fun getUseMeanSeaLevelAccuracy(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_MEAN_SEA_LEVEL_ACCURACY)
+    }
+
+    fun getMeanSeaLevelAccuracy(): Float? {
+        return getPreference<Float>(KEY_MEAN_SEA_LEVEL_ACCURACY)
+    }
+
+    fun getUseSpeed(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_SPEED)
+    }
+
+    fun getSpeed(): Float? {
+        return getPreference<Float>(KEY_SPEED)
+    }
+
+    fun getUseSpeedAccuracy(): Boolean? {
+        return getPreference<Boolean>(KEY_USE_SPEED_ACCURACY)
+    }
+
+    fun getSpeedAccuracy(): Float? {
+        return getPreference<Float>(KEY_SPEED_ACCURACY)
+    }
+
     private inline fun <reified T> getPreference(key: String): T? {
         preferences.reload()
         return when (T::class) {
@@ -67,10 +95,21 @@ object PreferencesUtil {
                     KEY_ACCURACY -> java.lang.Double.doubleToRawLongBits(DEFAULT_ACCURACY)
                     KEY_ALTITUDE -> java.lang.Double.doubleToRawLongBits(DEFAULT_ALTITUDE)
                     KEY_RANDOMIZE_RADIUS -> java.lang.Double.doubleToRawLongBits(DEFAULT_RANDOMIZE_RADIUS)
+                    KEY_MEAN_SEA_LEVEL -> java.lang.Double.doubleToRawLongBits(DEFAULT_MEAN_SEA_LEVEL)
                     else -> -1L
                 }
                 val bits = preferences.getLong(key, defaultValue)
                 java.lang.Double.longBitsToDouble(bits) as? T
+            }
+            Float::class -> {
+                val defaultValue = when (key) {
+                    KEY_VERTICAL_ACCURACY -> DEFAULT_VERTICAL_ACCURACY
+                    KEY_MEAN_SEA_LEVEL_ACCURACY -> DEFAULT_MEAN_SEA_LEVEL_ACCURACY
+                    KEY_SPEED -> DEFAULT_SPEED
+                    KEY_SPEED_ACCURACY -> DEFAULT_SPEED_ACCURACY
+                    else -> -1f
+                }
+                preferences.getFloat(key, defaultValue) as? T
             }
             Boolean::class -> preferences.getBoolean(key, false) as? T
             else -> {

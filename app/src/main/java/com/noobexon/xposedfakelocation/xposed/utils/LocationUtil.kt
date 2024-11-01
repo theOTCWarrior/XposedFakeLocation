@@ -3,9 +3,15 @@ package com.noobexon.xposedfakelocation.xposed.utils
 
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import com.noobexon.xposedfakelocation.data.DEFAULT_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_ALTITUDE
+import com.noobexon.xposedfakelocation.data.DEFAULT_MEAN_SEA_LEVEL
+import com.noobexon.xposedfakelocation.data.DEFAULT_MEAN_SEA_LEVEL_ACCURACY
 import com.noobexon.xposedfakelocation.data.DEFAULT_RANDOMIZE_RADIUS
+import com.noobexon.xposedfakelocation.data.DEFAULT_SPEED
+import com.noobexon.xposedfakelocation.data.DEFAULT_SPEED_ACCURACY
+import com.noobexon.xposedfakelocation.data.DEFAULT_VERTICAL_ACCURACY
 import com.noobexon.xposedfakelocation.data.PI
 import com.noobexon.xposedfakelocation.data.RADIUS_EARTH
 import de.robv.android.xposed.XposedBridge
@@ -20,15 +26,19 @@ import kotlin.math.sqrt
 object LocationUtil {
     private const val TAG = "[LocationUtil]"
 
-    private const val DEBUG: Boolean = false
+    private const val DEBUG: Boolean = true
 
     private val random: Random = Random()
 
-    var fakeLatitude: Double = 0.0
-    var fakeLongitude: Double = 0.0
-    var fakeAccuracy: Float = 0F
-    var fakeAltitude: Double = 0.0
-    var randomizationRadius: Double = 0.0
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    var accuracy: Float = 0F
+    var altitude: Double = 0.0
+    var verticalAccuracy: Float = 0F
+    var meanSeaLevel: Double = 0.0
+    var meanSeaLevelAccuracy: Float = 0F
+    var speed: Float = 0F
+    var speedAccuracy: Float = 0F
 
     @Synchronized
     fun createFakeLocation(originalLocation: Location? = null, provider: String = LocationManager.GPS_PROVIDER): Location {
@@ -47,19 +57,38 @@ object LocationUtil {
             }
         }
 
-        fakeLocation.latitude = fakeLatitude
-        fakeLocation.longitude = fakeLongitude
+        fakeLocation.latitude = latitude
+        fakeLocation.longitude = longitude
 
-        if (fakeAccuracy != 0F) {
-            fakeLocation.accuracy = fakeAccuracy
+        if (accuracy != 0F) {
+            fakeLocation.accuracy = accuracy
         }
 
-        if (fakeAltitude != 0.0) {
-            fakeLocation.altitude = fakeAltitude
+        if (altitude != 0.0) {
+            fakeLocation.altitude = altitude
         }
 
-        fakeLocation.speed = 0F
-        fakeLocation.speedAccuracyMetersPerSecond = 0F
+        if (verticalAccuracy != 0F) {
+            fakeLocation.verticalAccuracyMeters = verticalAccuracy
+        }
+
+        if (speed != 0F) {
+            fakeLocation.speed = speed
+        }
+
+        if (speedAccuracy != 0F) {
+            fakeLocation.speedAccuracyMetersPerSecond = speedAccuracy
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (meanSeaLevel != 0.0) {
+                fakeLocation.mslAltitudeMeters = meanSeaLevel
+            }
+
+            if (meanSeaLevelAccuracy != 0F) {
+                fakeLocation.mslAltitudeAccuracyMeters = meanSeaLevelAccuracy
+            }
+        }
 
         attemptHideMockProvider(fakeLocation)
 
@@ -79,29 +108,54 @@ object LocationUtil {
     fun updateLocation() {
         try {
             PreferencesUtil.getLastClickedLocation()?.let {
+                if (PreferencesUtil.getUseRandomize() == true) {
+                    val randomizationRadius = PreferencesUtil.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
+                    val randomLocation = getRandomLocation(it.latitude, it.longitude, randomizationRadius)
+                    latitude = randomLocation.first
+                    longitude = randomLocation.second
+                } else {
+                    latitude = it.latitude
+                    longitude = it.longitude
+                }
+
                 if (PreferencesUtil.getUseAccuracy() == true) {
-                    fakeAccuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
+                    accuracy = (PreferencesUtil.getAccuracy() ?: DEFAULT_ACCURACY).toFloat()
                 }
 
                  if (PreferencesUtil.getUseAltitude() == true) {
-                     fakeAltitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
+                     altitude = PreferencesUtil.getAltitude() ?: DEFAULT_ALTITUDE
                 }
 
-                if (PreferencesUtil.getUseRandomize() == true) {
-                    randomizationRadius = PreferencesUtil.getRandomizeRadius() ?: DEFAULT_RANDOMIZE_RADIUS
-                    val randomLocation = getRandomLocation(it.latitude, it.longitude, randomizationRadius)
-                    fakeLatitude = randomLocation.first
-                    fakeLongitude = randomLocation.second
-                } else {
-                    fakeLatitude = it.latitude
-                    fakeLongitude = it.longitude
+                if (PreferencesUtil.getUseVerticalAccuracy() == true) {
+                    verticalAccuracy = PreferencesUtil.getVerticalAccuracy()?.toFloat() ?: DEFAULT_VERTICAL_ACCURACY
+                }
+
+                if (PreferencesUtil.getUseMeanSeaLevel() == true) {
+                    meanSeaLevel = PreferencesUtil.getMeanSeaLevel() ?: DEFAULT_MEAN_SEA_LEVEL
+                }
+
+                if (PreferencesUtil.getUseMeanSeaLevelAccuracy() == true) {
+                    meanSeaLevelAccuracy = PreferencesUtil.getMeanSeaLevelAccuracy()?.toFloat() ?: DEFAULT_MEAN_SEA_LEVEL_ACCURACY
+                }
+
+                if (PreferencesUtil.getUseSpeed() == true) {
+                    speed = PreferencesUtil.getSpeed()?.toFloat() ?: DEFAULT_SPEED
+                }
+
+                if (PreferencesUtil.getUseSpeedAccuracy() == true) {
+                    speedAccuracy = PreferencesUtil.getSpeedAccuracy()?.toFloat() ?: DEFAULT_SPEED_ACCURACY
                 }
 
                 if (DEBUG) {
                     XposedBridge.log("$TAG Updated fake location values to:")
-                    XposedBridge.log("\t coordinates: (latitude = $fakeLatitude, longitude = $fakeLongitude)")
-                    XposedBridge.log("\t accuracy: $fakeAccuracy")
-                    XposedBridge.log("\t altitude: $fakeAltitude")
+                    XposedBridge.log("\tCoordinates: (latitude = $latitude, longitude = $longitude)")
+                    XposedBridge.log("\tAccuracy: $accuracy")
+                    XposedBridge.log("\tAltitude: $altitude")
+                    XposedBridge.log("\tVertical Accuracy: $verticalAccuracy")
+                    XposedBridge.log("\tMean Sea Level: $meanSeaLevel")
+                    XposedBridge.log("\tMean Sea Level Accuracy: $meanSeaLevelAccuracy")
+                    XposedBridge.log("\tSpeed: $speed")
+                    XposedBridge.log("\tSpeed Accuracy: $speedAccuracy")
                 }
             } ?: XposedBridge.log("$TAG Last clicked location is null")
         } catch (e: Exception) {

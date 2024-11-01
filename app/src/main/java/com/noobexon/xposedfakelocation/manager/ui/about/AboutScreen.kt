@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.platform.LocalContext
+import com.noobexon.xposedfakelocation.BuildConfig
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -131,7 +132,7 @@ fun AppVersionTitle() {
 @Composable
 fun AppVersionValue() {
     Text(
-        text = "0.0.1",
+        text = BuildConfig.VERSION_NAME,
         style = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.SemiBold
         ),
