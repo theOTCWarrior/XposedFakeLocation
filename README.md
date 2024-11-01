@@ -24,7 +24,6 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
 - [Development](#development)
 - [License](#license)
 - [Disclaimer](#disclaimer)
@@ -34,10 +33,10 @@
 
 ## **Features**
 
-- **Global Location Spoofing**: Override your device's location data system-wide (Requires Android 11+ for full support).
+- **Global Location Spoofing**: Override your device's location data system-wide (Unstable for now).
 - **Per-App Location Control**: Apply location spoofing to specific applications.
 - **Custom Coordinates**: Set precise latitude and longitude.
-- **Altitude and Accuracy Settings**: Customize altitude and accuracy values.
+- **Altitude and Accuracy Settings**: Customize altitude, accuracy and other custom sensor values.
 - **Randomization**: Add random offsets within a specified radius for enhanced privacy.
 - **User-Friendly Interface**: Intuitive design for easy configuration.
 
@@ -103,8 +102,9 @@ You can always install the latest stable version from the releases page. If you 
 
    - Access the **Settings** screen to customize:
 
-     - **Accuracy**: Enable and set a custom accuracy value.
+     - **Accuracy**: Enable and set a custom horizontal and/or vertical accuracy value.
      - **Altitude**: Enable and set a custom altitude.
+     - **Other Sensor Data**: New spoofable sensors data added in new versions.
      - **Randomization Radius**: Set the radius in meters for location randomization.
 
 4. **Start Spoofing**
@@ -117,25 +117,6 @@ You can always install the latest stable version from the releases page. If you 
    - Toggle the **Stop** button to cease location spoofing.
 
 ---
-
-## **Configuration**
-
-### **Settings**
-
-- **Accuracy**
-
-  - Enable to set a custom accuracy value for the fake location.
-  - **Accuracy Value**: Specify in meters.
-
-- **Altitude**
-
-  - Enable to set a custom altitude for the fake location.
-  - **Altitude Value**: Specify in meters.
-
-- **Randomization Radius**
-
-  - Set the radius in meters to randomize your location within a circle around the selected point.
-  - **Value**: specify the radius in meters.
 
 ### **Favorites**
 
@@ -191,15 +172,15 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for more informati
 
 ## **Disclaimer**
 
-This application is intended for **development and testing purposes only**. Misuse of location spoofing can violate terms of service of other applications and services. Use at your own risk.
+This application is intended for **development and testing purposes only**. Misuse of location spoofing can violate terms of service of other applications and services. Use at your own risk. There is no reposnsability whatsoever for any damage to the device.
 
 ---
 
 ## **Acknowledgements**
 
 - [GpsSetter](https://github.com/Android1500/GpsSetter) - Highly inspired by this amazing project!
-- [Xposed Framework](https://repo.xposed.info/) 
-- [LSPosed](https://github.com/LSPosed/LSPosed)
-- [OSMDroid](https://github.com/osmdroid/osmdroid) 
+- [Xposed Framework](https://repo.xposed.info/) - Java hooks
+- [LSPosed](https://github.com/LSPosed/LSPosed) - The go-to Xposed framework manager app.
+- [OSMDroid](https://github.com/osmdroid/osmdroid) - Open-Source offline map interface.
 
 
