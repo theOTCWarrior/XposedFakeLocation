@@ -53,7 +53,11 @@ fun DrawerContent(
             DrawerItem(
                 icon = LineAwesomeIcons.Discord,
                 label = "Discord",
-                onClick = { Toast.makeText(context, "Coming soon!", Toast.LENGTH_SHORT).show() }
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/8eCRU3KzVS"))
+                    context.startActivity(intent)
+                    onCloseDrawer()
+                }
             )
             DrawerItem(
                 icon = LineAwesomeIcons.Github,
