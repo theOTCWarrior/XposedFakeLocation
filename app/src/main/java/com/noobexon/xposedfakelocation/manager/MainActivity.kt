@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.navigation.compose.rememberNavController
-import com.noobexon.xposedfakelocation.data.repository.PreferencesRepository
 import com.noobexon.xposedfakelocation.manager.ui.navigation.AppNavGraph
 import com.noobexon.xposedfakelocation.manager.ui.theme.XposedFakeLocationTheme
 import org.osmdroid.config.Configuration
@@ -38,7 +37,6 @@ class MainActivity : ComponentActivity() {
         }
 
         if (isXposedModuleEnabled) {
-            PreferencesRepository(this.application).clearNonPersistentSettings()
             enableEdgeToEdge()
             setContent {
                 XposedFakeLocationTheme {

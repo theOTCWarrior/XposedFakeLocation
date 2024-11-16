@@ -30,6 +30,10 @@ class PreferencesRepository(context: Context) {
         Log.d(tag, "Saved IsPlaying: $isPlaying")
     }
 
+    fun getIsPlaying(): Boolean {
+        return sharedPrefs.getBoolean(KEY_IS_PLAYING, false) // Default to false if not set
+    }
+
     // Last Clicked Location
     fun saveLastClickedLocation(latitude: Double, longitude: Double) {
         val location = LastClickedLocation(latitude, longitude)
@@ -40,7 +44,16 @@ class PreferencesRepository(context: Context) {
         Log.d(tag, "Saved LastClickedLocation: $json")
     }
 
-    fun clearNonPersistentSettings() {
+    fun getLastClickedLocation(): LastClickedLocation? {
+        val json = sharedPrefs.getString(KEY_LAST_CLICKED_LOCATION, null)
+        return if (json != null) {
+            gson.fromJson(json, LastClickedLocation::class.java)
+        } else {
+            null
+        }
+    }
+
+    fun clearLastClickedLocation() {
         sharedPrefs.edit()
             .remove(KEY_LAST_CLICKED_LOCATION)
             .apply()
