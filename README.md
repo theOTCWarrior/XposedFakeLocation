@@ -1,3 +1,11 @@
+# original author : noobexon1 https://github.com/noobexon1 #
+I want to use this project to crash CampusDaily
+-crack fakelocation
+-co-opt lerist/fakelocation and re-implement hooking on LocationManagerServices
+
+
+
+# original readme.md#
 # **XposedFakeLocation**
 
 ![GitHub License](https://img.shields.io/github/license/noobexon1/XposedFakeLocation?color=blue)
