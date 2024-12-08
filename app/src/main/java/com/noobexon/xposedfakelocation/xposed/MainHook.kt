@@ -33,7 +33,25 @@ class MainHook : IXposedHookLoadPackage {
         if (lpparam.packageName == "android") {
             systemServicesHooks = SystemServicesHooks(lpparam).also { it.initHooks() }
         }
+        if (lpparam.packageName == "com.lerist.fakelocation") {
+            XposedBridge.log("$tag: Fake Location已選中")
 
+            val activityThreadClass = XposedHelpers.findClass("android.app.ActivityThread", loadPackageParam.classLoader)
+            XposedBridge.hookAllMethods(activityThreadClass, "performLaunchActivity", object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    super.afterHookedMethod(param)
+                    XposedHelpers.findAndHookMethod(
+                        "ൟ.ՠ",
+                        lpparam.classLoader,
+                        "Ԫ",
+                        object : XC_MethodHook() {
+                        override fun afterHookedMethod(param: MethodHookParam) {
+                            param.result = true
+                        }
+                    })
+                }
+            })
+        }
         initHookingLogic(lpparam)
     }
 
